@@ -1,0 +1,218 @@
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #f3f3f3;
+}
+
+.birthstone-regular {
+    font-family: "Birthstone", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .albert-sans {
+    font-family: "Albert Sans", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+  }
+
+  .ephesis {
+    font-family: "Ephesis", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+
+.sidebar {
+    width: 200px;
+    background: #C0D6DF;
+    color: rgb(0, 0, 0);
+    padding: 15px;
+    height: 100vh;
+ 
+}
+.sidebar h2{
+    display: flex;
+    justify-content: center;
+    font-family: 'birthstone';
+    font-size: 55px;
+    font-weight: 400;
+    color: #C0D6DF;
+}
+.sidebar a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    display: block;
+    padding: 20px;
+    font-family: 'albert sans';
+    transition: background-color 0.5s;
+}
+.sidebar i{
+    padding-right: 5px;
+}
+
+.sidebar a:hover {
+    background-color: #ffffff;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 500;
+
+}
+.main-content {
+    flex: 1;
+    padding: 10px;
+}
+.card {
+    background: white;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-family:'albert sans';
+    font-weight: 300;
+}
+
+.card h2{
+    font-weight: 400;
+}
+
+.card2{
+    background: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-family:'albert sans';
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+}
+
+.card2 h2{
+    text-indent: 10px;
+
+}
+
+
+
+
+.img{
+    margin-right: 50px; /* Space between image and form */
+    max-width: 300px; /* Adjust the size of the image */
+    height: auto; /* Maintain aspect ratio */
+}
+
+
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+p {
+    font-weight: 300;
+    margin-top: 10px; /* Add margin for spacing */
+}
+
+
+.card-container {
+    display: flex; /* Use flexbox to arrange cards side by side */
+    gap: 20px; /* Space between cards */
+}
+
+.card {
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 600px;
+    
+}
+
+.container {
+    display: flex; 
+    align-items: center; 
+    padding-top: 10px; 
+
+}
+
+
+.container h2, .container a {
+    margin: 0; 
+    height: 40px; 
+    display: flex; 
+    align-items: center; 
+}
+
+
+
+.edit{
+    background-color: #6BBBAE; 
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 10px 20px; /* Some padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Make the button inline */
+    font-size: 16px; /* Increase font size */
+    margin: 20px 0; /* Some margin */
+    cursor: pointer; /* Pointer/hand icon */
+    border-radius: 4px; /* Rounded corners */
+}
+
+
+.logout-button {
+    background-color: #6BBBAE;
+    border: none; 
+    color: rgb(0, 0, 0); 
+    padding: 10px 20px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px;
+    margin: 15px;
+    margin-top: 500px;
+    cursor: pointer; 
+    border-radius: 4px; 
+}
+
+.logout-button:hover {
+    background-color: #31a592; 
+}
+
+.signup-image {
+    width: 100%; 
+    height: auto; 
+    object-fit: contain; 
+    margin-bottom: 20px; 
+    margin-top: 20px;
+}
+
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: 'Albert Sans', sans-serif;
+}
+
+.schedule-table th, .schedule-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+.schedule-table th {
+    background-color: #C0D6DF;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+
+.schedule-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.schedule-table tr:hover {
+    background-color: #f1f1f1;
+}

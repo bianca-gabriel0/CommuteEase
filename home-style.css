@@ -73,40 +73,70 @@ body {
 
 
 
-/* Welcome section */
-.welcome-section {
-  position: relative;
-  width: 100%;
-  margin-top: 70px;
-  height: 600px; 
-  overflow: hidden;
+/* Hero Section */
+.hero {
+  background: #ddd;
+  text-align: left;
+  margin-top: 40px;
+  padding: 100px 40px;
 }
 
-.welcome-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
+.hero h2 {
+  font-size: 32px;
+  margin-bottom: 90px;
 }
 
-/* Button overlay */
-.welcome-overlay {
-  position: absolute;
-  top: 80%;
-  left: 15%;
-  transform: translate(-50%, -50%);
-}
-
-.welcome-btn {
-  background-color: #6BBBAE;
-  color: rgb(24, 24, 24);
+/* Button styled as link */
+.btn {
+  display: inline-block;
+  background-color: #58a193;
   border: none;
-  padding: 26px 74px;
-  font-size: 24px;
-  border-radius: 8px;
+  padding: 22px 50px;
+  color: #fff;
+  font-size: 20px;
   cursor: pointer;
-  transition: 0.3s ease;
+  border-radius: 4px;
+  text-decoration: none;
 }
 
-.welcome-btn:hover {
-  background-color: #6BBBAE; /* darker green on hover */
+.btn:hover {
+  background-color: #4a8c7f;
+}
+
+/* About Section */
+.about {
+  display: flex;
+  justify-content: space-between;
+  padding: 40px;
+  background: #f6f6f6;
+  margin: 40px;
+}
+
+.about-text {
+  width: 55%;
+}
+
+.about-text h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.underline {
+  border-bottom: 5px solid #58a193;
+  padding-bottom: 3px;
+  font-size: 36px;
+}
+
+.about-text p {
+  font-size: 20px;
+  line-height: 1.6;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  margin-right: 50px;
+}
+
+.about-image {
+  width: 50%;
+  background: #ddd;
+  height: 400px;
 }

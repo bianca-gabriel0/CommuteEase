@@ -71,73 +71,65 @@ body {
 }
 
 
+/* TABLE SCHEDULE */
 
+body {
+  font-family: Arial, sans-serif;
+}
 
-/* Hero Section */
-.hero {
-  background: #ddd;
+/* Center Table */
+table {
+  width: 80%;             
+  margin: 20px auto;       
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #000000;
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background-color: #C0D6DF;
+  color: black;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+h3 {
   text-align: left;
   margin-top: 40px;
-  padding: 100px 40px;
+  margin-bottom: 50px; 
+  font-size: 28px;
 }
 
-.hero h2 {
-  font-size: 32px;
-  margin: 40px;
-}
-
-/* Button styled as link */
-.btn {
-  display: inline-block;
-  background-color: #58a193;
-  border: none;
-  padding: 22px 50px;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  border-radius: 4px;
-  text-decoration: none;
-  margin: 40px;
-}
-
-.btn:hover {
-  background-color: #4a8c7f;
-}
-
-/* About Section */
-.about {
-  display: flex;
-  justify-content: space-between;
-  padding: 40px;
-  background: #f6f6f6;
-  margin: 40px;
-}
-
-.about-text {
-  width: 55%;
-}
-
-.about-text h3 {
-  font-size: 22px;
-  margin-bottom: 15px;
-}
-
-.underline {
+.underlinesched {
   border-bottom: 5px solid #58a193;
   padding-bottom: 3px;
   font-size: 36px;
+  margin: 80px;
 }
 
-.about-text p {
-  font-size: 20px;
-  line-height: 1.6;
-  margin-top: 40px;
-  margin-bottom: 15px;
-  margin-right: 50px;
+
+/* save buttonss */
+.save-btn {
+  background-color: #6BBBAE;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.about-image {
-  width: 50%;
-  background: #ddd;
-  height: 400px;
+.save-btn:hover {
+  background-color: #5ea398;
 }

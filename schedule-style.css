@@ -71,6 +71,7 @@ body {
 }
 
 
+
 /* TABLE SCHEDULE */
 
 body {
@@ -107,7 +108,7 @@ tr:hover {
 h3 {
   text-align: left;
   margin-top: 40px;
-  margin-bottom: 50px; 
+  margin-bottom: 10px; 
   font-size: 28px;
 }
 
@@ -133,3 +134,53 @@ h3 {
 .save-btn:hover {
   background-color: #5ea398;
 }
+
+
+/* search + filter bars */
+.table-controls {
+  display: flex;
+  justify-content: flex-end; /* ✅ align to right */
+  gap: 20px;
+  margin: 20px auto;
+  width: 80%;
+}
+
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+
+.search-container input {
+  width: 370px;
+  padding: 8px 35px 10px 10px; 
+  font-size: 14px;
+}
+
+.search-container i {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: gray;
+  pointer-events: none; 
+}
+
+.table-controls select,
+.table-controls button {
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+#searchBtn {
+  background-color: #6BBBAE;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#searchBtn:hover {
+  background-color: #5ea398;
+}
+

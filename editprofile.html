@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="editprofile.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="assets/CE-logo.png" alt="CommuteEase Logo">
+      <div class="logo-text">
+        <h1>CommuteEase</h1>
+        <p>Your daily ride, hassle-free</p>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#">HOME</a>
+      <a href="#">SCHEDULES</a>
+      <a href="#">ABOUT</a>
+      <a href="#">ACCOUNT</a>
+    </nav>
+  </header>
+
+  <!-- Account Information Card -->
+  <main>
+    <div class="account-card">
+      <h2>Account Information</h2>
+      <hr>
+      <div class="profile-section">
+        <img src="profile.jpg" alt="Profile Picture" class="profile-pic">
+        <div class="profile-form">
+          <p>Change Personal Profile:</p>
+          <div class="form-row">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName">
+          </div>
+          <p class="email">example@gmail.com</p>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+        <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- JavaScript -->
+  <script>
+    function saveProfile() {
+      let first = document.getElementById("firstName").value;
+      let last = document.getElementById("lastName").value;
+
+      if (first.trim() === "" || last.trim() === "") {
+        alert("Please enter both first and last names.");
+        return;
+      }
+
+      alert("Profile updated: " + first + " " + last);
+    }
+
+    function cancelEdit() {
+      document.getElementById("firstName").value = "";
+      document.getElementById("lastName").value = "";
+      alert("Edit cancelled.");
+    }
+  </script>
+
+</body>
+</html>

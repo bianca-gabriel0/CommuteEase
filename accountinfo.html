@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommuteEase - Account</title>
+  <link rel="stylesheet" href="accountinfo.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="assets/CE-logo.png" alt="CommuteEase Logo">
+    </div>
+    <nav>
+      <a href="#">HOME</a>
+      <a href="#">SCHEDULES</a>
+      <a href="#">ABOUT</a>
+      <a href="#">ACCOUNT</a>
+    </nav>
+  </header>
+
+  <!-- Account Information -->
+  <div class="account-card">
+    <h2>Account Information</h2>
+    <div class="profile">
+      <div class="profile-info">
+        <img src="profile.jpg" alt="User Profile">
+        <div class="profile-text">
+          <p><b>Personal Profile:</b> <span>EDIT</span></p>
+          <p>Juan Dela Cruz</p>
+          <p>example@gmail.com</p>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">↳ Log out</button>
+    </div>
+  </div>
+
+  <!-- Saved Schedules -->
+  <div class="schedule-card">
+    <h3>My Saved Schedules:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Type/s</th>
+          <th>Route / Destination</th>
+          <th>Departure Time</th>
+          <th>Estimated Arrival</th>
+          <th>Frequency</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="scheduleTable">
+        <tr>
+          <td>SM Mall</td>
+          <td>Bus</td>
+          <td>Dagupan – Manaoag</td>
+          <td>5:30 AM</td>
+          <td>6:30 AM</td>
+          <td>Every 30 minutes</td>
+          <td><span class="delete-btn" onclick="deleteRow(this)">🗑️</span></td>
+        </tr>
+        <tr>
+          <td>SM Mall</td>
+          <td>Jeepney</td>
+          <td>Dagupan – Lingayen</td>
+          <td>6:00 AM</td>
+          <td>7:20 AM</td>
+          <td>Every 15 minutes</td>
+          <td><span class="delete-btn" onclick="deleteRow(this)">🗑️</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- JavaScript inside HTML -->
+  <script>
+    function deleteRow(button) {
+      let row = button.closest("tr");
+      row.remove();
+    }
+
+    function logout() {
+      alert("You have logged out!");
+      // Example: redirect to login page
+      // window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

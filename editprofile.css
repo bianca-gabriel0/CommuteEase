@@ -1,0 +1,149 @@
+/* General */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Header Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 10px 30px;
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 60px;
+}
+
+.logo-text h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.logo-text p {
+  font-size: 12px;
+  margin: 0;
+  color: #666;
+}
+
+.nav-links a {
+  margin-left: 25px;
+  text-decoration: none;
+  color: black;
+  font-size: 14px;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* Main Account Card */
+main {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.account-card {
+  width: 80%;
+  max-width: 850px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.account-card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.account-card hr {
+  margin: 10px 0 20px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+/* Profile Section */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.profile-form {
+  flex: 1;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 10px 0;
+}
+
+.form-row label {
+  font-size: 14px;
+}
+
+.form-row input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: 150px;
+}
+
+.email {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 20px;
+}
+
+.save-btn {
+  background: #3cb5a6;
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: #2a9487;
+}
+
+.cancel-btn {
+  background: #ccc;
+  border: none;
+  color: #333;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.cancel-btn:hover {
+  background: #999;
+}

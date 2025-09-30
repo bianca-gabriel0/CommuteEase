@@ -2,21 +2,29 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background-color: #e5e5e5;
+  background-color: #dcdcdc;  /* gray full background */
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
+/* White box (same size as login) */
 .container {
+  position: relative;  
   background: white;
-  width: 900px;
+  padding: 50px;                /* same padding as login */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  width: 95%;                   /* same width rule */
+  max-width: 850px;             /* same max size as login */
+  border-radius: 12px;
   display: flex;
-  padding: 40px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.15);
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;                    /* match spacing */
 }
 
+/* Left side image */
 .left {
   flex: 1;
   display: flex;
@@ -25,63 +33,77 @@ body {
 }
 
 .left img {
+  width: 360px;                 /* same image size as login */
   max-width: 100%;
-  height: auto;
+  border-radius: 8px;
 }
 
+/* Right side form */
 .right {
   flex: 1;
-  padding: 20px 40px;
+  max-width: 450px;             /* same as login form */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
+/* Back to Home link */
 .back-link {
-  font-size: 14px;
+  font-size: 16px;
   color: #444;
-  margin-bottom: 20px;
-  display: inline-block;
   text-decoration: none;
+  position: absolute;
+  top: 20px;                    /* aligned same as login */
+  left: 30px;
 }
 
 .back-link:hover {
   text-decoration: underline;
 }
 
+/* Form heading */
 h2 {
-  font-size: 26px;
-  margin-bottom: 25px;
+  font-size: 32px;              /* same size as login heading */
+  margin-bottom: 22px;
+  color: #111;
+  text-align: center;
 }
 
+/* Input fields */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 14px;          /* same spacing */
 }
 
 input {
   width: 100%;
-  padding: 10px;
+  padding: 14px;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
+/* Button */
 .btn {
   width: 100%;
-  padding: 12px;
+  padding: 16px;
   background-color: #58a193;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 8px;
+  font-size: 17px;              /* same button size as login */
   color: white;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 .btn:hover {
   background-color: #4a8c7f;
 }
 
+/* Sign In text under button */
 .signin-text {
   text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
+  margin-top: 20px;
+  font-size: 15px;
   color: #444;
 }
 

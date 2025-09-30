@@ -1,51 +1,73 @@
-/* General */
-body {
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Header Navbar */
+body {
+  font-family: 'Albert Sans', sans-serif;
+  background-color: #F2F2F2;
+}
+
+/* Navbar*/
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
-  padding: 10px 30px;
-  border-bottom: 2px solid #e0e0e0;
-  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+  background-color: #ffffff; /* white background */
+  padding: 10px 40px;
+  border-bottom: 2px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* Logo */
 .logo img {
-  width: 60px;
+  height: 75px;
 }
 
-.logo-text h1 {
-  font-size: 20px;
-  margin: 0;
-}
-
-.logo-text p {
-  font-size: 12px;
-  margin: 0;
-  color: #666;
+/* Navigation links */
+.nav-links {
+  display: flex;
+  gap: 50px;
 }
 
 .nav-links a {
-  margin-left: 25px;
   text-decoration: none;
-  color: black;
-  font-size: 14px;
+  color: #333;
+  font-weight: normal;
+  font-size: 16px;
+  transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-  text-decoration: underline;
+  color: #74A8A4; 
+}
+
+/* Example content */
+.content {
+  padding: 40px;
+  text-align: center;
+}
+
+
+/* underline */
+.nav-links a {
+  text-decoration: none;
+  color: #222;
+  font-weight: normal;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #74A8A4;
+}
+
+.nav-links a.active {
+  border-bottom: 3px solid #74A8A4;
+  color: #222;                      
 }
 
 /* Main Account Card */

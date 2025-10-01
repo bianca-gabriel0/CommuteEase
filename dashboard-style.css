@@ -186,31 +186,3 @@ p {
     margin-bottom: 20px; 
     margin-top: 20px;
 }
-
-
-.schedule-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-family: 'Albert Sans', sans-serif;
-}
-
-.schedule-table th, .schedule-table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-}
-
-.schedule-table th {
-    background-color: #C0D6DF;
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-}
-
-.schedule-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.schedule-table tr:hover {
-    background-color: #f1f1f1;
-}

@@ -19,17 +19,75 @@
 
 <div class="sidebar">
     <img src="assets/CE-logo.png" alt="" class="signup-image">
-    <a href=""><i class="fa-solid fa-house"></i> Dashboard </a>
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard </a>
     <a href="scheduleadmin.html"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
-    <a href=""><i class="fa-solid fa-users"></i> Commuters</a>
+    <a href="commuters.html"><i class="fa-solid fa-users"></i> Commuters</a>
     <button class="logout-button" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
 </div>
 
 <div class="main-content">
-    <div class="card2">
-        <h2>Commuters</h2>
-    </div>
+  <div class="card2">
+    <h2>Commuters</h2>
+    <!-- commuters table -->
+    <table id="commutersTable" class="commuters-table">
+      <thead>
+        <tr>
+          <th>Names</th>
+          <th>Email</th>
+          <th>Password</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Juan Dela Cruz</td>
+          <td>juan@email.com</td>
+          <td>
+            <input type="password" value="password123" readonly>
+            <button class="show-btn" onclick="togglePassword(this)">Show</button>
+          </td>
+          <td>
+            <button class="delete-btn" onclick="deleteRow(this)">🗑</button>
+          </td>
+        </tr>
+        <tr>
+          <td>Maria Santos</td>
+          <td>maria@email.com</td>
+          <td>
+            <input type="password" value="mypass" readonly>
+            <button class="show-btn" onclick="togglePassword(this)">Show</button>
+          </td>
+          <td>
+            <button class="delete-btn" onclick="deleteRow(this)">🗑</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script>
+  // Toggle Show/Hide password
+  function togglePassword(button) {
+    const input = button.previousElementSibling;
+    if (input.type === "password") {
+      input.type = "text";
+      button.textContent = "Hide";
+    } else {
+      input.type = "password";
+      button.textContent = "Show";
+    }
+  }
+
+  // Delete row with confirmation
+  function deleteRow(button) {
+    const row = button.closest("tr");
+    const userName = row.querySelector("td").textContent; // first column = name
+    if (confirm(`Are you sure you want to delete ${userName}?`)) {
+      row.remove();
+    }
+  }
+</script>
 
 </body>
 </html>

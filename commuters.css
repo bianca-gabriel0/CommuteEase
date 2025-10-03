@@ -237,3 +237,28 @@ p {
   color: white;
   font-size: 16px;
 }
+
+
+/* Search bar styling */
+.search-container {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-container input {
+  padding: 8px 30px 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: "Albert Sans", sans-serif;
+}
+
+.search-container i {
+  position: absolute;
+  right: 10px;
+  color: #888;
+}
+

@@ -25,9 +25,19 @@
     <button class="logout-button" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
 </div>
 
+
+
 <div class="main-content">
   <div class="card2">
     <h2>Commuters</h2>
+
+    <!-- user search bar -->
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search by name..." onkeyup="searchUsers()">
+      <i class="fa fa-search"></i>
+    </div>
+  </div>
+
     <!-- commuters table -->
     <table id="commutersTable" class="commuters-table">
       <thead>
@@ -79,7 +89,7 @@
     }
   }
 
-  // Delete row with confirmation
+  // delete row with confirmation
   function deleteRow(button) {
     const row = button.closest("tr");
     const userName = row.querySelector("td").textContent; // first column = name
@@ -87,6 +97,23 @@
       row.remove();
     }
   }
+
+  // search bar function
+  function searchUsers() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById("commutersTable");
+    const tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {
+      let td = tr[i].getElementsByTagName("td")[0]; // Names column
+      if (td) {
+        let textValue = td.textContent || td.innerText;
+        tr[i].style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
+      }
+    }
+  }
+  
 </script>
 
 </body>

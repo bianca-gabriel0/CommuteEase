@@ -83,7 +83,7 @@ body {
     padding: 10px;
     margin-bottom: 20px;
     font-family:'albert sans';
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 .card2 h2{
@@ -95,9 +95,9 @@ body {
 
 
 .img{
-    margin-right: 50px; /* Space between image and form */
-    max-width: 300px; /* Adjust the size of the image */
-    height: auto; /* Maintain aspect ratio */
+    margin-right: 50px; 
+    max-width: 300px; 
+    height: auto; 
 }
 
 
@@ -110,13 +110,13 @@ h1 {
 
 p {
     font-weight: 300;
-    margin-top: 10px; /* Add margin for spacing */
+    margin-top: 10px; 
 }
 
 
 .card-container {
-    display: flex; /* Use flexbox to arrange cards side by side */
-    gap: 20px; /* Space between cards */
+    display: flex; 
+    gap: 20px; 
 }
 
 .card {
@@ -186,3 +186,54 @@ p {
     margin-bottom: 20px; 
     margin-top: 20px;
 }
+
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.top-row, .bottom-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #e9f2f7;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card.small { width: 20%; }
+.card.large { flex: 1; }
+.card.user-list { flex: 2; }
+.card.vehicle-card { width: 30%; }
+
+.stat {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+.dot.green { background: green; }
+.dot.red { background: red; }
+.dot.orange { background: orange; }
+.dot.yellowgreen { background: yellowgreen; }
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #ccc;
+  padding: 8px 0;
+}
+
+.right { float: right; }

@@ -24,5 +24,69 @@
     <a href="commuters.html"><i class="fa-solid fa-users"></i> Commuters</a>
     <button class="logout-button" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
 </div>
+
+<div class="main-content">
+
+  <div class="top-row">
+    <div class="card small">
+      <p>NEW USER :</p>
+      <div class="stat"><span class="dot green"></span> <span id="newUsers">54</span></div>
+    </div>
+    <div class="card small">
+      <p>CLIENT :</p>
+      <div class="stat"><span class="dot red"></span> <span id="clients">64</span></div>
+    </div>
+    <div class="card large">
+      <canvas id="weeklyChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="bottom-row">
+    <div class="card user-list">
+      <h3>USER NAME <span class="right">CELL NO.</span></h3>
+      <div class="user-item">
+        <input type="checkbox"> name <span class="right">00000000000</span>
+      </div>
+      <div class="user-item">
+        <input type="checkbox"> name1 <span class="right">00000000000</span>
+      </div>
+      <div class="user-item">
+        <input type="checkbox"> name2 <span class="right">00000000000</span>
+      </div>
+    </div>
+
+    <div class="card vehicle-card">
+      <p>Total Vehicle <span class="dot green"></span> 100</p>
+      <p>Active Vehicle <span class="dot yellowgreen"></span> 87</p>
+      <p>On Going Vehicle <span class="dot orange"></span> 13</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const ctx = document.getElementById('weeklyChart');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['MON','TUE','WED','THU','FRI','SAT','SUN'],
+      datasets: [{
+        data: [34, 29, 47, 53, 80, 55, 59],
+        backgroundColor: '#C0D6DF'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => v + '%' } }
+      }
+    }
+  });
+</script
+
 </body>
 </html>

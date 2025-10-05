@@ -72,6 +72,7 @@ h2 {
 /* Input fields */
 .form-group {
   margin-bottom: 14px;          /* same spacing */
+  position: relative;           /* for positioning the eye icon */
 }
 
 input {
@@ -80,6 +81,32 @@ input {
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Eye icon inside password input */
+.toggle-password {
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  fill: #666;
+  transition: fill 0.2s ease;
+}
+
+.toggle-password:hover {
+  fill: #333;
+}
+
+/* Error message */
+.error-message {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
 }
 
 /* Button */

@@ -9,34 +9,152 @@
 <body>
   <div class="login-container">
     <div class="login-box">
-      <a href="#" class="back-link">&lt; Return to Home</a>
+      <a href="home.html" class="back-link">&lt; Return to Home</a>
+
       <div class="login-content">
         <div class="bus-image">
           <img src="assets/CE-logo.png" alt="Bus" />
         </div>
+
         <div class="login-form">
           <h2>Welcome!</h2>
-          <form id="loginForm">
-            <label>Email</label>
-            <input type="email" required />
+          <form id="loginForm" novalidate>
             
-            <label>Password</label>
-            <input type="password" required />
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email" required />
+            <small class="error-message" id="emailError"></small>
+            
+            <label for="password">Password</label>
+            <div class="password-container">
+              <input type="password" id="password" placeholder="Enter your password" required minlength="6" />
+              <svg id="eyeIcon" class="toggle-password" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7zm0 11a4 4 0 110-8 4 4 0 010 8z"/>
+                <circle cx="12" cy="12" r="2.5"/>
+              </svg>
+            </div>
+            <small class="error-message" id="passwordError"></small>
 
             <div class="forgot-password">
-              <a href="forgotpassword.html">Forgot password?</a>
+              <a href="forgotpassword.html" id="forgotLink">Forgot password?</a>
             </div>
 
-            <button type="submit">Sign In</button>
+            <div class="loader" id="loader"></div>
+            <button type="submit" id="submitBtn" disabled>Sign In</button>
           </form>
+
           <p class="signup-text">
-            Don't have an account? <a href="signup.html">Sign up</a>
+            Don't have an account? <a href="signup.html" id="signupLink">Sign up</a>
           </p>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const submitBtn = document.getElementById("submitBtn");
+    const eyeIcon = document.getElementById("eyeIcon");
+    const loader = document.getElementById("loader");
+    const signupLink = document.getElementById("signupLink");
+    const forgotLink = document.getElementById("forgotLink");
+
+    // Email validation
+    function validateEmail() {
+      const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
+      if (email.value.trim() === "") {
+        emailError.textContent = "Email is required.";
+        emailError.style.color = "#dc3545";
+        email.classList.add("invalid");
+        email.classList.remove("valid");
+        return false;
+      } else if (!pattern.test(email.value.trim())) {
+        emailError.textContent = "Please enter a valid email address.";
+        emailError.style.color = "#dc3545";
+        email.classList.add("invalid");
+        email.classList.remove("valid");
+        return false;
+      } else {
+        emailError.textContent = "✅ Email looks good!";
+        emailError.style.color = "#28a745";
+        email.classList.add("valid");
+        email.classList.remove("invalid");
+        return true;
+      }
+    }
+
+    // Password validation
+    function validatePassword() {
+      if (password.value.trim() === "") {
+        passwordError.textContent = "Password is required.";
+        passwordError.style.color = "#dc3545";
+        password.classList.add("invalid");
+        password.classList.remove("valid");
+        return false;
+      } else if (password.value.length < 6) {
+        passwordError.textContent = "Password must be at least 6 characters long.";
+        passwordError.style.color = "#dc3545";
+        password.classList.add("invalid");
+        password.classList.remove("valid");
+        return false;
+      } else {
+        passwordError.textContent = "✅ Strong password.";
+        passwordError.style.color = "#28a745";
+        password.classList.add("valid");
+        password.classList.remove("invalid");
+        return true;
+      }
+    }
+
+    // Enable/disable sign-in button
+    function toggleSubmit() {
+      const emailValid = validateEmail();
+      const passwordValid = validatePassword();
+      submitBtn.disabled = !(emailValid && passwordValid);
+    }
+
+    // Eye icon toggle
+    eyeIcon.addEventListener("click", () => {
+      const isHidden = password.type === "password";
+      password.type = isHidden ? "text" : "password";
+      eyeIcon.style.opacity = isHidden ? "0.6" : "1";
+    });
+
+    // Live validation feedback
+    email.addEventListener("input", toggleSubmit);
+    password.addEventListener("input", toggleSubmit);
+
+    // Forgot password interaction
+    forgotLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      alert("Redirecting to Forgot Password page...");
+      window.location.href = "forgotpassword.html";
+    });
+
+    // Sign up interaction
+    signupLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      alert("Redirecting to Sign Up page...");
+      window.location.href = "signup.html";
+    });
+
+    // Form submission with loading animation
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (validateEmail() && validatePassword()) {
+        loader.style.display = "block";
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Signing in...";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+          alert("✅ Login successful!");
+          window.location.href = "home.html";
+        }, 1500);
+      }
+    });
+  </script>
 </body>
 </html>

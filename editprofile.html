@@ -16,7 +16,7 @@
     <nav class="nav-links">
       <a href="Home.html">HOME</a>
       <a href="schedule-main.html">SCHEDULE</a>
-      <a href="#">ABOUT</a>
+      <a href="Home.html">ABOUT</a>
       <a href="accountinfo.html" class="active">ACCOUNT</a>
     </nav>
   </header>
@@ -27,14 +27,14 @@
       <h2>Account Information</h2>
       <hr>
       <div class="profile-section">
-        <img src="assets/profile.png" alt="Profile Picture" class="profile-pic">
+        <img src="profile.jpg" alt="Profile Picture" class="profile-pic">
         <div class="profile-form">
           <p>Change Personal Profile:</p>
           <div class="form-row">
             <label for="firstName">First Name:</label>
-            <input type="text" id="firstName">
+            <input type="text" id="firstName" placeholder="Enter first name">
             <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName">
+            <input type="text" id="lastName" placeholder="Enter last name">
           </div>
           <p class="email">example@gmail.com</p>
         </div>
@@ -48,23 +48,38 @@
 
   <!-- JavaScript -->
   <script>
+    // Save profile
     function saveProfile() {
-      let first = document.getElementById("firstName").value;
-      let last = document.getElementById("lastName").value;
+      const first = document.getElementById("firstName").value.trim();
+      const last = document.getElementById("lastName").value.trim();
 
-      if (first.trim() === "" || last.trim() === "") {
+      if (!first || !last) {
         alert("Please enter both first and last names.");
         return;
       }
 
-      alert("Profile updated: " + first + " " + last);
+      alert(`Profile updated: ${first} ${last}`);
     }
 
+    // Cancel edit
     function cancelEdit() {
       document.getElementById("firstName").value = "";
       document.getElementById("lastName").value = "";
       alert("Edit cancelled.");
     }
+
+    // Navigation interactivity
+    const navLinks = document.querySelectorAll(".nav-links a");
+    navLinks.forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add("active");
+      }
+
+      link.addEventListener("click", () => {
+        navLinks.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
   </script>
 
 </body>

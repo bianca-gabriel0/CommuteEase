@@ -19,19 +19,19 @@
     <nav class="nav-links">
       <a href="Home.html" class="active">HOME</a>
       <a href="schedule-main.html">SCHEDULE</a>
-      <a href="#">ABOUT</a>
+      <a href="Home.html">ABOUT</a>
       <a href="accountinfo.html">ACCOUNT</a>
     </nav>
   </header>
 
-<!-- Hero Section -->
+  <!-- Hero Section -->
   <section class="hero">
     <h2>Get the schedules you need,<br>when you need them!</h2>
-    <a href="schedules.html" class="btn">Go now!</a>
+    <a href="schedule-main.html" class="btn" id="goNowBtn">Go now!</a>
   </section>
 
-  <!-- About section -->
-  <section class="about">
+  <!-- About Section -->
+  <section id="about" class="about">
     <div class="about-text">
       <h3><span class="underline">ABOUT</span></h3>
       <p>
@@ -40,7 +40,7 @@
         to wasted time, long queues, and overcrowded vehicles.
       </p>
       <p>
-        CommuteEase provide Dagupan commuters with a clear and accessible timetable system. By 
+        CommuteEase provides Dagupan commuters with a clear and accessible timetable system. By 
         allowing users to see which buses or jeepneys are available at specific times—and which 
         departures are coming within the next few minutes—the system helps make daily commuting 
         more efficient and less stressful.
@@ -48,5 +48,61 @@
     </div>
     <div class="about-image"></div>
   </section>
+
+  <!-- JavaScript -->
+  <script>
+    // Navigation Active State
+    const navLinks = document.querySelectorAll(".nav-link");
+    navLinks.forEach(link => {
+      link.addEventListener("click", (e) => {
+        // Handle smooth scroll for #about
+        if (link.getAttribute("href").startsWith("#")) {
+          e.preventDefault();
+          const target = document.querySelector(link.getAttribute("href"));
+          if (target) {
+            window.scrollTo({
+              top: target.offsetTop - 60,
+              behavior: "smooth"
+            });
+          }
+        }
+
+        // Update active link
+        navLinks.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
+
+    // Highlight current page based on URL
+    navLinks.forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add("active");
+      }
+    });
+
+    // Hero Button Redirect
+    const goNowBtn = document.getElementById("goNowBtn");
+    if (goNowBtn) {
+      goNowBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        goNowBtn.textContent = "Loading...";
+        goNowBtn.style.opacity = "0.8";
+        setTimeout(() => {
+          window.location.href = goNowBtn.getAttribute("href");
+        }, 800);
+      });
+    }
+
+    // Fade-in for About section
+    const aboutSection = document.querySelector(".about");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          aboutSection.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.3 });
+    if (aboutSection) observer.observe(aboutSection);
+  </script>
 </body>
 </html>

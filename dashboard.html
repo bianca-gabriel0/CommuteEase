@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Commute Ease Admin - Dashboard</title>
+
   <link rel="stylesheet" href="dashboard-style.css">
-
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 </head>
 <body>
 
@@ -24,88 +22,108 @@
   </div>
 
   <div class="main-content">
-
     <div class="dashboard-content">
-      <!-- Left side (User cards + table) -->
-      <div class="stats-column">
-        <div class="card">
+
+      <!-- Top row: new user, client, overview -->
+      <div class="top-row">
+        <div class="card small">
           <p class="card-title">NEW USER :</p>
-          <div class="stat">
-            <span class="dot green"></span>
-            <span id="newUsers">54</span>
-          </div>
+          <div class="stat"><span class="dot green"></span><span id="newUsers">0</span></div>
+          <div class="mini-graph"><canvas id="newUserChart"></canvas></div>
         </div>
 
-        <div class="card">
+        <div class="card small">
           <p class="card-title">CLIENT :</p>
-          <div class="stat">
-            <span class="dot red"></span>
-            <span id="clients">64</span>
-          </div>
+          <div class="stat"><span class="dot red"></span><span id="clients">0</span></div>
+          <div class="mini-graph"><canvas id="clientChart"></canvas></div>
         </div>
 
-        <!-- User Table -->
+        <div class="chart-card card">
+          <p class="card-title">Overview</p>
+          <canvas id="overviewChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Bottom row: table + vehicle summary card -->
+      <div class="bottom-row">
         <div class="card user-table-card">
           <p class="card-title">Registered Users</p>
           <table id="usersTable" class="users-table">
             <thead>
-              <tr>
-                <th>Username</th>
-                <th>Email</th>
-              </tr>
+              <tr><th>Username</th><th>Email</th></tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
+
+        <div class="card small">
+          <p class="card-title">VEHICLE SUMMARY</p>
+          <div class="stat"><span class="dot blue"></span>Total Vehicle: <span id="totalVehicles">0</span></div>
+          <div class="stat"><span class="dot green"></span>Active Vehicle: <span id="activeVehicles">0</span></div>
+          <div class="stat"><span class="dot yellow"></span>On-going Vehicle: <span id="ongoingVehicles">0</span></div>
+          <div class="mini-graph"><canvas id="vehicleChart"></canvas></div>
+        </div>
       </div>
 
-      <!-- Right side (Vehicle status) -->
-      <div class="vehicle-card">
-        <p class="card-title">VEHICLE STATUS</p>
-        <div class="stat">
-          <span class="dot green"></span>
-          <span>Total Vehicle: <strong>100</strong></span>
-        </div>
-        <div class="stat">
-          <span class="dot yellow"></span>
-          <span>Active Vehicle: <strong>87</strong></span>
-        </div>
-        <div class="stat">
-          <span class="dot red"></span>
-          <span>On Going Vehicle: <strong>15</strong></span>
-        </div>
-      </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Example user data
+    // Populate user table
     const users = [
       { username: "John Doe", email: "john@example.com" },
-      { username: "Jane Smith", email: "jane@example.com" },
-      { username: "Alex Reyes", email: "alexr@gmail.com" },
-      { username: "Karla Cruz", email: "karla_cruz@yahoo.com" },
-      { username: "Miko Tan", email: "miko.tan@gmail.com" },
-      { username: "Sara Lim", email: "sara.lim@yahoo.com" },
-      { username: "Ken Ito", email: "ken.ito@gmail.com" }
+      { username: "Jane Smith", email: "jane@example.com" }
     ];
+    const tbody = document.querySelector("#usersTable tbody");
+    users.forEach(u => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${u.username}</td><td>${u.email}</td>`;
+      tbody.appendChild(tr);
+    });
 
-    const tableBody = document.querySelector("#usersTable tbody");
+    // Mini Graphs
+    new Chart(document.getElementById("newUserChart"), {
+      type: "line",
+      data: {
+        labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        datasets: [{ data: [2,3,5,4,6,7,8], borderColor: "#00c853", fill: false, tension: 0.3 }]
+      },
+      options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
+    });
 
-    // Populate table dynamically
-    users.forEach(user => {
-      const row = document.createElement("tr");
-      const nameCell = document.createElement("td");
-      const emailCell = document.createElement("td");
+    new Chart(document.getElementById("clientChart"), {
+      type: "line",
+      data: {
+        labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        datasets: [{ data: [5,4,6,7,5,8,9], borderColor: "#ff1744", fill: false, tension: 0.3 }]
+      },
+      options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
+    });
 
-      nameCell.textContent = user.username;
-      emailCell.textContent = user.email;
+    // Overview Chart
+    new Chart(document.getElementById("overviewChart"), {
+      type: "bar",
+      data: {
+        labels: ["Users", "Clients", "Vehicles"],
+        datasets: [{
+          label: "Overview",
+          data: [54, 64, 100],
+          backgroundColor: ["#00c853", "#ff1744", "#2196f3"]
+        }]
+      },
+      options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
+    });
 
-      row.appendChild(nameCell);
-      row.appendChild(emailCell);
-      tableBody.appendChild(row);
+    // Vehicle mini graph
+    new Chart(document.getElementById("vehicleChart"), {
+      type: "line",
+      data: {
+        labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        datasets: [{ data: [1,2,2,3,2,4,3], borderColor: "#2196f3", fill: false, tension: 0.3 }]
+      },
+      options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
     });
   </script>
-
 </body>
 </html>

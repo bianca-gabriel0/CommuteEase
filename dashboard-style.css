@@ -1,55 +1,39 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    background-color: #f3f3f3;
+  font-family: 'Albert Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  background-color: #f3f3f3;
 }
 
-.birthstone-regular {
-    font-family: "Birthstone", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-
-  .albert-sans {
-    font-family: "Albert Sans", serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-  }
-
-  .ephesis {
-    font-family: "Ephesis", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-
-
+/* Sidebar */
 .sidebar {
     width: 200px;
     background: #C0D6DF;
     color: rgb(0, 0, 0);
     padding: 15px;
     height: 100vh;
- 
 }
-.sidebar h2{
+
+.sidebar h2 {
     display: flex;
     justify-content: center;
-    font-family: 'birthstone';
+    font-family: 'Birthstone', serif;
     font-size: 55px;
     font-weight: 400;
     color: #C0D6DF;
 }
+
 .sidebar a {
     color: rgb(0, 0, 0);
     text-decoration: none;
     display: block;
     padding: 20px;
-    font-family: 'albert sans';
+    font-family: 'Albert Sans', sans-serif;
     transition: background-color 0.5s;
 }
-.sidebar i{
+
+.sidebar i {
     padding-right: 5px;
 }
 
@@ -58,44 +42,9 @@ body {
     border-radius: 10px;
     font-size: 17px;
     font-weight: 500;
-
-}
-.main-content {
-    flex: 1;
-    padding: 10px;
-}
-.card {
-    background: white;
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 20px;
-    font-family:'albert sans';
-    font-weight: 300;
 }
 
-.card h2{
-    font-weight: 400;
-}
-
-.card2{
-    background: white;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 20px;
-    font-family:'albert sans';
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
-}
-
-.card2 h2{
-    text-indent: 10px;
-
-}
-
-.img{
-    margin-right: 50px; /* Space between image and form */
-    max-width: 300px; /* Adjust the size of the image */
-    height: auto; /* Maintain aspect ratio */
-}
+/* === Logout button === */
 .logout-button {
     background-color: #6BBBAE;
     border: none; 
@@ -109,107 +58,110 @@ body {
     margin-top: 500px;
     cursor: pointer; 
     border-radius: 4px; 
+    font-family: 'Albert Sans', sans-serif;
 }
 
 .logout-button:hover {
     background-color: #31a592; 
 }
 
+/* Main */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.top-row, .bottom-row {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
 
-    /* Layout for left stats and right vehicle card */
-    .dashboard-content {
-      display: flex;
-      gap: 30px;
-      align-items: flex-start;
-    }
+/* Cards */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex: 1;
+}
 
-    .stats-column {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      width: 100%;
-      max-width: 900px;
-    }
+/* New User and Client */
+.card.small {
+  flex: 0.3;
+  height: 250px;            
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-    .card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      padding: 20px;
-    }
+.card-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
 
-    .card-title {
-      font-weight: 700;
-      font-size: 1.1em;
-      color: #000;
-      margin: 0;
-    }
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
 
-    .stat {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-      font-size: 1.3em;
-      font-weight: 600;
-    }
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot.green { background: #00c853; }
+.dot.red { background: #ff1744; }
+.dot.yellow { background: #fbc02d; }
+.dot.blue { background: #2196f3; }
 
-    .dot {
-      height: 12px;
-      width: 12px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 8px;
-    }
+/* Chart cards */
+.chart-card {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+}
+.chart-card canvas {
+  width: 100%;
+  height: 200px;
+}
 
-    .green { background-color: #2ecc71; }
-    .red { background-color: #e74c3c; }
-    .yellow { background-color: #f1c40f; }
+.mini-graph canvas {
+  width: 100%;
+  height: 50px;            
+}
 
-    /* User Table */
-    .user-table-card {
-      width: 100%;
-    }
+/* Table */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.users-table th, .users-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+.users-table th {
+  background: #C0D6DF;
+  font-weight: 600;
+}
 
-    .users-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      font-family: 'Albert Sans', sans-serif;
-      font-size: 1em;
-    }
+/* Vehicle summary card */
+.user-table-card {
+  flex: 1;
+}
 
-    .users-table th, .users-table td {
-      border: 1px solid #ddd;
-      padding: 14px 18px;
-      text-align: left;
-    }
-
-    .users-table th {
-      background-color: #C0D6DF;
-      color: #000;
-      font-weight: 700;
-      font-size: 1.05em;
-    }
-
-    .users-table tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    .users-table tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    /* Vehicle card on the right */
-    .vehicle-card {
-      flex-shrink: 0;
-      width: 280px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      padding: 20px;
-    }
-
-    .vehicle-card .stat {
-      font-size: 1.1em;
-      margin-top: 12px;
-    }
+.bottom-row .card.small {
+  height: 320px;            
+}

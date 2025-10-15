@@ -1,28 +1,105 @@
 const express = require('express');
+
+const sqlite3 = require('sqlite3').verbose();
+
+const bodyParser = require('body-parser');
+
 const cors = require('cors');
-const path = require('path');
+
 const app = express();
-const PORT = process.env.PORT || 3000;
-// Middleware
-app.use(cors()); // Allows frontend to fetch from backend (needed for browser security)
-app.use(express.json()); // Parses JSON bodies (if you add POST routes later)
-app.use(express.static(path.join(__dirname))); // Serves static files like CSS, images, HTML
-// Sample schedule data (in a real app, this could come from a database like MongoDB)
-const schedules = [
-  { Location: "Victory Liner", type: "Bus", route: "Dagupan → Manaoag", departure: "5:30 AM", arrival: "6:30 AM", frequency: "Every 30 minutes" },
-  { Location: "Assada Center", type: "Bus", route: "Dagupan → Lingayen", departure: "6:00 AM", arrival: "7:20 AM", frequency: "Every 15 minutes" },
-  { Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → San Fabian", departure: "8:00 AM", arrival: "9:00 AM", frequency: "Every 20 minutes" },
-  { Location: "Solid North", type: "Bus", route: "Dagupan → Urdaneta", departure: "10:00 AM", arrival: "12:00 PM", frequency: "Every 30 minutes" },
-  { Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → Malasiqui", departure: "9:00 AM", arrival: "10:00 PM", frequency: "Every 15 minutes" }
-];
-// API Route: Fetch all schedules
-app.get('/api/schedules', (req, res) => {
-  res.json(schedules);
+
+const port = 3000; // Or whatever port
+
+app.use(cors());
+
+app.use(bodyParser.json());
+
+// Connect to SQLite database
+
+const db = new sqlite3.Database('./schedules.db', (err) => {
+
+if (err) {
+
+console.error(err.message);
+}
+
+console.log('Connected to the schedules database.');
+
 });
-// Serve the HTML file at root
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+
+// Create table if not exists
+
+db.run(`CREATE TABLE IF NOT EXISTS schedules (
+
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+day TEXT,
+
+type TEXT,
+
+location TEXT,
+
+route TEXT,
+
+departure TEXT, // Store as 24-hour string
+
+arrival TEXT, // Store as 24-hour string
+
+frequency TEXT
+
+)`);
+
+// GET /schedules?day=Monday
+
+app.get('/schedules', (req, res) => {
+
+const day = req.query.day; // e.g., 'Monday' or 'All'
+
+let sql = 'SELECT * FROM schedules';
+
+let params = [];
+
+if (day && day !== 'All') {
+
+sql += ' WHERE day = ?';
+params.push(day);
+}
+
+db.all(sql, params, (err, rows) => {
+
+if (err) {
+  res.status(400).json({ error: err.message });
+  return;
+}
+res.json(rows);
 });
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+
+});
+
+// POST /schedules
+
+app.post('/schedules', (req, res) => {
+
+const { day, type, location, route, departure, arrival, frequency } = req.body;
+
+// Note: Frontend sends departure and arrival in 24-hour format
+
+const sql = `INSERT INTO schedules (day, type, location, route, departure, arrival, frequency)
+
+           VALUES (?, ?, ?, ?, ?, ?, ?)`;
+db.run(sql, [day, type, location, route, departure, arrival, frequency], function(err) {
+
+if (err) {
+  res.status(400).json({ error: err.message });
+  return;
+}
+res.json({ id: this.lastID });
+});
+
+});
+
+app.listen(port, () => {
+
+console.log(`Server running on port ${port}`);
+
 });

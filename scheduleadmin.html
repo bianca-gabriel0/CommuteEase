@@ -1,216 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commute Ease Admin - Schedule</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Birthstone&family=Ephesis&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="scheduleadmin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-  
-    </style>
-</head>
-<body>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commute Ease Admin - Schedule</title>
 
-<div class="sidebar">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Birthstone&family=Ephesis&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="scheduleadmin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+  <div class="sidebar">
     <img src="assets/CE-logo.png" alt="" class="signup-image">
-    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard </a>
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
     <a href="scheduleadmin.html"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
     <a href="commuters.html"><i class="fa-solid fa-users"></i> Commuters</a>
-    <button class="logout-button" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
-</div>
-
-<div class="main-content">
-    <div class="card2">
-        <h2>Schedules</h2>
-    </div>
-
-<div class="main-content">
-    <div class="card2">
-        <table class="schedule-table" id="scheduleTable">
-  <thead>
-<!-- mon to sun row -->
-<div class="days-row">
-  <button onclick="filterByDay('All')">All</button>
-  <button onclick="filterByDay('Sunday')">Sunday</button>
-  <button onclick="filterByDay('Monday')">Monday</button>
-  <button onclick="filterByDay('Tuesday')">Tuesday</button>
-  <button onclick="filterByDay('Wednesday')">Wednesday</button>
-  <button onclick="filterByDay('Thursday')">Thursday</button>
-  <button onclick="filterByDay('Friday')">Friday</button>
-  <button onclick="filterByDay('Saturday')">Saturday</button>
-  <button class="add-schedule" onclick="openModal()">Add Schedule</button>
-</div>
-
-<!-- sched tabl -->
-<table id="scheduleTable" class="schedule-table">
-  <thead>
-    <tr>
-      <th>Location</th>
-      <th>Type/s</th>
-      <th>Route / Destination</th>
-      <th>Departure Time</th>
-      <th>Estimated Arrival</th>
-      <th>Frequency</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<!-- add schhed -->
-<div id="scheduleModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>Add a New Schedule</h2>
-
-    <label for="day">Day:</label>
-    <select id="day">
-      <option>Monday</option>
-      <option>Tuesday</option>
-      <option>Wednesday</option>
-      <option>Thursday</option>
-      <option>Friday</option>
-      <option>Saturday</option>
-      <option>Sunday</option>
-    </select>
-
-    <label for="type">Type:</label>
-    <select id="type">
-      <option>Bus</option>
-      <option>Mini-bus</option>
-    </select>
-
-    <label for="location">Location (Terminal):</label>
-    <input type="text" id="location">
-
-    <label for="route">Route / Destination:</label>
-    <div>
-    Dagupan → <input type="text" id="route" placeholder="Enter destination">
-    </div>
-
-    <label for="time">Departure Time:</label>
-    <input type="time" id="time">
-
-    <label for="arrival">Estimated Arrival:</label>
-    <input type="time" id="arrival">
-
-    <label for="frequency">Frequency:</label>
-    <select id="frequency">
-      <option>Every 10 minutes</option>
-      <option>Every 15 minutes</option>
-      <option>Every 20 minutes</option>
-      <option>Every 25 minutes</option>
-      <option>Every 30 minutes</option>
-      <option>Every 35 minutes</option>
-      <option>Every 40 minutes</option>
-    </select>
-
-    <button onclick="addNewSchedule()">Add Schedule</button>
+    <button class="logout-button" onclick="logout()">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+    </button>
   </div>
-</div>
 
+  <div class="main-content">
+    <div class="card2">
+      <h2>Schedules</h2>
 
-<script>
-const schedules = [
-  { day: "Monday", type: "Bus", location: "Victory Liner", route: "Dagupan → Manila", departure: "6:30AM", arrival: "9:00AM", frequency: "Every 30 minutes" },
-  { day: "Tuesday", type: "Mini-bus", location: "Assada Center", route: "Dagupan → Manaoag", departure: "7:00AM", arrival: "8:15AM", frequency: "Every 20 minutes" },
-  { day: "Wednesday", type: "Bus", location: "Solid North", route: "Dagupan → Urdaneta", departure: "10:00AM", arrival: "12:00PM", frequency: "Every 40 minutes" }
-];
+      <!-- ✅ Day Filter Buttons -->
+      <div class="days-row">
+        <button onclick="filterByDay('All')">All</button>
+        <button onclick="filterByDay('Sunday')">Sunday</button>
+        <button onclick="filterByDay('Monday')">Monday</button>
+        <button onclick="filterByDay('Tuesday')">Tuesday</button>
+        <button onclick="filterByDay('Wednesday')">Wednesday</button>
+        <button onclick="filterByDay('Thursday')">Thursday</button>
+        <button onclick="filterByDay('Friday')">Friday</button>
+        <button onclick="filterByDay('Saturday')">Saturday</button>
+        <button class="add-schedule" onclick="openModal()">Add Schedule</button>
+      </div>
 
-function displaySchedules(list) {
-  const tableBody = document.querySelector("#scheduleTable tbody");
-  tableBody.innerHTML = "";
-  list.forEach(s => {
-    const row = document.createElement("tr");
+      <!-- ✅ Schedule Table -->
+      <table id="scheduleTable" class="schedule-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Location</th>
+            <th>Type/s</th>
+            <th>Route / Destination</th>
+            <th>Departure Time</th>
+            <th>Estimated Arrival</th>
+            <th>Frequency</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-    row.innerHTML = `
-      <td>${s.location}</td>
-      <td>${s.type}</td>
-      <td>${s.route}</td>
-      <td>${s.departure}</td>
-      <td>${s.arrival}</td>
-      <td>${s.frequency}</td>
-    `;
+  <!-- ✅ Add Schedule Modal -->
+  <div id="scheduleModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Add a New Schedule</h2>
 
-    tableBody.appendChild(row);
-  });
-}
+      <label for="day">Day:</label>
+      <select id="day">
+        <option>Monday</option>
+        <option>Tuesday</option>
+        <option>Wednesday</option>
+        <option>Thursday</option>
+        <option>Friday</option>
+        <option>Saturday</option>
+        <option>Sunday</option>
+      </select>
 
-// ✅ Call when page loads
-window.onload = function() {
-  displaySchedules(schedules);
-};
+      <label for="type">Type:</label>
+      <select id="type">
+        <option>Bus</option>
+        <option>Mini-bus</option>
+      </select>
 
-// filter by day
-function filterByDay(day) {
-  if (day === "All") {
-    displaySchedules(schedules); // show everything
-  } else {
-    const filtered = schedules.filter(s => s.day === day);
-    displaySchedules(filtered);
-  }
-}
+      <label for="location">Location (Terminal):</label>
+      <input type="text" id="location">
 
-// popup javascriipt
-const schedule = [];
+      <label for="route">Route / Destination:</label>
+      <div>Dagupan → <input type="text" id="route" placeholder="Enter destination"></div>
 
-  function openModal() {
-    document.getElementById("scheduleModal").style.display = "block";
-  }
+      <label for="time">Departure Time:</label>
+      <input type="time" id="time">
 
-  function closeModal() {
-    document.getElementById("scheduleModal").style.display = "none";
-  }
+      <label for="arrival">Estimated Arrival:</label>
+      <input type="time" id="arrival">
 
-  // convert 24hr to 12hr (pm/am)
-  function formatTimeTo12Hour(time) {
-    let [hour, minute] = time.split(":").map(Number);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    hour = hour % 12 || 12;
-    return `${hour}:${minute.toString().padStart(2, "0")}${ampm}`;
-  }
+      <label for="frequency">Frequency:</label>
+      <select id="frequency">
+        <option>Every 10 minutes</option>
+        <option>Every 15 minutes</option>
+        <option>Every 20 minutes</option>
+        <option>Every 25 minutes</option>
+        <option>Every 30 minutes</option>
+        <option>Every 35 minutes</option>
+        <option>Every 40 minutes</option>
+      </select>
 
-  function addNewSchedule() {
-    const day = document.getElementById("day").value;
-    const type = document.getElementById("type").value;
-    const location = document.getElementById("location").value;
-    const route = `Dagupan → ${document.getElementById("route").value}`;
-    const departureRaw = document.getElementById("time").value;
-    const arrivalRaw = document.getElementById("arrival").value;
-    const frequency = document.getElementById("frequency").value;
+      <button onclick="addNewSchedule()">Add Schedule</button>
+    </div>
+  </div>
 
-    if (!location || !route || !departureRaw || !arrivalRaw) {
-      alert("Please fill in all fields");
-      return;
+  <script>
+    const schedules = [
+      { day: "Monday", type: "Bus", location: "Victory Liner", route: "Dagupan → Manila", departure: "6:30AM", arrival: "9:00AM", frequency: "Every 30 minutes" },
+      { day: "Tuesday", type: "Mini-bus", location: "Assada Center", route: "Dagupan → Manaoag", departure: "7:00AM", arrival: "8:15AM", frequency: "Every 20 minutes" },
+      { day: "Wednesday", type: "Bus", location: "Solid North", route: "Dagupan → Urdaneta", departure: "10:00AM", arrival: "12:00PM", frequency: "Every 40 minutes" }
+    ];
+
+    function displaySchedules(list) {
+      const tableBody = document.querySelector("#scheduleTable tbody");
+      tableBody.innerHTML = "";
+      list.forEach(s => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${s.day}</td>
+          <td>${s.location}</td>
+          <td>${s.type}</td>
+          <td>${s.route}</td>
+          <td>${s.departure}</td>
+          <td>${s.arrival}</td>
+          <td>${s.frequency}</td>
+        `;
+        tableBody.appendChild(row);
+      });
     }
 
-    // Convert time
-    const departure = formatTimeTo12Hour(departureRaw);
-    const arrival = formatTimeTo12Hour(arrivalRaw);
-    
-    schedules.push({
-      day,
-      type,
-      location,
-      route,
-      departure,
-      arrival,
-      frequency
-    });
+    window.onload = function() {
+      displaySchedules(schedules);
+    };
 
-    console.log(schedules);
-    closeModal();
-  }
-</script>
+    function filterByDay(day) {
+      if (day === "All") displaySchedules(schedules);
+      else displaySchedules(schedules.filter(s => s.day === day));
+    }
 
+    function openModal() {
+      document.getElementById("scheduleModal").style.display = "block";
+    }
 
+    function closeModal() {
+      document.getElementById("scheduleModal").style.display = "none";
+    }
 
-</table>
+    function formatTimeTo12Hour(time) {
+      let [hour, minute] = time.split(":").map(Number);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12 || 12;
+      return `${hour}:${minute.toString().padStart(2, "0")}${ampm}`;
+    }
 
+    function addNewSchedule() {
+      const day = document.getElementById("day").value;
+      const type = document.getElementById("type").value;
+      const location = document.getElementById("location").value;
+      const route = `Dagupan → ${document.getElementById("route").value}`;
+      const departureRaw = document.getElementById("time").value;
+      const arrivalRaw = document.getElementById("arrival").value;
+      const frequency = document.getElementById("frequency").value;
+
+      if (!location || !route || !departureRaw || !arrivalRaw) {
+        alert("Please fill in all fields");
+        return;
+      }
+
+      const departure = formatTimeTo12Hour(departureRaw);
+      const arrival = formatTimeTo12Hour(arrivalRaw);
+
+      schedules.push({ day, type, location, route, departure, arrival, frequency });
+      displaySchedules(schedules);
+      closeModal();
+    }
+  </script>
 </body>
 </html>

@@ -9,12 +9,12 @@ body {
   background-color: #F2F2F2;
 }
 
-/* Navbar*/
+/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff; /* white background */
+  background-color: #ffffff;
   padding: 10px 40px;
   border-bottom: 2px solid #ddd;
   position: sticky;
@@ -42,83 +42,93 @@ body {
 }
 
 .nav-links a:hover {
-  color: #74A8A4; 
-}
-
-/* Example content */
-.content {
-  padding: 40px;
-  text-align: center;
-}
-
-
-/* underline */
-.nav-links a {
-  text-decoration: none;
-  color: #222;
-  font-weight: normal;
-  font-size: 16px;
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
   color: #74A8A4;
 }
 
 .nav-links a.active {
   border-bottom: 3px solid #74A8A4;
-  color: #222;                      
+  color: #222;
 }
-
-
-
 
 /* Hero Section */
 .hero {
-  background: #ddd;
-  text-align: left;
+  position: relative;
+  background-image: url('assets/bus-1.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #242424;
+  padding: 120px 60px;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   margin-top: 40px;
-  padding: 100px 40px;
+  filter: none;
+  overflow: hidden;
 }
 
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2); 
+  z-index: 1;
+}
+
+/* Hero Text */
 .hero h2 {
-  font-size: 32px;
-  margin: 40px;
+  font-style: oblique;
+  font-size: 42px;
+  font-weight: 400;
+  max-width: 600px;
+  line-height: 1.4;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 30px;
 }
 
-/* Button styled as link */
+/* Hero Button */
 .btn {
   display: inline-block;
   background-color: #58a193;
-  border: none;
-  padding: 22px 50px;
+  padding: 20px 45px;
   color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  border-radius: 4px;
+  font-size: 22px;
+  border-radius: 6px;
   text-decoration: none;
-  margin: 40px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .btn:hover {
   background-color: #4a8c7f;
+  transform: translateY(-2px);
 }
 
-/* About Section */
+/* About Section - Wider Layout */
 .about {
   display: flex;
   justify-content: space-between;
-  padding: 40px;
+  align-items: center;
+  padding: 80px 80px;
   background: #f6f6f6;
-  margin: 40px;
+  margin: 0;
+  gap: 60px;
+  width: 100%;
+  max-width: none;
 }
 
+/* About Text */
 .about-text {
-  width: 55%;
+  flex: 1;
+  padding-right: 40px;
 }
 
 .about-text h3 {
-  font-size: 22px;
+  font-size: 24px;
   margin-bottom: 15px;
 }
 
@@ -131,13 +141,171 @@ body {
 .about-text p {
   font-size: 20px;
   line-height: 1.6;
-  margin-top: 40px;
-  margin-bottom: 15px;
-  margin-right: 50px;
+  margin-top: 20px;
+  color: #333;
 }
 
+/* Flashcard Image Animation */
 .about-image {
-  width: 50%;
-  background: #ddd;
-  height: 400px;
+  flex: 1;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.image-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.image-card img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  border-radius: 10px;
+}
+
+.image-card img.active {
+  opacity: 1;
+}
+
+/* Image Navigation Arrows */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.3s ease;
+  user-select: none;
+}
+
+.arrow:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.arrow.left {
+  left: 15px;
+}
+
+.arrow.right {
+  right: 15px;
+}
+
+
+
+
+
+/* Available Vehicles Section */
+.terminal {
+  text-align: center;
+  background: #ffffff;
+  padding: 80px 60px;
+  margin-top: 60px;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 500;
+  border-bottom: 5px solid #58a193;
+  display: inline-block;
+  padding-bottom: 6px;
+  margin-bottom: 50px;
+  color: #222;
+}
+
+.terminal-cards {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.terminal-card {
+  margin-top: 50px;
+  position: relative;
+  width: 260px;
+  height: 120px;
+  border: 3px solid #58a193;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  background-color: #f6f6f6;
+  cursor: pointer;
+}
+
+.terminal-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.8);
+  transition: all 0.3s ease;
+}
+
+.terminal-card:hover img {
+  filter: brightness(1);
+  transform: scale(1.03);
+}
+
+.terminal-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.45); /* subtle dark overlay */
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 12px 0;
+  transition: all 0.3s ease;
+}
+
+.terminal-card:hover .vehicle-label {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+
+
+
+
+/* Notification Icon */
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-icon i {
+  font-size: 20px;
+  color: #333;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.notification-icon i:hover {
+  color: #58a193;
+  transform: scale(1.1);
+}
+
+/* Optional small red badge for new notifications */
+.notification-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: block;
 }

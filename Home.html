@@ -6,6 +6,7 @@
   <title>CommuteEase - Home</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="home-style.css">
 </head>
 
@@ -17,11 +18,14 @@
       <img src="assets/CE-logo.png" a href = "Home.html" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-      <a href="Home.html" class="active">HOME</a>
-      <a href="schedule-main.html">SCHEDULE</a>
-      <a href="Home.html">ABOUT</a>
-      <a href="accountinfo.html">ACCOUNT</a>
-    </nav>
+  <a href="Home.html" class="active">HOME</a>
+  <a href="schedule-main.html">SCHEDULE</a>
+  <a href="Home.html">ABOUT</a>
+  <a href="accountinfo.html">ACCOUNT</a>
+  <div class="notification-icon">
+    <i class="fa-solid fa-bell"></i>
+  </div>
+</nav>
   </header>
 
   <!-- Hero Section -->
@@ -30,27 +34,75 @@
     <a href="schedule-main.html" class="btn" id="goNowBtn">Go now!</a>
   </section>
 
-  <!-- About Section -->
-  <section id="about" class="about">
-    <div class="about-text">
-      <h3><span class="underline">ABOUT</span></h3>
-      <p>
-        Public transportation in Dagupan City, Pangasinan, is widely used by workers, students, 
-        and residents, but commuters often face uncertain bus and jeepney schedules. This leads 
-        to wasted time, long queues, and overcrowded vehicles.
-      </p>
-      <p>
-        CommuteEase provides Dagupan commuters with a clear and accessible timetable system. By 
-        allowing users to see which buses or jeepneys are available at specific times—and which 
-        departures are coming within the next few minutes—the system helps make daily commuting 
-        more efficient and less stressful.
-      </p>
+  <!-- Available terminal Section -->
+<section class="terminals">
+
+  <div class="terminal-cards">
+    <div class="terminal-card">
+      <img src="assets/solid-north.png" alt="Solid North">
+      <div class="terminal-label">Solid North Dagupan</div>
     </div>
-    <div class="about-image"></div>
-  </section>
+        <div class="terminal-card">
+      <img src="assets/dagupan-bus.png" alt="Dagupan Bus Terminal">
+      <div class="terminal-label">Dagupan Bus</div>
+    </div>
+    <div class="terminal-card">
+      <img src="assets/victory-liner.png" alt="Victory Liner">
+      <div class="terminal-label">Victory Liner Dagupan</div>
+    </div>
+    <div class="terminal-card">
+      <img src="assets/five-star.png" alt="Five Star">
+      <div class="terminal-label">Five Star Dagupan</div>
+    </div>
+    <div class="terminal-card">
+      <img src="assets/SM-mall.png" alt="SM Dagupan">
+      <div class="terminal-label">SM Center Dagupan</div>
+    </div>
+  </div>
+</section>
+
+  <!-- About Section -->
+<section id="about" class="about">
+  <div class="about-text">
+    <h3><span class="underline">ABOUT</span></h3>
+    <p>
+      Public transportation in Dagupan City, Pangasinan, is widely used by workers, students, 
+      and residents, but commuters often face uncertain bus and jeepney schedules. This leads 
+      to wasted time, long queues, and overcrowded vehicles.
+    </p>
+    <p>
+      CommuteEase provides Dagupan commuters with a clear and accessible timetable system. By 
+      allowing users to see which buses or jeepneys are available at specific times—and which 
+      departures are coming within the next few minutes—the system helps make daily commuting 
+      more efficient and less stressful.
+    </p>
+  </div>
+
+  <!-- About IMAGES -->
+  <div class="about-image">
+    <div class="image-card">
+      <img src="assets/bus-imagevl.png" alt="Victory" class="active">
+      <img src="assets/bus-sample.png" alt="Bus">
+      <img src="assets/bus-1.png" alt="City Traffic">
+    </div>
+  </div>
+</section>
+
 
   <!-- JavaScript -->
   <script>
+      const images = document.querySelectorAll('.image-card img');
+  let current = 0;
+
+  function showNextImage() {
+    images[current].classList.remove('active');
+    current = (current + 1) % images.length;
+    images[current].classList.add('active');
+  }
+
+  setInterval(showNextImage, 5000); // switch every 10 seconds
+
+
     // Navigation Active State
     const navLinks = document.querySelectorAll(".nav-link");
     navLinks.forEach(link => {

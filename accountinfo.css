@@ -153,3 +153,32 @@ td .delete-btn:hover {
   color: red;
 }
 
+/* Notification Icon */
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-icon i {
+  font-size: 20px;
+  color: #333;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.notification-icon i:hover {
+  color: #58a193;
+  transform: scale(1.1);
+}
+
+/* Optional small red badge for new notifications */
+.notification-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: block;
+}

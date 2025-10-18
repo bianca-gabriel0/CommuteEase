@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Profile</title>
+  <title>CommuteEase - Edit Profile</title>
   <link rel="stylesheet" href="editprofile.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
@@ -12,78 +12,185 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href = "Home.html" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href="Home.html" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-  <a href="Home.html" class="active">HOME</a>
-  <a href="schedule-main.html">SCHEDULE</a>
-  <a href="Home.html">ABOUT</a>
-  <a href="accountinfo.html">ACCOUNT</a>
-  <div class="notification-icon">
-    <i class="fa-solid fa-bell"></i>
-  </div>
-</nav>
+      <a href="Home.html">HOME</a>
+      <a href="schedule-main.html">SCHEDULE</a>
+      <a href="Home.html">ABOUT</a>
+      <a href="accountinfo.html" class="active">ACCOUNT</a>
+      <div class="notification-icon">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+    </nav>
   </header>
 
-  <!-- Account Information Card -->
-  <main>
-    <div class="account-card">
-      <h2>Account Information</h2>
-      <hr>
-      <div class="profile-section">
-        <img src="profile.jpg" alt="Profile Picture" class="profile-pic">
-        <div class="profile-form">
-          <p>Change Personal Profile:</p>
-          <div class="form-row">
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" placeholder="Enter first name">
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" placeholder="Enter last name">
+  <!-- Account Section -->
+  <section class="account-section">
+    <h2 class="account-heading">Edit Profile</h2>
+
+    <div class="account-container">
+      <!-- Profile Card (Editable) -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-pic">
+            <img src="assets/profile.png" alt="User Profile">
           </div>
-          <p class="email">example@gmail.com</p>
+        </div>
+
+        <div class="profile-details">
+          <h3>Edit Personal Information</h3>
+          <hr>
+          <form id="editProfileForm">
+            <div class="form-group">
+              <label for="firstName">First Name:</label>
+              <input type="text" id="firstName" placeholder="Enter first name">
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name:</label>
+              <input type="text" id="lastName" placeholder="Enter last name">
+            </div>
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" id="email" placeholder="Enter email address">
+            </div>
+            <div class="form-group">
+              <label for="password">New Password:</label>
+              <input type="password" id="password" placeholder="Enter new password">
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password:</label>
+              <input type="password" id="confirmPassword" placeholder="Confirm new password">
+            </div>
+          </form>
+        </div>
+
+        <div class="edit-buttons">
+          <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+          <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
         </div>
       </div>
-      <div class="buttons">
-        <button class="save-btn" onclick="saveProfile()">Save Changes</button>
-        <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+
+      <!-- Right: Saved Schedules -->
+      <div class="schedule-card">
+        <h3>My Saved Schedules:</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Type/s</th>
+              <th>Route / Destination</th>
+              <th>Departure Time</th>
+              <th>Estimated Arrival</th>
+              <th>Frequency</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTable">
+            <tr>
+              <td>SM Mall</td>
+              <td>Bus</td>
+              <td>Dagupan – Manaoag</td>
+              <td>5:30 AM</td>
+              <td>6:30 AM</td>
+              <td>Every 30 minutes</td>
+              <td><span class="delete-btn" onclick="deleteRow(this)">🗑️</span></td>
+            </tr>
+            <tr>
+              <td>SM Mall</td>
+              <td>Jeepney</td>
+              <td>Dagupan – Lingayen</td>
+              <td>6:00 AM</td>
+              <td>7:20 AM</td>
+              <td>Every 15 minutes</td>
+              <td><span class="delete-btn" onclick="deleteRow(this)">🗑️</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="table-arrows">
+          <button>&lt;</button>
+          <button>&gt;</button>
+        </div>
       </div>
     </div>
-  </main>
+  </section>
 
-  <!-- JavaScript -->
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-logo">
+          <img src="assets/CE-logo-white.png" alt="CommuteEase Logo">
+          <p class="footer-tagline">Making your daily commute easier.</p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+          <a href="Home.html">Home</a>
+          <a href="#about">About</a>
+          <a href="schedule-main.html">Schedule</a>
+          <a href="accountinfo.html">Account</a>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+          <p>📧 Email:</p>
+          <a href="mailto:commuteease@gmail.com">commuteease@gmail.com</a>
+          <p>Phone:</p>
+          <a>(+63) 9123 456 789</a>
+          <button id="backToTop">Back to Top ↑</button>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 CommuteEase. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS -->
   <script>
-    // Save profile
+    // Back to top
+    const backToTop = document.getElementById("backToTop");
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // Delete schedule row
+    function deleteRow(button) {
+      const row = button.closest("tr");
+      row.remove();
+    }
+
+    // Save profile info
     function saveProfile() {
       const first = document.getElementById("firstName").value.trim();
       const last = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-      if (!first || !last) {
-        alert("Please enter both first and last names.");
+      if (!first || !last || !email) {
+        alert("Please fill out all fields.");
         return;
       }
 
-      alert(`Profile updated: ${first} ${last}`);
+      if (password && password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      alert(`Profile updated for: ${first} ${last}`);
+      window.location.href = "accountinfo.html";
     }
 
     // Cancel edit
     function cancelEdit() {
-      document.getElementById("firstName").value = "";
-      document.getElementById("lastName").value = "";
-      alert("Edit cancelled.");
-    }
-
-    // Navigation interactivity
-    const navLinks = document.querySelectorAll(".nav-links a");
-    navLinks.forEach(link => {
-      if (link.href === window.location.href) {
-        link.classList.add("active");
+      if (confirm("Discard changes?")) {
+        window.location.href = "accountinfo.html";
       }
-
-      link.addEventListener("click", () => {
-        navLinks.forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
-      });
-    });
+    }
   </script>
 
 </body>

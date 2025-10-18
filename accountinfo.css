@@ -182,3 +182,128 @@ td .delete-btn:hover {
   border-radius: 50%;
   display: block;
 }
+
+/* Footer Section */
+footer {
+  background-color: #6BBBAE;
+  color: #e6f2ef;
+  padding: 50px 40px 20px;
+  margin-top: 80px;
+  font-family: 'Albert Sans', sans-serif;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Top Footer Layout */
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+/* Left Section: Logo */
+.footer-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.footer-logo img {
+  height: 70px;
+  width: auto;
+  margin-bottom: 10px;
+}
+
+.footer-logo h2 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.footer-tagline {
+  font-size: 18px;
+  font-style: italic;
+  color: #e6f2ef;
+}
+
+/* Center Section: Links */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-links h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.footer-links a {
+  color: #e6f2ef;
+  text-decoration: none;
+  font-size: 16px;
+  transition: opacity 0.3s ease;
+}
+
+.footer-links a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Right Section: Contact + Button */
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 10px;
+}
+
+.footer-contact h3 {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.footer-contact a {
+  color: #e6f2ef;
+  text-decoration: underline;
+}
+
+#backToTop {
+  background-color: white;
+  color: #6BBBAE;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  margin: 10px;
+}
+
+#backToTop:hover {
+  background-color: #58a193;
+  color: #e6f2ef;
+  transform: translateY(-2px);
+}
+
+/* Bottom Section */
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.3);
+  text-align: center;
+  padding-top: 20px;
+  font-size: 14px;
+  color: #e6f2ef;
+  margin-top: 30px;
+  
+}

@@ -14,49 +14,47 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href = "Home.html" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href="Home.html" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-  <a href="Home.html" class="active">HOME</a>
-  <a href="schedule-main.html">SCHEDULE</a>
-  <a href="Home.html">ABOUT</a>
-  <a href="accountinfo.html">ACCOUNT</a>
-  <div class="notification-icon">
-    <i class="fa-solid fa-bell"></i>
-  </div>
-</nav>
+      <a href="Home.html">HOME</a>
+      <a href="schedule-main.html" class="active">SCHEDULE</a>
+      <a href="Home.html">ABOUT</a>
+      <a href="accountinfo.html">ACCOUNT</a>
+      <div class="notification-icon">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+    </nav>
   </header>
-    </body>
 
-    <!-- TABLE FOR SCHED -->
-<body>
+  <!-- TABLE FOR SCHED -->
   <h3><span class="underlinesched">TRIP SCHEDULES</span></h3>
 
-<div class="table-controls">
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search routes or destination...">
-    <i class="fa fa-search"></i>
+  <div class="table-controls">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search routes or destination...">
+      <i class="fa fa-search"></i>
+    </div>
+
+    <select id="timeFilter">
+      <option value="">Time</option>
+      <option value="5 AM">5 AM</option>
+      <option value="6 AM">6 AM</option>
+      <option value="7 AM">7 AM</option>
+      <option value="8 AM">8 AM</option>
+      <option value="9 AM">9 AM</option>
+      <option value="10 AM">10 AM</option>
+      <option value="11 AM">11 AM</option>
+      <option value="12 PM">12 PM</option>
+    </select>
+
+    <select id="typeFilter">
+      <option value="">Types</option>
+      <option value="Bus">Bus</option>
+      <option value="Mini Bus">Mini Bus</option>
+    </select>
+    <button id="searchBtn">Search</button>
   </div>
-<!-- drop down TIME -->
-  <select id="timeFilter">
-    <option value="">Time</option>
-    <option value="5 AM">5 AM</option>
-    <option value="6 AM">6 AM</option>
-    <option value="7 AM">7 AM</option>
-    <option value="8 AM">8 AM</option>
-    <option value="9 AM">9 AM</option>
-    <option value="10 AM">10 AM</option>
-    <option value="11 AM">11 AM</option>
-    <option value="12 PM">12 PM</option>
-  </select>
-<!-- drop down TYPE -->
-  <select id="typeFilter">
-    <option value="">Types</option>
-    <option value="Bus">Bus</option>
-    <option value="Mini-bus">Mini-bus</option>
-  </select>
-  <button id="searchBtn">Search</button>
-</div>
 
   <table id="scheduleTable">
     <thead>
@@ -70,106 +68,109 @@
         <th>Save Schedule</th>
       </tr>
     </thead>
-    <tbody>
-    </tbody>
+    <tbody></tbody>
   </table>
 
   <!-- Footer -->
-<footer>
-  <div class="footer-container">
-    <div class="footer-top">
-      
-      <div class="footer-logo">
-        <img src="assets/CE-logo-white.png" alt="CommuteEase Logo">
-        <p class="footer-tagline">Making your daily commute easier.</p>
+  <footer>
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-logo">
+          <img src="assets/CE-logo-white.png" alt="CommuteEase Logo">
+          <p class="footer-tagline">Making your daily commute easier.</p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+          <a href="Home.html">Home</a>
+          <a href="#about">About</a>
+          <a href="schedule-main.html">Schedule</a>
+          <a href="accountinfo.html">Account</a>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+          <p>📧 Email:</p>
+          <a href="mailto:support@commuteease.com">commuteease@gmail.com</a>
+          <p>Phone:</p>
+          <a>(+63) 9123 456 789</a>
+          <button id="backToTop">Back to Top ↑</button>
+        </div>
       </div>
 
-      <!-- Center: Quick Links -->
-      <div class="footer-links">
-        <h3>Quick Links</h3>
-        <a href="Home.html">Home</a>
-        <a href="#about">About</a>
-        <a href="schedule-main.html">Schedule</a>
-        <a href="accountinfo.html">Account</a>
-      </div>
-
-      <!-- Right: Contact + Back to Top -->
-      <div class="footer-contact">
-        <h3>Contact Us</h3>
-        <p>📧 Email:</p>
-        <a href="mailto:support@commuteease.com">commuteease@gmail.com</a>
-        <p>Phone:</p>
-        <a>(+63) 9123 456 789</a>
-        <button id="backToTop">Back to Top ↑</button>
+      <div class="footer-bottom">
+        <p>&copy; 2025 CommuteEase.</p>
       </div>
     </div>
+  </footer>
 
-    <div class="footer-bottom">
-      <p>&copy; 2025 CommuteEase.
-
-
-<script>
-  const backToTop = document.getElementById("backToTop");
-  backToTop.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-</script>
-
-<script>
-  // schedule data
-  const schedules = [
-    {Location: "Victory Liner", type: "Bus", route: "Dagupan → Manaoag", departure: "5:30 AM", arrival: "6:30 AM", frequency: "Every 30 minutes"},
-    {Location: "Assada Center", type: "Bus", route: "Dagupan → Lingayen", departure: "6:00 AM", arrival: "7:20 AM", frequency: "Every 15 minutes"},
-    {Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → San Fabian", departure: "8:00 AM", arrival: "9:00 AM", frequency: "Every 20 minutes"},
-    {Location: "Solid North", type: "Bus", route: "Dagupan → Urdaneta", departure: "10:00 AM", arrival: "12:00 PM", frequency: "Every 30 minutes"},
-    {Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → Malasiqui", departure: "9:00 AM", arrival: "10:00 PM", frequency: "Every 15 minutes"}
-];
-
-  const tableBody = document.querySelector("#scheduleTable tbody");
-
-  function renderTable(data) {
-    tableBody.innerHTML = ""; 
-
-    data.forEach(schedule => {
-      const row = document.createElement("tr");
-
-      Object.values(schedule).forEach(value => {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-        row.appendChild(cell);
-      });
-
-      const saveCell = document.createElement("td");
-      const saveBtn = document.createElement("button");
-      saveBtn.textContent = "Save";
-      saveBtn.classList.add("save-btn");
-      saveBtn.addEventListener("click", () => {
-        alert(`Saved schedule: ${schedule.route}`);
-      });
-
-      saveCell.appendChild(saveBtn);
-      row.appendChild(saveCell);
-      tableBody.appendChild(row);
+  <script>
+    const backToTop = document.getElementById("backToTop");
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
-  }
+  </script>
 
-  renderTable(schedules);
+  <script>
+    // schedule data
+    const schedules = [
+      { Location: "Victory Liner", type: "Bus", route: "Dagupan → Manaoag", departure: "5:30 AM", arrival: "6:30 AM", frequency: "Every 30 minutes" },
+      { Location: "Assada Center", type: "Bus", route: "Dagupan → Lingayen", departure: "6:00 AM", arrival: "7:20 AM", frequency: "Every 15 minutes" },
+      { Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → San Fabian", departure: "8:00 AM", arrival: "9:00 AM", frequency: "Every 20 minutes" },
+      { Location: "Solid North", type: "Bus", route: "Dagupan → Urdaneta", departure: "10:00 AM", arrival: "12:00 PM", frequency: "Every 30 minutes" },
+      { Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → Malasiqui", departure: "9:00 AM", arrival: "10:00 PM", frequency: "Every 15 minutes" }
+    ];
 
-  // Search + filter
-  document.getElementById("searchBtn").addEventListener("click", () => {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const typeValue = document.getElementById("typeFilter").value;
+    const tableBody = document.querySelector("#scheduleTable tbody");
 
-    const filtered = schedules.filter(s =>
-      (s.route.toLowerCase().includes(searchValue) || s.Location.toLowerCase().includes(searchValue)) &&
-      (typeValue === "" || s.type === typeValue)
-    );
+    function renderTable(data) {
+      tableBody.innerHTML = "";
 
-    renderTable(filtered);
-  });
-</script>
+      data.forEach(schedule => {
+        const row = document.createElement("tr");
 
+        Object.values(schedule).forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
 
+        // save button with icon
+        const saveCell = document.createElement("td");
+        const saveBtn = document.createElement("button");
+        saveBtn.classList.add("save-btn");
+
+        const saveIcon = document.createElement("img");
+        saveIcon.src = "assets/bookmark-icon.png";
+        saveIcon.alt = "Save";
+        saveIcon.classList.add("save-icon");
+
+        saveBtn.appendChild(saveIcon);
+        saveBtn.addEventListener("click", () => {
+          alert(`Saved schedule: ${schedule.route}`);
+        });
+
+        saveCell.appendChild(saveBtn);
+        row.appendChild(saveCell);
+        tableBody.appendChild(row);
+      });
+    }
+
+    renderTable(schedules);
+
+    // Search + filter
+    document.getElementById("searchBtn").addEventListener("click", () => {
+      const searchValue = document.getElementById("searchInput").value.toLowerCase();
+      const typeValue = document.getElementById("typeFilter").value;
+
+      const filtered = schedules.filter(s =>
+        (s.route.toLowerCase().includes(searchValue) || s.Location.toLowerCase().includes(searchValue)) &&
+        (typeValue === "" || s.type === typeValue)
+      );
+
+      renderTable(filtered);
+    });
+  </script>
 
 </body>
 </html>

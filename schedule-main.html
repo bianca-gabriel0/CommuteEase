@@ -28,48 +28,61 @@
   </header>
 
   <!-- TABLE FOR SCHED -->
-  <h3><span class="underlinesched">TRIP SCHEDULES</span></h3>
+ <h3><span class="underlinesched">TRIP SCHEDULES</span></h3>
 
-  <div class="table-controls">
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search routes or destination...">
-      <i class="fa fa-search"></i>
-    </div>
-
-    <select id="timeFilter">
-      <option value="">Time</option>
-      <option value="5 AM">5 AM</option>
-      <option value="6 AM">6 AM</option>
-      <option value="7 AM">7 AM</option>
-      <option value="8 AM">8 AM</option>
-      <option value="9 AM">9 AM</option>
-      <option value="10 AM">10 AM</option>
-      <option value="11 AM">11 AM</option>
-      <option value="12 PM">12 PM</option>
-    </select>
-
-    <select id="typeFilter">
-      <option value="">Types</option>
-      <option value="Bus">Bus</option>
-      <option value="Mini Bus">Mini Bus</option>
-    </select>
-    <button id="searchBtn">Search</button>
+<div class="table-controls right-align">
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search routes or destination...">
+    <i class="fa fa-search"></i>
   </div>
 
-  <table id="scheduleTable">
-    <thead>
-      <tr>
-        <th>Location</th>
-        <th>Type/s</th>
-        <th>Route / Destination</th>
-        <th>Departure Time</th>
-        <th>Estimated Arrival</th>
-        <th>Frequency</th>
-        <th>Save Schedule</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <select id="timeFilter">
+    <option value="">Time</option>
+    <option value="5 AM">5 AM</option>
+    <option value="6 AM">6 AM</option>
+    <option value="7 AM">7 AM</option>
+    <option value="8 AM">8 AM</option>
+    <option value="9 AM">9 AM</option>
+    <option value="10 AM">10 AM</option>
+    <option value="11 AM">11 AM</option>
+    <option value="12 PM">12 PM</option>
+  </select>
+
+  <select id="typeFilter">
+    <option value="">Types</option>
+    <option value="Bus">Bus</option>
+    <option value="Mini Bus">Mini Bus</option>
+  </select>
+
+  <button id="searchBtn">Search</button>
+</div>
+
+<!-- Schedule table inside bordered card -->
+<div class="schedule-card">
+  <div class="table-wrapper">
+    <table id="scheduleTable">
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Type/s</th>
+          <th>Route / Destination</th>
+          <th>Departure Time</th>
+          <th>Estimated Arrival</th>
+          <th>Frequency</th>
+          <th>Save Schedule</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- next + previous arrows -->
+<div class="table-arrows">
+  <button class="arrow-btn">&lt;</button>
+  <button class="arrow-btn">&gt;</button>
+</div>
+
 
   <!-- Footer -->
   <footer>

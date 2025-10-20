@@ -28,61 +28,73 @@
   </header>
 
   <!-- TABLE FOR SCHED -->
- <h3><span class="underlinesched">TRIP SCHEDULES</span></h3>
+  <h3><span class="underlinesched">TRIP SCHEDULES</span></h3>
 
-<div class="table-controls right-align">
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search routes or destination...">
-    <i class="fa fa-search"></i>
+  <div class="table-controls right-align">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search routes or destination...">
+      <i class="fa fa-search"></i>
+    </div>
+
+    <!-- 🟩 Added Day Filter -->
+    <select id="dayFilter">
+      <option value="">Day</option>
+      <option value="Monday">Monday</option>
+      <option value="Tuesday">Tuesday</option>
+      <option value="Wednesday">Wednesday</option>
+      <option value="Thursday">Thursday</option>
+      <option value="Friday">Friday</option>
+      <option value="Saturday">Saturday</option>
+      <option value="Sunday">Sunday</option>
+    </select>
+
+    <select id="timeFilter">
+      <option value="">Time</option>
+      <option value="5 AM">5 AM</option>
+      <option value="6 AM">6 AM</option>
+      <option value="7 AM">7 AM</option>
+      <option value="8 AM">8 AM</option>
+      <option value="9 AM">9 AM</option>
+      <option value="10 AM">10 AM</option>
+      <option value="11 AM">11 AM</option>
+      <option value="12 PM">12 PM</option>
+    </select>
+
+    <select id="typeFilter">
+      <option value="">Types</option>
+      <option value="Bus">Bus</option>
+      <option value="Mini Bus">Mini Bus</option>
+    </select>
+
+    <button id="searchBtn">Search</button>
   </div>
 
-  <select id="timeFilter">
-    <option value="">Time</option>
-    <option value="5 AM">5 AM</option>
-    <option value="6 AM">6 AM</option>
-    <option value="7 AM">7 AM</option>
-    <option value="8 AM">8 AM</option>
-    <option value="9 AM">9 AM</option>
-    <option value="10 AM">10 AM</option>
-    <option value="11 AM">11 AM</option>
-    <option value="12 PM">12 PM</option>
-  </select>
-
-  <select id="typeFilter">
-    <option value="">Types</option>
-    <option value="Bus">Bus</option>
-    <option value="Mini Bus">Mini Bus</option>
-  </select>
-
-  <button id="searchBtn">Search</button>
-</div>
-
-<!-- Schedule table inside bordered card -->
-<div class="schedule-card">
-  <div class="table-wrapper">
-    <table id="scheduleTable">
-      <thead>
-        <tr>
-          <th>Location</th>
-          <th>Type/s</th>
-          <th>Route / Destination</th>
-          <th>Departure Time</th>
-          <th>Estimated Arrival</th>
-          <th>Frequency</th>
-          <th>Save Schedule</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <!-- Schedule table inside bordered card -->
+  <div class="schedule-card">
+    <div class="table-wrapper">
+      <table id="scheduleTable">
+        <thead>
+          <tr>
+            <th>Day</th> <!-- 🟩 Added new column -->
+            <th>Location</th>
+            <th>Type/s</th>
+            <th>Route / Destination</th>
+            <th>Departure Time</th>
+            <th>Estimated Arrival</th>
+            <th>Frequency</th>
+            <th>Save Schedule</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
-</div>
 
-<!-- next + previous arrows -->
-<div class="table-arrows">
-  <button class="arrow-btn">&lt;</button>
-  <button class="arrow-btn">&gt;</button>
-</div>
-
+  <!-- next + previous arrows -->
+  <div class="table-arrows">
+    <button class="arrow-btn">&lt;</button>
+    <button class="arrow-btn">&gt;</button>
+  </div>
 
   <!-- Footer -->
   <footer>
@@ -117,21 +129,22 @@
     </div>
   </footer>
 
+  <!-- JavaScript -->
   <script>
     const backToTop = document.getElementById("backToTop");
     backToTop.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
-  </script>
 
-  <script>
-    // schedule data
+    // 🟩 Updated schedule data with Day
     const schedules = [
-      { Location: "Victory Liner", type: "Bus", route: "Dagupan → Manaoag", departure: "5:30 AM", arrival: "6:30 AM", frequency: "Every 30 minutes" },
-      { Location: "Assada Center", type: "Bus", route: "Dagupan → Lingayen", departure: "6:00 AM", arrival: "7:20 AM", frequency: "Every 15 minutes" },
-      { Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → San Fabian", departure: "8:00 AM", arrival: "9:00 AM", frequency: "Every 20 minutes" },
-      { Location: "Solid North", type: "Bus", route: "Dagupan → Urdaneta", departure: "10:00 AM", arrival: "12:00 PM", frequency: "Every 30 minutes" },
-      { Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → Malasiqui", departure: "9:00 AM", arrival: "10:00 PM", frequency: "Every 15 minutes" }
+      { day: "Monday", Location: "Victory Liner", type: "Bus", route: "Dagupan → Manaoag", departure: "5:30 AM", arrival: "6:30 AM", frequency: "Every 30 minutes" },
+      { day: "Tuesday", Location: "Assada Center", type: "Bus", route: "Dagupan → Lingayen", departure: "6:00 AM", arrival: "7:20 AM", frequency: "Every 15 minutes" },
+      { day: "Wednesday", Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → San Fabian", departure: "8:00 AM", arrival: "9:00 AM", frequency: "Every 20 minutes" },
+      { day: "Thursday", Location: "Solid North", type: "Bus", route: "Dagupan → Urdaneta", departure: "10:00 AM", arrival: "12:00 PM", frequency: "Every 30 minutes" },
+      { day: "Friday", Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → Malasiqui", departure: "9:00 AM", arrival: "10:00 AM", frequency: "Every 15 minutes" },
+      { day: "Saturday", Location: "Assada Center", type: "Bus", route: "Dagupan → Binmaley", departure: "7:00 AM", arrival: "8:00 AM", frequency: "Every 25 minutes" },
+      { day: "Sunday", Location: "Victory Liner", type: "Bus", route: "Dagupan → Calasiao", departure: "6:30 AM", arrival: "7:15 AM", frequency: "Every 40 minutes" }
     ];
 
     const tableBody = document.querySelector("#scheduleTable tbody");
@@ -148,7 +161,7 @@
           row.appendChild(cell);
         });
 
-        // save button with icon
+        // save button
         const saveCell = document.createElement("td");
         const saveBtn = document.createElement("button");
         saveBtn.classList.add("save-btn");
@@ -171,19 +184,25 @@
 
     renderTable(schedules);
 
-    // Search + filter
+    // 🟩 Search + Day + Type Filters
     document.getElementById("searchBtn").addEventListener("click", () => {
       const searchValue = document.getElementById("searchInput").value.toLowerCase();
       const typeValue = document.getElementById("typeFilter").value;
+      const dayValue = document.getElementById("dayFilter").value;
 
       const filtered = schedules.filter(s =>
         (s.route.toLowerCase().includes(searchValue) || s.Location.toLowerCase().includes(searchValue)) &&
-        (typeValue === "" || s.type === typeValue)
+        (typeValue === "" || s.type === typeValue) &&
+        (dayValue === "" || s.day === dayValue)
       );
 
       renderTable(filtered);
     });
-  </script>
 
+    // 🟩 Auto-update on day filter change
+    document.getElementById("dayFilter").addEventListener("change", () => {
+      document.getElementById("searchBtn").click();
+    });
+  </script>
 </body>
 </html>

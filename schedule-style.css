@@ -432,3 +432,13 @@ footer {
   background-color: #5ea398;
   transform: scale(1.05);
 }
+
+/* 🟩 Day Filter Styling */
+#dayFilter {
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  outline: none;
+}
+

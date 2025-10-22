@@ -25,6 +25,10 @@
   <div class="notification-icon">
     <i class="fa-solid fa-bell"></i>
   </div>
+  <div class="notification-dropdown" id="notificationDropdown">
+  <p>No new notifications</p>
+</div>
+
 </nav>
   </header>
 
@@ -142,6 +146,25 @@
   }
 
   setInterval(showNextImage, 5000); // switch every 10 seconds
+  
+  const bell = document.querySelector('.notification-icon');
+  const dropdown = document.getElementById('notificationDropdown');
+  const redDot = document.querySelector('.notification-icon::after'); // for visual note only
+
+  bell.addEventListener('click', (event) => {
+    event.stopPropagation();
+    dropdown.classList.toggle('show');
+
+    // Remove red badge after clicking (simulate "read" state)
+    bell.classList.add('read');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
+      dropdown.classList.remove('show');
+    }
+  });
 
 
     // Navigation Active State

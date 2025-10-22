@@ -442,3 +442,39 @@ footer {
   outline: none;
 }
 
+/* Notification Dropdown */
+.notification-dropdown {
+  display: none;
+  position: absolute;
+  top: 60px; /* Adjust based on navbar height */
+  right: 40px;
+  width: 260px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 12px;
+  z-index: 999;
+}
+
+.notification-dropdown p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+  text-align: center;
+}
+
+/* Optional fade-in effect */
+.notification-dropdown.show {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-icon.read::after {
+  display: none;
+}

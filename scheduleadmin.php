@@ -16,7 +16,7 @@
   <div class="sidebar">
     <img src="assets/CE-logo.png" alt="" class="signup-image">
     <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
-    <a href="scheduleadmin.html"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
+    <a href="scheduleadmin.php"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
     <a href="commuters.html"><i class="fa-solid fa-users"></i> Commuters</a>
     <button class="logout-button" onclick="logout()">
       <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
@@ -109,12 +109,16 @@
   </div>
 
   <script>
-    const schedules = [
-      { day: "Monday", type: "Bus", location: "Victory Liner", route: "Dagupan → Manila", departure: "6:30AM", arrival: "9:00AM", frequency: "Every 30 minutes" },
-      { day: "Tuesday", type: "Mini-bus", location: "Assada Center", route: "Dagupan → Manaoag", departure: "7:00AM", arrival: "8:15AM", frequency: "Every 20 minutes" },
-      { day: "Wednesday", type: "Bus", location: "Solid North", route: "Dagupan → Urdaneta", departure: "10:00AM", arrival: "12:00PM", frequency: "Every 40 minutes" }
-    ];
+    let schedules = [];
 
+    // 🟢 Fetch from PHP (MySQL)
+    async function loadSchedules() {
+      const res = await fetch("php/fetch_schedules.php");
+      schedules = await res.json();
+      displaySchedules(schedules);
+    }
+
+    // 🟢 Display table rows
     function displaySchedules(list) {
       const tableBody = document.querySelector("#scheduleTable tbody");
       tableBody.innerHTML = "";
@@ -133,15 +137,13 @@
       });
     }
 
-    window.onload = function() {
-      displaySchedules(schedules);
-    };
-
+    // 🟢 Filter by day
     function filterByDay(day) {
       if (day === "All") displaySchedules(schedules);
       else displaySchedules(schedules.filter(s => s.day === day));
     }
 
+    // 🟢 Modal controls
     function openModal() {
       document.getElementById("scheduleModal").style.display = "block";
     }
@@ -150,34 +152,48 @@
       document.getElementById("scheduleModal").style.display = "none";
     }
 
-    function formatTimeTo12Hour(time) {
-      let [hour, minute] = time.split(":").map(Number);
-      const ampm = hour >= 12 ? "PM" : "AM";
-      hour = hour % 12 || 12;
-      return `${hour}:${minute.toString().padStart(2, "0")}${ampm}`;
-    }
+    // 🟢 Add new schedule to DB
+    async function addNewSchedule() {
+      const data = {
+        day: document.getElementById("day").value,
+        type: document.getElementById("type").value,
+        location: document.getElementById("location").value,
+        destination: document.getElementById("route").value,
+        departure: document.getElementById("time").value,
+        arrival: document.getElementById("arrival").value,
+        frequency: document.getElementById("frequency").value
+      };
 
-    function addNewSchedule() {
-      const day = document.getElementById("day").value;
-      const type = document.getElementById("type").value;
-      const location = document.getElementById("location").value;
-      const route = `Dagupan → ${document.getElementById("route").value}`;
-      const departureRaw = document.getElementById("time").value;
-      const arrivalRaw = document.getElementById("arrival").value;
-      const frequency = document.getElementById("frequency").value;
-
-      if (!location || !route || !departureRaw || !arrivalRaw) {
+      if (!data.location || !data.destination || !data.departure || !data.arrival) {
         alert("Please fill in all fields");
         return;
       }
 
-      const departure = formatTimeTo12Hour(departureRaw);
-      const arrival = formatTimeTo12Hour(arrivalRaw);
+      const res = await fetch("php/add_schedules.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
 
-      schedules.push({ day, type, location, route, departure, arrival, frequency });
-      displaySchedules(schedules);
-      closeModal();
+      const result = await res.json();
+      if (result.status === "success") {
+        closeModal();
+        loadSchedules();
+      } else {
+        alert("Error: " + result.message);
+      }
     }
+
+  window.onload = function() {
+    fetch('php/fetch_schedules.php')
+      .then(response => response.json())
+      .then(data => {
+        schedules = data;
+        displaySchedules(schedules);
+      })
+      .catch(error => console.error('Error fetching schedules:', error));
+  };
+
   </script>
 </body>
 </html>

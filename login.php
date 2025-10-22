@@ -9,7 +9,7 @@
 <body>
   <div class="login-container">
     <div class="login-box">
-      <a href="home.html" class="back-link">&lt; Return to Home</a>
+      <a href="Home.php" class="back-link">&lt; Return to Home</a>
 
       <div class="login-content">
         <div class="bus-image">
@@ -35,7 +35,7 @@
             <small class="error-message" id="passwordError"></small>
 
             <div class="forgot-password">
-              <a href="forgotpassword.html" id="forgotLink">Forgot password?</a>
+              <a href="forgotpassword" id="forgotLink">Forgot password?</a>
             </div>
 
             <div class="loader" id="loader"></div>
@@ -43,7 +43,7 @@
           </form>
 
           <p class="signup-text">
-            Don't have an account? <a href="signup.html" id="signupLink">Sign up</a>
+            Don't have an account? <a href="signup" id="signupLink">Sign up</a>
           </p>
         </div>
       </div>
@@ -130,14 +130,14 @@
     forgotLink.addEventListener("click", (e) => {
       e.preventDefault();
       alert("Redirecting to Forgot Password page...");
-      window.location.href = "forgotpassword.html";
+      window.location.href = "forgotpassword.php";
     });
 
     // Sign up interaction
     signupLink.addEventListener("click", (e) => {
       e.preventDefault();
       alert("Redirecting to Sign Up page...");
-      window.location.href = "signup.html";
+      window.location.href = "signup.php";
     });
 
     // Form submission with loading animation
@@ -151,7 +151,7 @@
         setTimeout(() => {
           loader.style.display = "none";
           alert("✅ Login successful!");
-          window.location.href = "home.html";
+          window.location.href = "Home";
         }, 1500);
       }
     });

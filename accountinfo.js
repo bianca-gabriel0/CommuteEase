@@ -59,7 +59,7 @@ app.delete("/api/schedules/:id", (req, res) => {
 
 // Default route
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "accountinfo.html"));
+  res.sendFile(path.join(__dirname, "public", "accountinfo.php"));
 });
 
 // Start server

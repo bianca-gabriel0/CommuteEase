@@ -7,6 +7,6 @@ fetch("/api/user/update", {
 .then(res => res.json())
 .then(data => {
   alert("✅ " + data.message);
-  window.location.href = "accountinfo.html";
+  window.location.href = "accountinfo.php";
 })
 .catch(err => console.error("Error updating profile:", err));

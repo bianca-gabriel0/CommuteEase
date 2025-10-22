@@ -13,7 +13,7 @@
     </div>
 
     <div class="right">
-      <a href="Home.html" class="back-link" id="backHome">&lt; Return to Home</a>
+      <a href="Home" class="back-link" id="backHome">&lt; Return to Home</a>
       <h2>Create Account</h2>
       <form id="createAccountForm" novalidate>
         <div class="form-group">
@@ -36,7 +36,7 @@
         </div>
         <button type="submit" class="btn" id="submitBtn" disabled>Create Account</button>
       </form>
-      <p class="signin-text">Already have an account? <a href="login.html" id="signInLink">Sign in</a></p>
+      <p class="signin-text">Already have an account? <a href="login.php" id="signInLink">Sign in</a></p>
     </div>
   </div>
 
@@ -96,7 +96,7 @@
       e.preventDefault();
       if (validateEmail() && validatePassword()) {
         alert("✅ Account Created Successfully!");
-        window.location.href = "home.html";
+        window.location.href = "Home.php";
       } else {
         alert("⚠️ Please enter valid details.");
       }
@@ -106,14 +106,14 @@
     backHome.addEventListener("click", (e) => {
       e.preventDefault();
       alert("🔙 Returning to Home Page...");
-      window.location.href = "home.html";
+      window.location.href = "Home.php";
     });
 
     // Go to Sign In
     signInLink.addEventListener("click", (e) => {
       e.preventDefault();
       alert("🔐 Redirecting to Sign In...");
-      window.location.href = "login.html";
+      window.location.href = "login.php";
     });
   </script>
 </body>

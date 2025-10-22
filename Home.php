@@ -15,13 +15,13 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href = "Home.html" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href = "Home" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-  <a href="Home.html" class="active">HOME</a>
-  <a href="schedule-main.html">SCHEDULE</a>
-  <a href="Home.html">ABOUT</a>
-  <a href="accountinfo.html">ACCOUNT</a>
+  <a href="Home" class="active">HOME</a>
+  <a href="schedule-main">SCHEDULE</a>
+  <a href="Home">ABOUT</a>
+  <a href="accountinfo">ACCOUNT</a>
   <div class="notification-icon">
     <i class="fa-solid fa-bell"></i>
   </div>
@@ -31,7 +31,7 @@
   <!-- Hero Section -->
   <section class="hero">
     <h2>Get the schedules you need,<br>when you need them!</h2>
-    <a href="schedule-main.html" class="btn" id="goNowBtn">Go now!</a>
+    <a href="schedule-main.php" class="btn" id="goNowBtn">Go now!</a>
   </section>
 
   <!-- Available terminal Section -->
@@ -101,10 +101,10 @@
       <!-- Center: Quick Links -->
       <div class="footer-links">
         <h3>Quick Links</h3>
-        <a href="Home.html">Home</a>
+        <a href="Home">Home</a>
         <a href="#about">About</a>
-        <a href="schedule-main.html">Schedule</a>
-        <a href="accountinfo.html">Account</a>
+        <a href="schedule-main">Schedule</a>
+        <a href="accountinfo">Account</a>
       </div>
 
       <!-- Right: Contact + Back to Top -->

@@ -35,7 +35,7 @@ app.post("/api/forgot-password", (req, res) => {
 
 // Fallback to serve the forgotpassword page
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "forgotpassword.html"));
+  res.sendFile(path.join(__dirname, "public", "forgotpassword.php"));
 });
 
 // Start the server

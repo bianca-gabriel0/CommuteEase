@@ -12,13 +12,13 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href = "Home.html" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href = "Home" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-  <a href="Home.html">HOME</a>
-  <a href="schedule-main.html">SCHEDULE</a>
-  <a href="Home.html">ABOUT</a>
-  <a href="accountinfo.html" class="active">ACCOUNT</a>
+  <a href="Home">HOME</a>
+  <a href="schedule-main">SCHEDULE</a>
+  <a href="Home">ABOUT</a>
+  <a href="accountinfo" class="active">ACCOUNT</a>
   <div class="notification-icon">
     <i class="fa-solid fa-bell"></i>
   </div>
@@ -105,10 +105,10 @@
 
         <div class="footer-links">
           <h3>Quick Links</h3>
-          <a href="Home.html">Home</a>
+          <a href="Home.php">Home</a>
           <a href="#about">About</a>
-          <a href="schedule-main.html">Schedule</a>
-          <a href="accountinfo.html">Account</a>
+          <a href="schedule-main.php">Schedule</a>
+          <a href="accountinfo.php">Account</a>
         </div>
 
         <div class="footer-contact">
@@ -141,10 +141,11 @@
 
     function logout() {
       alert("You have logged out!");
+      window.location.href = "login";
     }
 
     function goToEdit() {
-      window.location.href = "editprofile.html";
+      window.location.href = "editprofile.php";
     }
 
     

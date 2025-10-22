@@ -30,9 +30,9 @@ app.post('/api/account', (req, res) => {
   res.json({ message: "Account info received!" });
 });
 
-// Fallback to serve Home.html for unknown routes
+// Fallback to serve Home.php for unknown routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'Home.html'));
+  res.sendFile(path.join(__dirname, 'public', 'Home.php'));
 });
 
 // Start server

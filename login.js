@@ -19,7 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       message.textContent = data.message;
       // Store user info (optional)
       localStorage.setItem('user', JSON.stringify(data.user));
-      setTimeout(() => window.location.href = 'dashboard.html', 1000);
+      setTimeout(() => window.location.href = 'dashboard.php', 1000);
     } else {
       message.style.color = 'red';
       message.textContent = data.message || 'Login failed';

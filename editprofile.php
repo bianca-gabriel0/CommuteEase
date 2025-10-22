@@ -12,13 +12,13 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href="Home.html" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href="Home.php" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-      <a href="Home.html">HOME</a>
-      <a href="schedule-main.html">SCHEDULE</a>
-      <a href="Home.html">ABOUT</a>
-      <a href="accountinfo.html" class="active">ACCOUNT</a>
+      <a href="Home.php">HOME</a>
+      <a href="schedule-main.php">SCHEDULE</a>
+      <a href="Home.php">ABOUT</a>
+      <a href="accountinfo.php" class="active">ACCOUNT</a>
       <div class="notification-icon">
         <i class="fa-solid fa-bell"></i>
       </div>
@@ -127,10 +127,10 @@
 
         <div class="footer-links">
           <h3>Quick Links</h3>
-          <a href="Home.html">Home</a>
+          <a href="Home.php">Home</a>
           <a href="#about">About</a>
-          <a href="schedule-main.html">Schedule</a>
-          <a href="accountinfo.html">Account</a>
+          <a href="schedule-main.php">Schedule</a>
+          <a href="accountinfo.php">Account</a>
         </div>
 
         <div class="footer-contact">
@@ -182,13 +182,13 @@
       }
 
       alert(`Profile updated for: ${first} ${last}`);
-      window.location.href = "accountinfo.html";
+      window.location.href = "accountinfo.php";
     }
 
     // Cancel edit
     function cancelEdit() {
       if (confirm("Discard changes?")) {
-        window.location.href = "accountinfo.html";
+        window.location.href = "accountinfo.php";
       }
     }
   </script>

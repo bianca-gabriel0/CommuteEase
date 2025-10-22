@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (res.ok) {
         message.style.color = 'green';
         message.textContent = data.message || 'Account created successfully!';
-        setTimeout(() => window.location.href = 'login.html', 1500);
+        setTimeout(() => window.location.href = 'login.php', 1500);
       } else {
         message.style.color = 'red';
         message.textContent = data.message || 'Signup failed';
@@ -122,12 +122,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // Back to Home (no alert, just redirect)
   backHome.addEventListener("click", (e) => {
     e.preventDefault();
-    window.location.href = "home.html";
+    window.location.href = "Home.php";
   });
 
   // Go to Sign In (no alert, just redirect)
   signInLink.addEventListener("click", (e) => {
     e.preventDefault();
-    window.location.href = "login.html";
+    window.location.href = "login.php";
   });
 });

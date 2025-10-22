@@ -24,7 +24,7 @@
         <button type="submit" class="btn">Confirm</button>
       </form>
 
-      <a href="login.html" class="back-link" id="backToSignIn">&lt; Back to Sign in</a>
+      <a href="login" class="back-link" id="backToSignIn">&lt; Back to Sign in</a>
     </div>
   </div>
 
@@ -58,7 +58,7 @@
 
     backToSignIn.addEventListener("click", (e) => {
       e.preventDefault();
-      window.location.href = "login.html"; // change this to your actual sign-in page
+      window.location.href = "login.php"; // change this to your actual sign-in page
     });
   </script>
 </body>

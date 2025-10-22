@@ -33,7 +33,7 @@ app.delete("/api/commuters/:id", (req, res) => {
 
 // Serve the admin page
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "commuters.html"));
+  res.sendFile(path.join(__dirname, "public", "commuters.php"));
 });
 
 app.listen(PORT, () => {

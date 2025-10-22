@@ -144,8 +144,16 @@
     }
 
     function logout() {
-      alert("You have logged out!");
-    }
+  const confirmLogout = confirm("Are you sure you want to log out?");
+  if (confirmLogout) {
+    alert("You have logged out!");
+    setTimeout(() => {
+      window.location.href = "signup.html"; // redirect after 0.5s
+    }, 500);
+  } else {
+    alert("Logout canceled.");
+  }
+}s
 
     function goToEdit() {
       window.location.href = "editprofile.html";

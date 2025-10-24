@@ -18,6 +18,7 @@
     <a href="dashboard.php"><i class="fa-solid fa-house"></i> Dashboard</a>
     <a href="scheduleadmin.php"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
     <a href="commuters.php"><i class="fa-solid fa-users"></i> Commuters</a>
+    <a href="view_users_admin.php"><i class="fa-solid fa-user-gear"></i> View Users</a>
     <button class="logout-button" onclick="logout()">
       <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
     </button>
@@ -27,7 +28,7 @@
     <div class="card2">
       <h2>Schedules</h2>
 
-      <!--  Day Filter Buttons -->
+      <!-- ✅ Day Filter Buttons -->
       <div class="days-row">
         <button onclick="filterByDay('All')">All</button>
         <button onclick="filterByDay('Sunday')">Sunday</button>
@@ -40,7 +41,7 @@
         <button class="add-schedule" onclick="openModal()">Add Schedule</button>
       </div>
 
-      <!--  Schedule Table -->
+      <!-- ✅ Schedule Table -->
       <table id="scheduleTable" class="schedule-table">
         <thead>
           <tr>
@@ -58,7 +59,7 @@
     </div>
   </div>
 
-  <!--  Add Schedule Modal -->
+  <!-- ✅ Add Schedule Modal -->
   <div id="scheduleModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
@@ -111,14 +112,14 @@
   <script>
     let schedules = [];
 
-    //  Fetch from PHP (MySQL)
+    // 🟢 Fetch from PHP (MySQL)
     async function loadSchedules() {
       const res = await fetch("php/fetch_schedules.php");
       schedules = await res.json();
       displaySchedules(schedules);
     }
 
-    //  Display table rows
+    // 🟢 Display table rows
     function displaySchedules(list) {
       const tableBody = document.querySelector("#scheduleTable tbody");
       tableBody.innerHTML = "";
@@ -137,13 +138,13 @@
       });
     }
 
-    //  Filter by day
+    // 🟢 Filter by day
     function filterByDay(day) {
       if (day === "All") displaySchedules(schedules);
       else displaySchedules(schedules.filter(s => s.day === day));
     }
 
-    //  Modal controls
+    // 🟢 Modal controls
     function openModal() {
       document.getElementById("scheduleModal").style.display = "block";
     }
@@ -152,7 +153,7 @@
       document.getElementById("scheduleModal").style.display = "none";
     }
 
-    //  Add new schedule to DB
+    // 🟢 Add new schedule to DB
     async function addNewSchedule() {
       const data = {
         day: document.getElementById("day").value,

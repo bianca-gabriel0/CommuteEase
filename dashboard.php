@@ -33,11 +33,6 @@
           <div class="mini-graph"><canvas id="newUserChart"></canvas></div>
         </div>
 
-        <div class="card small">
-          <p class="card-title">CLIENT :</p>
-          <div class="stat"><span class="dot red"></span><span id="clients">0</span></div>
-          <div class="mini-graph"><canvas id="clientChart"></canvas></div>
-        </div>
 
         <div class="chart-card card">
           <p class="card-title">Overview</p>
@@ -60,8 +55,6 @@
         <div class="card small">
           <p class="card-title">VEHICLE SUMMARY</p>
           <div class="stat"><span class="dot blue"></span>Total Vehicle: <span id="totalVehicles">0</span></div>
-          <div class="stat"><span class="dot green"></span>Active Vehicle: <span id="activeVehicles">0</span></div>
-          <div class="stat"><span class="dot yellow"></span>On-going Vehicle: <span id="ongoingVehicles">0</span></div>
           <div class="mini-graph"><canvas id="vehicleChart"></canvas></div>
         </div>
       </div>

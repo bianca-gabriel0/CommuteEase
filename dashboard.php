@@ -40,7 +40,7 @@
         </div>
       </div>
 
-      <!-- Bottom row: table + vehicle summary card -->
+      <!-- table + vehicle summary card -->
       <div class="bottom-row">
         <div class="card user-table-card">
           <p class="card-title">Registered Users</p>

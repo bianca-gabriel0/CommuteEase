@@ -1,0 +1,44 @@
+-- Table for registered users
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    registration_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    is_active BOOLEAN DEFAULT TRUE  -- To distinguish "clients" if needed (e.g., active users)
+);
+
+-- Insert sample users (matching your JS data)
+INSERT INTO users (username, email) VALUES
+('John Doe', 'john@example.com'),
+('Jane Smith', 'jane@example.com');
+
+-- Table for vehicles
+CREATE TABLE vehicles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT,  -- Foreign key to users (if vehicles are owned by users)
+    type VARCHAR(50),  -- e.g., 'Car', 'Bus', 'Bike'
+    registration_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- Insert sample vehicles (for total count; adjust as needed)
+INSERT INTO vehicles (type) VALUES
+('Car'), ('Bus'), ('Bike'), ('Car');  -- Total: 4, matching your JS overview
+
+-- Table for daily statistics (for mini graphs: new users, new vehicles per day)
+CREATE TABLE daily_stats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date DATE NOT NULL UNIQUE,
+    new_users INT DEFAULT 0,
+    new_vehicles INT DEFAULT 0
+);
+
+-- Insert sample daily stats (matching your JS chart data for new users and vehicles)
+INSERT INTO daily_stats (date, new_users, new_vehicles) VALUES
+('2023-10-01', 2, 1),  -- Mon
+('2023-10-02', 3, 2),  -- Tue
+('2023-10-03', 5, 2),  -- Wed
+('2023-10-04', 4, 3),  -- Thu
+('2023-10-05', 6, 2),  -- Fri
+('2023-10-06', 7, 4),  -- Sat
+('2023-10-07', 8, 3);  -- Sun

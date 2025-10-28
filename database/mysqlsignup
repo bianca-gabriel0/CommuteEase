@@ -1,0 +1,43 @@
+-- Updated table for registered users (now includes first/last name and password)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,  -- Store hashed password (e.g., bcrypt)
+    registration_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    is_active BOOLEAN DEFAULT TRUE  -- For dashboard "clients" if needed
+);
+
+-- Insert sample users (matching your previous JS data; passwords are placeholders – hash them in PHP)
+INSERT INTO users (first_name, last_name, email, password) VALUES
+('John', 'Doe', 'john@example.com', '$2y$10$exampleHashedPassword1'),  -- Replace with actual hash
+('Jane', 'Smith', 'jane@example.com', '$2y$10$exampleHashedPassword2');  -- Replace with actual hash
+
+-- (Keep the rest from the previous schema unchanged)
+CREATE TABLE vehicles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT,
+    type VARCHAR(50),
+    registration_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+INSERT INTO vehicles (type) VALUES
+('Car'), ('Bus'), ('Bike'), ('Car');
+
+CREATE TABLE daily_stats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date DATE NOT NULL UNIQUE,
+    new_users INT DEFAULT 0,
+    new_vehicles INT DEFAULT 0
+);
+
+INSERT INTO daily_stats (date, new_users, new_vehicles) VALUES
+('2023-10-01', 2, 1),
+('2023-10-02', 3, 2),
+('2023-10-03', 5, 2),
+('2023-10-04', 4, 3),
+('2023-10-05', 6, 2),
+('2023-10-06', 7, 4),
+('2023-10-07', 8, 3);

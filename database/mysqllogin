@@ -1,0 +1,14 @@
+-- Create the database
+CREATE DATABASE IF NOT EXISTS login_system;
+USE login_system;
+
+-- Create the users table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Optional: Create an index on email for faster lookups during login
+CREATE INDEX idx_email ON users(email);

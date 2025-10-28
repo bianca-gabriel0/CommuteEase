@@ -17,7 +17,6 @@
     <img src="assets/CE-logo.png" alt="" class="signup-image">
     <a href="dashboard.php"><i class="fa-solid fa-house"></i> Dashboard</a>
     <a href="scheduleadmin.php"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
-    <a href="commuters.php"><i class="fa-solid fa-users"></i> Commuters</a>
     <a href="view_users_admin.php"><i class="fa-solid fa-user-gear"></i> View Users</a>
     <button class="logout-button" onclick="logout()">
       <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out

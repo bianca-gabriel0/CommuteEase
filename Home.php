@@ -1,3 +1,19 @@
+<?php
+// 
+// --- FIX #1: THE "AUTH GUARD" ---
+// We MUST start the session at the very top to check for the login "wristband"
+session_start();
+
+// Check if the user_id "wristband" is NOT set
+if (!isset($_SESSION['user_id'])) {
+    // If they are not logged in, kick them back to the login page
+    header("Location: login.php");
+    exit(); // Stop the rest of the page from loading
+}
+
+// If the script gets past this point, the user IS logged in.
+// 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,34 +28,35 @@
 
 <body>
 
-  <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href = "Home" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href = "Home.php" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-  <a href="Home" class="active">HOME</a>
-  <a href="schedule-main">SCHEDULE</a>
-  <a href="Home">ABOUT</a>
-  <a href="accountinfo">ACCOUNT</a>
-  <div class="notification-icon">
-    <i class="fa-solid fa-bell"></i>
-  </div>
-  <div class="notification-dropdown" id="notificationDropdown">
-  <p>No new notifications</p>
-</div>
-
-</nav>
+      <a href="Home.php" class="active">HOME</a>
+      <a href="schedule-main.php">SCHEDULE</a>
+      <a href="#about">ABOUT</a>
+      <a href="accountinfo.php">ACCOUNT</a>
+      
+      <div class="welcome-message">
+        Hi, <?php echo htmlspecialchars($_SESSION['first_name']); ?>!
+      </div>
+      
+      <div class="notification-icon">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <div class="notification-dropdown" id="notificationDropdown">
+        <p>No new notifications</p>
+      </div>
+    </nav>
   </header>
 
-  <!-- Hero Section -->
   <section class="hero">
     <h2>Get the schedules you need,<br>when you need them!</h2>
     <a href="schedule-main.php" class="btn" id="goNowBtn">Go now!</a>
   </section>
 
-  <!-- Available terminal Section -->
-<section class="terminals">
+  <section class="terminals">
 
   <div class="terminal-cards">
     <div class="terminal-card">
@@ -65,8 +82,7 @@
   </div>
 </section>
 
-  <!-- About Section -->
-<section id="about" class="about">
+  <section id="about" class="about">
   <div class="about-text">
     <h3><span class="underline">ABOUT</span></h3>
     <p>
@@ -82,7 +98,6 @@
     </p>
   </div>
 
-  <!-- About IMAGES -->
   <div class="about-image">
     <div class="image-card">
       <img src="assets/bus-imagevl.png" alt="Victory" class="active">
@@ -92,7 +107,6 @@
   </div>
 </section>
 
-<!-- Footer -->
 <footer>
   <div class="footer-container">
     <div class="footer-top">
@@ -102,16 +116,14 @@
         <p class="footer-tagline">Making your daily commute easier.</p>
       </div>
 
-      <!-- Center: Quick Links -->
       <div class="footer-links">
         <h3>Quick Links</h3>
-        <a href="Home">Home</a>
+        <a href="Home.php">Home</a>
         <a href="#about">About</a>
-        <a href="schedule-main">Schedule</a>
-        <a href="accountinfo">Account</a>
+        <a href="schedule-main.php">Schedule</a>
+        <a href="accountinfo.php">Account</a>
       </div>
 
-      <!-- Right: Contact + Back to Top -->
       <div class="footer-contact">
         <h3>Contact Us</h3>
         <p>📧 Email:</p>
@@ -134,7 +146,6 @@
 </script>
 
 
-  <!-- JavaScript -->
   <script>
       const images = document.querySelectorAll('.image-card img');
   let current = 0;

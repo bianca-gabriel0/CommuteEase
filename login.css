@@ -157,3 +157,31 @@ button:hover:enabled {
   color: #1c9eff;
   text-decoration: none;
 }
+
+/* --- CSS for Login Error/Success Notifications --- */
+
+.error-notification {
+  /* Background is light red, text is dark red */
+  background-color: #f8d7da; 
+  color: #721c24; 
+  border: 1px solid #f5c6cb;
+  padding: 12px 15px;
+  border-radius: 8px; /* Match your input/button radius */
+  margin-bottom: 15px; /* Spacing above the form */
+  margin-top: 10px; /* Spacing below the welcome header */
+  font-size: 14px;
+  text-align: center;
+}
+
+.success-notification {
+  /* Background is light green, text is dark green */
+  background-color: #d4edda; 
+  color: #155724; 
+  border: 1px solid #c3e6cb;
+  padding: 12px 15px;
+  border-radius: 8px; /* Match your input/button radius */
+  margin-bottom: 15px;
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+}

@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login</title>
   <link rel="stylesheet" href="login.css"/>
+  
+
 </head>
 <body>
   <div class="login-container">
     <div class="login-box">
+      <?php session_start(); ?> 
       <a href="Home.php" class="back-link">&lt; Return to Home</a>
 
       <div class="login-content">
@@ -18,15 +21,32 @@
 
         <div class="login-form">
           <h2>Welcome!</h2>
-          <form id="loginForm" novalidate>
+
+          <?php
+            // Check if an 'error' was sent from the login script
+            if (isset($_GET['error']) && $_GET['error'] == 'invalid_credentials') {
+              // Display the error notification
+              echo '<div class="error-notification">
+                      ⚠️ Incorrect email or password. Please try again.
+                    </div>';
+            }
+            
+            // Check for a success message (like after logging out)
+            if (isset($_GET['message']) && $_GET['message'] == 'logged_out') {
+              echo '<div class="success-notification">
+                      ✅ You have been logged out successfully.
+                    </div>';
+            }
+          ?>
+          <form id="loginForm" novalidate action="process_login.php" method="POST">
             
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email" required />
+            <input type="email" id="email" name="email" placeholder="Enter your email" required />
             <small class="error-message" id="emailError"></small>
             
             <label for="password">Password</label>
             <div class="password-container">
-              <input type="password" id="password" placeholder="Enter your password" required minlength="6" />
+              <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6" />
               <svg id="eyeIcon" class="toggle-password" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7zm0 11a4 4 0 110-8 4 4 0 010 8z"/>
                 <circle cx="12" cy="12" r="2.5"/>
@@ -51,6 +71,8 @@
   </div>
 
   <script>
+    // Note: The fake submit event listener remains commented out here.
+    // The rest of your JavaScript validation code is untouched.
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const emailError = document.getElementById("emailError");
@@ -61,7 +83,6 @@
     const signupLink = document.getElementById("signupLink");
     const forgotLink = document.getElementById("forgotLink");
 
-    // Email validation
     function validateEmail() {
       const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
       if (email.value.trim() === "") {
@@ -85,7 +106,6 @@
       }
     }
 
-    // Password validation
     function validatePassword() {
       if (password.value.trim() === "") {
         passwordError.textContent = "Password is required.";
@@ -108,53 +128,39 @@
       }
     }
 
-    // Enable/disable sign-in button
     function toggleSubmit() {
       const emailValid = validateEmail();
       const passwordValid = validatePassword();
       submitBtn.disabled = !(emailValid && passwordValid);
     }
 
-    // Eye icon toggle
     eyeIcon.addEventListener("click", () => {
       const isHidden = password.type === "password";
       password.type = isHidden ? "text" : "password";
       eyeIcon.style.opacity = isHidden ? "0.6" : "1";
     });
 
-    // Live validation feedback
     email.addEventListener("input", toggleSubmit);
     password.addEventListener("input", toggleSubmit);
 
-    // Forgot password interaction
     forgotLink.addEventListener("click", (e) => {
       e.preventDefault();
       alert("Redirecting to Forgot Password page...");
       window.location.href = "forgotpassword.php";
     });
 
-    // Sign up interaction
     signupLink.addEventListener("click", (e) => {
       e.preventDefault();
       alert("Redirecting to Sign Up page...");
       window.location.href = "signup.php";
     });
 
-    // Form submission with loading animation
+    /* The original fake submit handler remains commented out to ensure PHP backend works
     document.getElementById("loginForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (validateEmail() && validatePassword()) {
-        loader.style.display = "block";
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Signing in...";
-
-        setTimeout(() => {
-          loader.style.display = "none";
-          alert("✅ Login successful!");
-          window.location.href = "Home";
-        }, 1500);
-      }
+      // ... (code removed for PHP submission) ...
     });
+    */
+    
   </script>
 </body>
 </html>

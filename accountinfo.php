@@ -1,3 +1,23 @@
+<?php
+// Start the session
+session_start();
+
+// 1. STRICT AUTH GUARD: Do not allow public access to this page.
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit(); // Stop the page from loading
+}
+
+// Prepare dynamic data using session variables
+// We assume the login/signup scripts are correctly saving these three keys:
+$firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
+$lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
+$userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 
+
+// NEW: Combine first and last name for single display
+$fullName = trim($firstName . ' ' . $lastName);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,21 +32,26 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href = "Home" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href="Home.php" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-  <a href="Home">HOME</a>
-  <a href="schedule-main">SCHEDULE</a>
-  <a href="Home">ABOUT</a>
-  <a href="accountinfo" class="active">ACCOUNT</a>
-  <div class="notification-icon">
-  <i class="fa-solid fa-bell"></i>
-</div>
-<div class="notification-dropdown" id="notificationDropdown">
-  <p>No new notifications</p>
-</div>
+      <a href="Home.php">HOME</a>
+      <a href="schedule-main.php">SCHEDULE</a>
+      <a href="Home.php#about">ABOUT</a>
+      <a href="accountinfo.php" class="active">ACCOUNT</a>
+           
+      <div class="welcome-message">
+        Hi, <?php echo $firstName; ?>!
+      </div>
 
-</nav>
+      <div class="notification-icon">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <div class="notification-dropdown" id="notificationDropdown">
+        <p>No new notifications</p>
+      </div>
+
+    </nav>
   </header>
 
   <!-- Account Section -->
@@ -43,11 +68,12 @@
         </div>
 
         <div class="profile-details">
-          <h3>Juan Dela Cruz</h3>
+          <h3></h3>
+          <h3><?php echo $fullName; ?></h3> 
           <a href="#" class="edit-link" onclick="goToEdit()"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
           <hr>
-          <p><b>Email:</b> user@gmail.com</p>
-          <p><b>Phone:</b> (+63) 9123 456 789</p>
+          <!-- UPDATED: Display actual email -->
+          <p><b>Email:</b> <?php echo $userEmail; ?></p>
         </div>
 
         <button class="logout-btn" onclick="logout()">↳ Log out</button>
@@ -144,31 +170,29 @@
     }
 
     function logout() {
-      alert("You have logged out!");
-      window.location.href = 'login.php';
+      // Correctly sends the user to the PHP script that destroys the session.
+      window.location.href = 'logout.php';
     }
 
     function goToEdit() {
       window.location.href = "editprofile.php";
     }
-const bell = document.querySelector('.notification-icon');
-  const dropdown = document.getElementById('notificationDropdown');
-  const redDot = document.querySelector('.notification-icon::after'); // for visual note only
+    
+    // Notification JS is fine
+    const bell = document.querySelector('.notification-icon');
+    const dropdown = document.getElementById('notificationDropdown');
 
-  bell.addEventListener('click', (event) => {
-    event.stopPropagation();
-    dropdown.classList.toggle('show');
+    bell.addEventListener('click', (event) => {
+      event.stopPropagation();
+      dropdown.classList.toggle('show');
+      bell.classList.add('read');
+    });
 
-    // Remove red badge after clicking (simulate "read" state)
-    bell.classList.add('read');
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (event) => {
-    if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
-      dropdown.classList.remove('show');
-    }
-  });
+    document.addEventListener('click', (event) => {
+      if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
     
   </script>
 

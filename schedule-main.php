@@ -1,3 +1,20 @@
+<?php
+// 
+// --- AUTH GUARD ---
+// We MUST start the session at the very top to check for the login "wristband"
+session_start();
+
+// Check if the user_id "wristband" is NOT set
+if (!isset($_SESSION['user_id'])) {
+    // If they are not logged in, kick them back to the login page
+    header("Location: login.php");
+    exit(); // Stop the rest of the page from loading
+}
+
+// If the script gets past this point, the user IS logged in.
+// 
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,19 +31,22 @@
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
-      <img src="assets/CE-logo.png" a href="Home" alt="Commute Ease Logo">
+      <img src="assets/CE-logo.png" a href="Home.php" alt="Commute Ease Logo">
     </div>
     <nav class="nav-links">
-      <a href="Home">HOME</a>
-      <a href="schedule-main" class="active">SCHEDULE</a>
-      <a href="Home">ABOUT</a>
-      <a href="accountinfo">ACCOUNT</a>
+      <a href="Home.php">HOME</a>
+      <a href="schedule-main.php" class="active">SCHEDULE</a>
+      <a href="Home.php#about">ABOUT</a>
+      <a href="accountinfo.php">ACCOUNT</a>
+      <div class="welcome-message">
+        Hi, <?php echo htmlspecialchars($_SESSION['first_name']); ?>!
+      </div>
       <div class="notification-icon">
   <i class="fa-solid fa-bell"></i>
 </div>
 <div class="notification-dropdown" id="notificationDropdown">
   <p>No new notifications</p>
-</div>
+</div> 
 
     </nav>
   </header>
@@ -40,7 +60,7 @@
       <i class="fa fa-search"></i>
     </div>
 
-    <!-- 🟩 Added Day Filter -->
+    <!-- Day Filter -->
     <select id="dayFilter">
       <option value="">Day</option>
       <option value="Monday">Monday</option>
@@ -55,7 +75,7 @@
     <!-- UPDATED: Time Filter with 24-hour options -->
     <select id="timeFilter">
       <option value="">Time</option>
-      <option value="0">12 AM (Midnight)</option>
+      <option value="0">12 AM</option>
       <option value="1">1 AM</option>
       <option value="2">2 AM</option>
       <option value="3">3 AM</option>
@@ -67,7 +87,7 @@
       <option value="9">9 AM</option>
       <option value="10">10 AM</option>
       <option value="11">11 AM</option>
-      <option value="12">12 PM (Noon)</option>
+      <option value="12">12 PM</option>
       <option value="13">1 PM</option>
       <option value="14">2 PM</option>
       <option value="15">3 PM</option>
@@ -84,7 +104,6 @@
     <select id="typeFilter">
       <option value="">Types</option>
       <option value="Bus">Bus</option>
-      <!-- FIXED: Changed "Mini Bus" to "Mini-bus" to match database value -->
       <option value="Mini-bus">Mini-bus</option>
     </select>
 
@@ -97,7 +116,7 @@
       <table id="scheduleTable">
         <thead>
           <tr>
-            <th>Day</th> <!-- 🟩 Added new column -->
+            <th>Day</th>
             <th>Location</th>
             <th>Type/s</th>
             <th>Route / Destination</th>
@@ -153,31 +172,29 @@
 
   <!-- JavaScript -->
 <script>
-  // --- This back-to-top code is fine ---
+  // --- Back-to-top code ---
   const backToTop = document.getElementById("backToTop");
   backToTop.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // 🟩 --- START OF PAGINATION CODE --- 🟩
-
+  // --- START OF PAGINATION CODE ---
   const tableBody = document.querySelector("#scheduleTable tbody");
-  const prevPageBtn = document.getElementById("prevPageBtn"); // 🟩 New
-  const nextPageBtn = document.getElementById("nextPageBtn"); // 🟩 New
+  const prevPageBtn = document.getElementById("prevPageBtn");
+  const nextPageBtn = document.getElementById("nextPageBtn");
 
   let allSchedules = [];    // This holds ALL schedules from the DB
-  let currentView = [];     // 🟩 This holds what we're *currently* looking at (all or filtered)
-  let currentPage = 1;      // 🟩 The page we're on
-  const rowsPerPage = 10;   // 🟩 Max rows per page
+  let currentView = [];     // This holds what we're *currently* looking at (all or filtered)
+  let currentPage = 1;      // The page we're on
+  const rowsPerPage = 10;   // Max rows per page
 
-  // 4. renderTable function
+  // Renders the table rows for the given data (a "slice")
   function renderTable(data) {
     tableBody.innerHTML = ""; // Clear the table first
 
     data.forEach(schedule => {
       const row = document.createElement("tr");
-      // FIXED: Changed s.route, s.departure, and s.arrival
-      // to the new fields from fetch_schedules.php
+      // Uses the _formatted fields from fetch_schedules.php
       row.innerHTML = `
         <td>${schedule.day}</td>
         <td>${schedule.location}</td>
@@ -198,7 +215,6 @@
       saveIcon.classList.add("save-icon");
       saveBtn.appendChild(saveIcon);
       saveBtn.addEventListener("click", () => {
-        // FIXED: Changed schedule.route to schedule.route_formatted
         alert(`Saved schedule: ${schedule.route_formatted}`);
       });
       saveCell.appendChild(saveBtn);
@@ -209,7 +225,7 @@
     });
   }
 
-  // 🟩 5. NEW "Master" Display Function
+  // Master" Display Function: Calculates the slice and updates buttons
   function updateDisplay() {
     // Calculate the "slice" of data we need for the current page
     const startIndex = (currentPage - 1) * rowsPerPage;
@@ -224,17 +240,14 @@
     nextPageBtn.disabled = (endIndex >= currentView.length);
   }
 
-  // 6. Fetching data (Modified)
+  // Fetches data when the page loads
   document.addEventListener("DOMContentLoaded", () => {
-    // We are fetching from the same PHP file as the admin panel
-    // This file provides 'departure_time' (raw HH:mm:ss)
-    // and 'departure_formatted' (friendly "g:iA")
     fetch('php/fetch_schedules.php')
       .then(response => response.json())
       .then(data => {
-        allSchedules = data;    // Fill our "master list"
-        currentView = data;     // Set the "current view" to be the master list
-        updateDisplay();        // 🟩 Call our new function
+        allSchedules = data;    
+        currentView = data;     
+        updateDisplay();        
       })
       .catch(error => {
         console.error('Error fetching schedules:', error);
@@ -242,88 +255,79 @@
       });
   });
 
-  // 7. Your search filter (Modified)
+  // Search filter event listener
   document.getElementById("searchBtn").addEventListener("click", () => {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
     const typeValue = document.getElementById("typeFilter").value;
     const dayValue = document.getElementById("dayFilter").value;
-    // UPDATED: Get the time value
-    const timeValue = document.getElementById("timeFilter").value;
+    const timeValue = document.getElementById("timeFilter").value; // This is the selected hour (0-23)
 
     const filtered = allSchedules.filter(s => {
       
-      // UPDATED: Time filter logic
-      // We check the raw 'departure_time' (e.g., "08:45:00")
-      // and extract the hour part (e.g., "08")
-      let scheduleHour = -1; // Default to a non-matching value
+      // Time filter logic (The fix is to be absolutely sure the comparison is between numbers)
+      let scheduleHour = -1; 
       if (s.departure_time) {
-        // Get "08" from "08:45:00" and turn it into the number 8
+        // Extract the hour (e.g., gets "08" from "08:45:00", then turns it into the number 8)
         scheduleHour = parseInt(s.departure_time.split(':')[0], 10);
       }
       
+      // Parse the filter value to a number, or use null/empty string if not set
+      const timeFilterHour = timeValue === "" ? null : parseInt(timeValue, 10);
+
       // Check all filters
       const matchesSearch = s.route_formatted.toLowerCase().includes(searchValue) || s.location.toLowerCase().includes(searchValue);
       const matchesType = (typeValue === "" || s.type === typeValue);
       const matchesDay = (dayValue === "" || s.day === dayValue);
-      // Compare the schedule's hour (8) to the filter's hour (e.g., parseInt("8", 10))
-      const matchesTime = (timeValue === "" || scheduleHour === parseInt(timeValue, 10));
+      // The key is here: Matches if filter is empty, OR schedule hour exactly equals the filtered hour.
+      const matchesTime = (timeFilterHour === null || scheduleHour === timeFilterHour);
 
       return matchesSearch && matchesType && matchesDay && matchesTime;
     });
 
-    currentView = filtered;   // 🟩 Set the "current view" to the filtered list
-    currentPage = 1;        // 🟩 Reset to page 1
-    updateDisplay();        // 🟩 Call our new function
+    currentView = filtered;   
+    currentPage = 1;        
+    updateDisplay();        
   });
 
-  // 8. Your 'auto-update on day filter' code (this was correct)
+  // Auto-update on filter changes
   document.getElementById("dayFilter").addEventListener("change", () => {
     document.getElementById("searchBtn").click();
   });
   
-  // 8.5. Auto-update on type filter (NEW)
   document.getElementById("typeFilter").addEventListener("change", () => {
     document.getElementById("searchBtn").click();
   });
 
-  // 8.6. UPDATED: Auto-update on time filter (NEW)
   document.getElementById("timeFilter").addEventListener("change", () => {
     document.getElementById("searchBtn").click();
   });
 
-  // 9. 🟩 NEW Click Listeners for Pagination
+  // Click Listeners for Pagination
   prevPageBtn.addEventListener("click", () => {
     if (currentPage > 1) {
       currentPage--;
-      updateDisplay(); // Re-render the new page
+      updateDisplay(); 
     }
   });
 
   nextPageBtn.addEventListener("click", () => {
-    // Calculate if there's a next page
     const maxPage = Math.ceil(currentView.length / rowsPerPage);
     if (currentPage < maxPage) {
       currentPage++;
-      updateDisplay(); // Re-render the new page
+      updateDisplay(); 
     }
   });
 
-  // 🟩 --- END OF PAGINATION CODE --- 🟩
-
-
 // --- Notification Bell Code ---
   const bell = document.querySelector('.notification-icon');
-  const dropdown = document.getElementById('notificationDropdown'); // This was the missing line!
+  const dropdown = document.getElementById('notificationDropdown'); 
   
   bell.addEventListener('click', (event) => {
-    // Stop the click from closing the dropdown immediately
     event.stopPropagation(); 
-    // This adds/removes the 'show' class to your dropdown
     dropdown.classList.toggle('show');
-    bell.classList.add('read'); // This is for your red dot
+    bell.classList.add('read'); 
   });
 
-  // This closes the dropdown if you click anywhere else on the page
   document.addEventListener('click', (event) => {
     if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
       dropdown.classList.remove('show');
@@ -333,4 +337,3 @@
 </script> 
 </body>
 </html>
-

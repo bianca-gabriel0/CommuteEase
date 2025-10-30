@@ -346,4 +346,26 @@ p {
 }
 .modal-content button:hover {
   background-color: #58a89c;
+  
+}
+.export-button {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none; 
+
+  background-color: #28a745; 
+  color: white;
+
+  margin-left: auto;
+}
+
+.export-button:hover {
+  background-color: #218838; 
 }

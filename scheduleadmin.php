@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Birthstone&family=Ephesis&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="scheduleadmin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
 </head>
 
 <body>
@@ -38,6 +39,7 @@
         <button onclick="filterByDay('Friday')">Friday</button>
         <button onclick="filterByDay('Saturday')">Saturday</button>
         <button class="add-schedule" onclick="openModal()">Add Schedule</button>
+        <a href="export.php" target="_blank" class="export-button"> Export to Excel </a>
       </div>
 
       <!-- ✅ Schedule Table -->

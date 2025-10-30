@@ -95,10 +95,10 @@
   </div>
 
   <!-- next + previous arrows -->
-  <div class="table-arrows">
-    <button class="arrow-btn">&lt;</button>
-    <button class="arrow-btn">&gt;</button>
-  </div>
+<div class="table-arrows">
+  <button id="prevPageBtn" class="arrow-btn">&lt;</button>
+  <button id="nextPageBtn" class="arrow-btn">&gt;</button>
+</div>
 
   <!-- Footer -->
   <footer>
@@ -134,101 +134,154 @@
   </footer>
 
   <!-- JavaScript -->
-  <script>
-    const backToTop = document.getElementById("backToTop");
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-
-    // 🟩 Updated schedule data with Day
-    const schedules = [
-      { day: "Monday", Location: "Victory Liner", type: "Bus", route: "Dagupan → Manaoag", departure: "5:30 AM", arrival: "6:30 AM", frequency: "Every 30 minutes" },
-      { day: "Tuesday", Location: "Assada Center", type: "Bus", route: "Dagupan → Lingayen", departure: "6:00 AM", arrival: "7:20 AM", frequency: "Every 15 minutes" },
-      { day: "Wednesday", Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → San Fabian", departure: "8:00 AM", arrival: "9:00 AM", frequency: "Every 20 minutes" },
-      { day: "Thursday", Location: "Solid North", type: "Bus", route: "Dagupan → Urdaneta", departure: "10:00 AM", arrival: "12:00 PM", frequency: "Every 30 minutes" },
-      { day: "Friday", Location: "SM Dagupan", type: "Mini Bus", route: "Dagupan → Malasiqui", departure: "9:00 AM", arrival: "10:00 AM", frequency: "Every 15 minutes" },
-      { day: "Saturday", Location: "Assada Center", type: "Bus", route: "Dagupan → Binmaley", departure: "7:00 AM", arrival: "8:00 AM", frequency: "Every 25 minutes" },
-      { day: "Sunday", Location: "Victory Liner", type: "Bus", route: "Dagupan → Calasiao", departure: "6:30 AM", arrival: "7:15 AM", frequency: "Every 40 minutes" }
-    ];
-
-    const tableBody = document.querySelector("#scheduleTable tbody");
-
-    function renderTable(data) {
-      tableBody.innerHTML = "";
-
-      data.forEach(schedule => {
-        const row = document.createElement("tr");
-
-        Object.values(schedule).forEach(value => {
-          const cell = document.createElement("td");
-          cell.textContent = value;
-          row.appendChild(cell);
-        });
-
-        // save button
-        const saveCell = document.createElement("td");
-        const saveBtn = document.createElement("button");
-        saveBtn.classList.add("save-btn");
-
-        const saveIcon = document.createElement("img");
-        saveIcon.src = "assets/bookmark-icon.png";
-        saveIcon.alt = "Save";
-        saveIcon.classList.add("save-icon");
-
-        saveBtn.appendChild(saveIcon);
-        saveBtn.addEventListener("click", () => {
-          alert(`Saved schedule: ${schedule.route}`);
-        });
-
-        saveCell.appendChild(saveBtn);
-        row.appendChild(saveCell);
-        tableBody.appendChild(row);
-      });
-    }
-
-
-    renderTable(schedules);
-
-    // 🟩 Search + Day + Type Filters
-    document.getElementById("searchBtn").addEventListener("click", () => {
-      const searchValue = document.getElementById("searchInput").value.toLowerCase();
-      const typeValue = document.getElementById("typeFilter").value;
-      const dayValue = document.getElementById("dayFilter").value;
-
-      const filtered = schedules.filter(s =>
-        (s.route.toLowerCase().includes(searchValue) || s.Location.toLowerCase().includes(searchValue)) &&
-        (typeValue === "" || s.type === typeValue) &&
-        (dayValue === "" || s.day === dayValue)
-      );
-
-      renderTable(filtered);
-    });
-
-    // 🟩 Auto-update on day filter change
-    document.getElementById("dayFilter").addEventListener("change", () => {
-      document.getElementById("searchBtn").click();
-    });
-
-  
-  const bell = document.querySelector('.notification-icon');
-  const dropdown = document.getElementById('notificationDropdown');
-  const redDot = document.querySelector('.notification-icon::after'); // for visual note only
-
-  bell.addEventListener('click', (event) => {
-    event.stopPropagation();
-    dropdown.classList.toggle('show');
-
-    // Remove red badge after clicking (simulate "read" state)
-    bell.classList.add('read');
+<script>
+  // --- This back-to-top code is fine ---
+  const backToTop = document.getElementById("backToTop");
+  backToTop.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // Close dropdown when clicking outside
+  // 🟩 --- START OF PAGINATION CODE --- 🟩
+
+  const tableBody = document.querySelector("#scheduleTable tbody");
+  const prevPageBtn = document.getElementById("prevPageBtn"); // 🟩 New
+  const nextPageBtn = document.getElementById("nextPageBtn"); // 🟩 New
+
+  let allSchedules = [];    // This holds ALL schedules from the DB
+  let currentView = [];     // 🟩 This holds what we're *currently* looking at (all or filtered)
+  let currentPage = 1;      // 🟩 The page we're on
+  const rowsPerPage = 10;   // 🟩 Max rows per page
+
+  // 4. renderTable function (This is your old function, it's perfect)
+  //    It just renders whatever 10-item "slice" we give it.
+  function renderTable(data) {
+    tableBody.innerHTML = ""; // Clear the table first
+
+    data.forEach(schedule => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${schedule.day}</td>
+        <td>${schedule.location}</td>
+        <td>${schedule.type}</td>
+        <td>${schedule.route}</td>
+        <td>${schedule.departure}</td>
+        <td>${schedule.arrival}</td>
+        <td>${schedule.frequency}</td>
+      `;
+
+      // --- save button code ---
+      const saveCell = document.createElement("td");
+      const saveBtn = document.createElement("button");
+      saveBtn.classList.add("save-btn");
+      const saveIcon = document.createElement("img");
+      saveIcon.src = "assets/bookmark-icon.png";
+      saveIcon.alt = "Save";
+      saveIcon.classList.add("save-icon");
+      saveBtn.appendChild(saveIcon);
+      saveBtn.addEventListener("click", () => {
+        alert(`Saved schedule: ${schedule.route}`);
+      });
+      saveCell.appendChild(saveBtn);
+      row.appendChild(saveCell);
+      // --- end save button code ---
+      
+      tableBody.appendChild(row);
+    });
+  }
+
+  // 🟩 5. NEW "Master" Display Function
+  //    This is the new boss. It does all the work.
+  function updateDisplay() {
+    // Calculate the "slice" of data we need for the current page
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const pageItems = currentView.slice(startIndex, endIndex);
+
+    // Render just that slice
+    renderTable(pageItems);
+
+    // Update the next/prev button states
+    // 'true' means disabled
+    prevPageBtn.disabled = (currentPage === 1);
+    nextPageBtn.disabled = (endIndex >= currentView.length);
+  }
+
+  // 6. Fetching data (Modified)
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('php/fetch_schedules.php')
+      .then(response => response.json())
+      .then(data => {
+        allSchedules = data;    // Fill our "master list"
+        currentView = data;     // Set the "current view" to be the master list
+        updateDisplay();        // 🟩 Call our new function (instead of renderTable)
+      })
+      .catch(error => {
+        console.error('Error fetching schedules:', error);
+        tableBody.innerHTML = "<tr><td colspan='8'>Error loading schedules.</td></tr>";
+      });
+  });
+
+  // 7. Your search filter (Modified)
+  document.getElementById("searchBtn").addEventListener("click", () => {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const typeValue = document.getElementById("typeFilter").value;
+    const dayValue = document.getElementById("dayFilter").value;
+
+    const filtered = allSchedules.filter(s =>
+      (s.route.toLowerCase().includes(searchValue) || s.location.toLowerCase().includes(searchValue)) &&
+      (typeValue === "" || s.type === typeValue) &&
+      (dayValue === "" || s.day === dayValue)
+    );
+
+    currentView = filtered;   // 🟩 Set the "current view" to the filtered list
+    currentPage = 1;        // 🟩 Reset to page 1
+    updateDisplay();          // 🟩 Call our new function (instead of renderTable)
+  });
+
+  // 8. Your 'auto-update on day filter' code (this was correct)
+  document.getElementById("dayFilter").addEventListener("change", () => {
+    document.getElementById("searchBtn").click();
+  });
+
+  // 9. 🟩 NEW Click Listeners for Pagination
+  prevPageBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      updateDisplay(); // Re-render the new page
+    }
+  });
+
+  nextPageBtn.addEventListener("click", () => {
+    // Calculate if there's a next page
+    const maxPage = Math.ceil(currentView.length / rowsPerPage);
+    if (currentPage < maxPage) {
+      currentPage++;
+      updateDisplay(); // Re-render the new page
+    }
+  });
+
+  // 🟩 --- END OF PAGINATION CODE --- 🟩
+
+
+// --- Notification Bell Code ---
+  const bell = document.querySelector('.notification-icon');
+  const dropdown = document.getElementById('notificationDropdown'); // 🟩 This was the missing line!
+  
+  bell.addEventListener('click', (event) => {
+    // Stop the click from closing the dropdown immediately
+    event.stopPropagation(); 
+    // This adds/removes the 'show' class to your dropdown
+    dropdown.classList.toggle('show');
+    bell.classList.add('read'); // This is for your red dot
+  });
+
+  // This closes the dropdown if you click anywhere else on the page
   document.addEventListener('click', (event) => {
     if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
       dropdown.classList.remove('show');
     }
   });
 
-  </script>
+</script> 
 </body>
 </html>

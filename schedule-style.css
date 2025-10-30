@@ -446,7 +446,7 @@ footer {
 .notification-dropdown {
   display: none;
   position: absolute;
-  top: 60px; /* Adjust based on navbar height */
+  top: 70px; /* Adjust based on navbar height */
   right: 40px;
   width: 260px;
   background-color: #fff;
@@ -477,4 +477,72 @@ footer {
 
 .notification-icon.read::after {
   display: none;
+}
+
+/* --- Notification Bell & Dropdown Styles --- */
+
+/* Your icon styles (merged) */
+.notification-icon {
+  position: relative; /* This is the parent */
+  cursor: pointer;
+}
+
+.notification-icon i {
+  font-size: 20px;
+  color: #333;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.notification-icon i:hover {
+  color: #58a193; /* Your hover color */
+  transform: scale(1.1);
+}
+
+/* Your red dot */
+.notification-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: block;
+}
+
+/* 🟩 NEW: This hides the red dot when you click the bell */
+/* (My JavaScript already adds the 'read' class for this) */
+.notification-icon.read::after {
+  display: none;
+}
+
+/* The dropdown box (hidden by default) */
+.notification-dropdown {
+  display: none;
+  position: absolute;
+  /* 🟩 Adjusted positioning to align with your icon */
+  top: 60px;  /* Drops it below the icon */
+  right: 40;   /* Aligns it to the right edge */
+  
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  min-width: 210px;
+  z-index: 1001;
+  padding: 10px;
+  border: 1px solid #eee;
+}
+
+/* This is the class our JavaScript toggles to show the box */
+.notification-dropdown.show {
+  display: block;
+}
+
+/* Text inside the dropdown */
+.notification-dropdown p {
+  margin: 0;
+  padding: 8px;
+  color: #555; /* Looks good with your #333 icon color */
+  font-size: 14px;
 }

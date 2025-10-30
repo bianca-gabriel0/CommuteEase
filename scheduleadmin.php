@@ -143,7 +143,7 @@
         <button onclick="filterByDay('Friday')">Friday</button>
         <button onclick="filterByDay('Saturday')">Saturday</button>
         <button class="add-schedule" onclick="openAddModal()">Add Schedule</button>
-        <a href="export.php" target="_blank" class="export-button"> Export to Excel </a>
+        <a href="export.php" target="_blank" class="export-button"> Export</a>
       </div>
 
       <!-- ✅ Schedule Table -->

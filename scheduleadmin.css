@@ -369,3 +369,66 @@ p {
 .export-button:hover {
   background-color: #218838; 
 }
+.table-arrows {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  margin-bottom: 40px;
+}
+
+.arrow-btn {
+  background-color: #6BBBAE;
+  border: none;
+  color: white;
+  font-size: 18px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.arrow-btn:hover {
+  background-color: #5ea398;
+  transform: scale(1.05);
+}
+ /* Basic styles needed for the new modal layout */
+.modal-actions {
+   display: flex;
+   justify-content: space-between;
+   margin-top: 20px;
+   gap: 10px;
+}
+#modalButton {
+            /* Primary Save/Add button */
+   flex-grow: 1;
+   padding: 10px 20px;
+   background-color: #6BBBAE; /* Primary brand color */
+   color: white;
+   border: none;
+   border-radius: 6px;
+   cursor: pointer;
+   font-size: 16px;
+   transition: background-color 0.2s;
+}
+
+#modalButton:hover {
+    background-color: #5ea398;
+} 
+        /* Style for the new Delete (Trash) button */
+.delete-button {
+            /* Secondary/Danger action button */
+    flex-grow: 1;
+    padding: 10px 20px;
+    background-color: #dc3545; /* Red for danger/delete */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+     background-color: #c82333;
+        }

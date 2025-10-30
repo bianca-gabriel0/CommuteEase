@@ -1,8 +1,13 @@
 <?php
+// NOTE: Assuming db.php initializes $conn using MySQLi or similar.
 include 'db.php';
 
-// UPDATED: Make sure to select schedule_id
-$result = $conn->query("SELECT * FROM schedule");
+// 🐛 FIX: Modified the SELECT query to include WHERE is_deleted = FALSE
+// This ensures that schedules marked as "trashed" are no longer displayed on the main dashboard.
+$sql = "SELECT * FROM schedule WHERE is_deleted = FALSE";
+
+// Execute the query
+$result = $conn->query($sql);
 $schedules = [];
 
 while ($row = $result->fetch_assoc()) {
@@ -17,6 +22,7 @@ while ($row = $result->fetch_assoc()) {
         "frequency" => $row["frequency"],
         
         // --- Formatted data (for table display) ---
+        // Note: Check that 'destination', 'departure_time', and 'estimated_arrival' are correct column names.
         "route_formatted" => "Dagupan → " . $row["destination"],
         "departure_formatted" => date("g:iA", strtotime($row["departure_time"])),
         "arrival_formatted" => date("g:iA", strtotime($row["estimated_arrival"])),

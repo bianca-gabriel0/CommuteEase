@@ -149,7 +149,7 @@ p {
     background-color: #6BBBAE; 
     border: none; /* Remove borders */
     color: white; /* White text */
-    padding: 10px 20px; /* Some padding */
+    padding: 7px 20px; /* Some padding */
     text-align: center; /* Centered text */
     text-decoration: none; /* Remove underline */
     display: inline-block; /* Make the button inline */
@@ -330,24 +330,7 @@ p {
   color: #000;
 }
 
-/* add button */
-.modal-content button {
-  background-color: #6BBBAE; 
-  color: #000000;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 15px;
-  font-weight: 500;
-  font-family: 'Albert Sans', sans-serif;
-  transition: 0.2s ease;
-}
-.modal-content button:hover {
-  background-color: #58a89c;
-  
-}
+
 .export-button {
   padding: 8px 12px;
   font-size: 14px;
@@ -419,11 +402,11 @@ p {
 .delete-button {
             /* Secondary/Danger action button */
     flex-grow: 1;
-    padding: 10px 20px;
+    padding: 10px 1px;
     background-color: #dc3545; /* Red for danger/delete */
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.2s;

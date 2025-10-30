@@ -4,17 +4,12 @@
 // We MUST start the session at the very top to check for the login "wristband"
 session_start();
 
-// Check if the user_id "wristband" is NOT set
-if (!isset($_SESSION['user_id'])) {
-    // If they are not logged in, kick them back to the login page
-    header("Location: login.php");
-    exit(); // Stop the rest of the page from loading
-}
+// FLEXIBLE ACCESS: We check the login status but DO NOT redirect if false.
+$is_logged_in = isset($_SESSION['user_id']); 
 
-// If the script gets past this point, the user IS logged in.
-// 
+// If the user is logged in, we grab their name for the greeting.
+$firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,16 +32,26 @@ if (!isset($_SESSION['user_id'])) {
       <a href="Home.php">HOME</a>
       <a href="schedule-main.php" class="active">SCHEDULE</a>
       <a href="Home.php#about">ABOUT</a>
-      <a href="accountinfo.php">ACCOUNT</a>
+      
+      <!-- DYNAMIC LINKS: Shows LOGIN/SIGN UP for guests, ACCOUNT for members -->
+      <?php if ($is_logged_in): ?>
+        <a href="accountinfo.php">ACCOUNT</a>
+      <?php else: ?>
+        <a href="login.php">LOGIN</a>
+        <a href="signup.php">SIGN UP</a>
+      <?php endif; ?>
+      
       <div class="welcome-message">
-        Hi, <?php echo htmlspecialchars($_SESSION['first_name']); ?>!
+        <?php if ($is_logged_in): ?>
+          Hi, <?php echo $firstName; ?>!
+        <?php endif; ?>
       </div>
       <div class="notification-icon">
-  <i class="fa-solid fa-bell"></i>
-</div>
-<div class="notification-dropdown" id="notificationDropdown">
-  <p>No new notifications</p>
-</div> 
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <div class="notification-dropdown" id="notificationDropdown">
+        <p>No new notifications</p>
+      </div> 
 
     </nav>
   </header>
@@ -149,7 +154,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="footer-links">
           <h3>Quick Links</h3>
           <a href="Home.php">Home</a>
-          <a href="#about">About</a>
+          <a href="Home.php#about">About</a>
           <a href="schedule-main.php">Schedule</a>
           <a href="accountinfo.php">Account</a>
         </div>
@@ -182,19 +187,18 @@ if (!isset($_SESSION['user_id'])) {
   const tableBody = document.querySelector("#scheduleTable tbody");
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
+  const searchInput = document.getElementById("searchInput"); // Get search input element
 
-  let allSchedules = [];    // This holds ALL schedules from the DB
-  let currentView = [];     // This holds what we're *currently* looking at (all or filtered)
-  let currentPage = 1;      // The page we're on
-  const rowsPerPage = 10;   // Max rows per page
+  let allSchedules = []; 
+  let currentView = []; 
+  let currentPage = 1; 
+  const rowsPerPage = 10; 
 
   // Renders the table rows for the given data (a "slice")
-  function renderTable(data) {
-    tableBody.innerHTML = ""; // Clear the table first
-
-    data.forEach(schedule => {
+  function renderTable(list) {
+    tableBody.innerHTML = "";
+    list.forEach(schedule => {
       const row = document.createElement("tr");
-      // Uses the _formatted fields from fetch_schedules.php
       row.innerHTML = `
         <td>${schedule.day}</td>
         <td>${schedule.location}</td>
@@ -205,7 +209,7 @@ if (!isset($_SESSION['user_id'])) {
         <td>${schedule.frequency}</td>
       `;
 
-      // --- save button code ---
+      // --- save button code (only functional if logged in, but visible to all) ---
       const saveCell = document.createElement("td");
       const saveBtn = document.createElement("button");
       saveBtn.classList.add("save-btn");
@@ -214,9 +218,11 @@ if (!isset($_SESSION['user_id'])) {
       saveIcon.alt = "Save";
       saveIcon.classList.add("save-icon");
       saveBtn.appendChild(saveIcon);
+      
       saveBtn.addEventListener("click", () => {
-        alert(`Saved schedule: ${schedule.route_formatted}`);
+        alert("You must be logged in to save a schedule!"); 
       });
+      
       saveCell.appendChild(saveBtn);
       row.appendChild(saveCell);
       // --- end save button code ---
@@ -227,15 +233,12 @@ if (!isset($_SESSION['user_id'])) {
 
   // Master" Display Function: Calculates the slice and updates buttons
   function updateDisplay() {
-    // Calculate the "slice" of data we need for the current page
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     const pageItems = currentView.slice(startIndex, endIndex);
 
-    // Render just that slice
     renderTable(pageItems);
 
-    // Update the next/prev button states
     prevPageBtn.disabled = (currentPage === 1);
     nextPageBtn.disabled = (endIndex >= currentView.length);
   }
@@ -260,25 +263,20 @@ if (!isset($_SESSION['user_id'])) {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
     const typeValue = document.getElementById("typeFilter").value;
     const dayValue = document.getElementById("dayFilter").value;
-    const timeValue = document.getElementById("timeFilter").value; // This is the selected hour (0-23)
+    const timeValue = document.getElementById("timeFilter").value;
 
     const filtered = allSchedules.filter(s => {
       
-      // Time filter logic (The fix is to be absolutely sure the comparison is between numbers)
       let scheduleHour = -1; 
       if (s.departure_time) {
-        // Extract the hour (e.g., gets "08" from "08:45:00", then turns it into the number 8)
         scheduleHour = parseInt(s.departure_time.split(':')[0], 10);
       }
       
-      // Parse the filter value to a number, or use null/empty string if not set
       const timeFilterHour = timeValue === "" ? null : parseInt(timeValue, 10);
 
-      // Check all filters
       const matchesSearch = s.route_formatted.toLowerCase().includes(searchValue) || s.location.toLowerCase().includes(searchValue);
       const matchesType = (typeValue === "" || s.type === typeValue);
       const matchesDay = (dayValue === "" || s.day === dayValue);
-      // The key is here: Matches if filter is empty, OR schedule hour exactly equals the filtered hour.
       const matchesTime = (timeFilterHour === null || scheduleHour === timeFilterHour);
 
       return matchesSearch && matchesType && matchesDay && matchesTime;
@@ -289,17 +287,30 @@ if (!isset($_SESSION['user_id'])) {
     updateDisplay();        
   });
 
-  // Auto-update on filter changes
-  document.getElementById("dayFilter").addEventListener("change", () => {
-    document.getElementById("searchBtn").click();
+  // UPDATED: Combined all filter change listeners into one
+  const filters = [
+    document.getElementById("dayFilter"),
+    document.getElementById("typeFilter"),
+    document.getElementById("timeFilter")
+  ];
+  
+  // Attach event listener to all dropdown filters (change)
+  filters.forEach(filter => {
+    filter.addEventListener("change", () => {
+      document.getElementById("searchBtn").click();
+    });
   });
   
-  document.getElementById("typeFilter").addEventListener("change", () => {
-    document.getElementById("searchBtn").click();
-  });
-
-  document.getElementById("timeFilter").addEventListener("change", () => {
-    document.getElementById("searchBtn").click();
+  // Attach keyup listener for instant search filtering on input
+  searchInput.addEventListener("keyup", (event) => {
+    // UPDATED: Check for Enter key and prevent default browser action
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Stop the Enter key from causing a page refresh (robustness)
+        document.getElementById("searchBtn").click();
+    } else {
+        // Instant search on every other key release (the existing behavior)
+        document.getElementById("searchBtn").click();
+    }
   });
 
   // Click Listeners for Pagination
@@ -322,15 +333,15 @@ if (!isset($_SESSION['user_id'])) {
   const bell = document.querySelector('.notification-icon');
   const dropdown = document.getElementById('notificationDropdown'); 
   
-  bell.addEventListener('click', (event) => {
+  bell.addEventListener("click", (event) => {
     event.stopPropagation(); 
-    dropdown.classList.toggle('show');
-    bell.classList.add('read'); 
+    dropdown.classList.toggle("show");
+    bell.classList.add("read"); 
   });
 
-  document.addEventListener('click', (event) => {
+  document.addEventListener("click", (event) => {
     if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
-      dropdown.classList.remove('show');
+      dropdown.classList.remove("show");
     }
   });
 

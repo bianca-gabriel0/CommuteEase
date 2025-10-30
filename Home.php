@@ -1,18 +1,12 @@
 <?php
-// 
-// --- FIX #1: THE "AUTH GUARD" ---
-// We MUST start the session at the very top to check for the login "wristband"
+// Start the session to check for login status
 session_start();
 
-// Check if the user_id "wristband" is NOT set
-if (!isset($_SESSION['user_id'])) {
-    // If they are not logged in, kick them back to the login page
-    header("Location: login.php");
-    exit(); // Stop the rest of the page from loading
-}
+// FLEXIBLE ACCESS: We check the login status but DO NOT redirect if false.
+$is_logged_in = isset($_SESSION['user_id']); 
 
-// If the script gets past this point, the user IS logged in.
-// 
+// If the user is logged in, we grab their name for the greeting.
+$firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +22,7 @@ if (!isset($_SESSION['user_id'])) {
 
 <body>
 
+  <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
       <img src="assets/CE-logo.png" a href = "Home.php" alt="Commute Ease Logo">
@@ -36,10 +31,20 @@ if (!isset($_SESSION['user_id'])) {
       <a href="Home.php" class="active">HOME</a>
       <a href="schedule-main.php">SCHEDULE</a>
       <a href="#about">ABOUT</a>
-      <a href="accountinfo.php">ACCOUNT</a>
+      
+      <!-- DYNAMIC LINKS: Shows LOGIN/SIGN UP for guests, ACCOUNT for members -->
+      <?php if ($is_logged_in): ?>
+        <a href="accountinfo.php">ACCOUNT</a>
+      <?php else: ?>
+        <a href="login.php">LOGIN</a>
+        <a href="signup.php">SIGN UP</a>
+      <?php endif; ?>
       
       <div class="welcome-message">
-        Hi, <?php echo htmlspecialchars($_SESSION['first_name']); ?>!
+        <!-- FIX: Display the user's name if they are logged in -->
+        <?php if ($is_logged_in): ?>
+          Hi, <?php echo $firstName; ?>!
+        <?php endif; ?>
       </div>
       
       <div class="notification-icon">
@@ -51,11 +56,13 @@ if (!isset($_SESSION['user_id'])) {
     </nav>
   </header>
 
+  <!-- Hero Section -->
   <section class="hero">
     <h2>Get the schedules you need,<br>when you need them!</h2>
     <a href="schedule-main.php" class="btn" id="goNowBtn">Go now!</a>
   </section>
 
+  <!-- Available terminal Section -->
   <section class="terminals">
 
   <div class="terminal-cards">
@@ -82,6 +89,7 @@ if (!isset($_SESSION['user_id'])) {
   </div>
 </section>
 
+  <!-- About Section -->
   <section id="about" class="about">
   <div class="about-text">
     <h3><span class="underline">ABOUT</span></h3>
@@ -147,67 +155,37 @@ if (!isset($_SESSION['user_id'])) {
 
 
   <script>
-      const images = document.querySelectorAll('.image-card img');
-  let current = 0;
-
-  function showNextImage() {
-    images[current].classList.remove('active');
-    current = (current + 1) % images.length;
-    images[current].classList.add('active');
-  }
-
-  setInterval(showNextImage, 5000); // switch every 10 seconds
-  
-  const bell = document.querySelector('.notification-icon');
-  const dropdown = document.getElementById('notificationDropdown');
-  const redDot = document.querySelector('.notification-icon::after'); // for visual note only
-
-  bell.addEventListener('click', (event) => {
-    event.stopPropagation();
-    dropdown.classList.toggle('show');
-
-    // Remove red badge after clicking (simulate "read" state)
-    bell.classList.add('read');
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (event) => {
-    if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
-      dropdown.classList.remove('show');
-    }
-  });
-
-
-    // Navigation Active State
-    const navLinks = document.querySelectorAll(".nav-link");
-    navLinks.forEach(link => {
-      link.addEventListener("click", (e) => {
-        // Handle smooth scroll for #about
-        if (link.getAttribute("href").startsWith("#")) {
-          e.preventDefault();
-          const target = document.querySelector(link.getAttribute("href"));
-          if (target) {
-            window.scrollTo({
-              top: target.offsetTop - 60,
-              behavior: "smooth"
-            });
-          }
-        }
-
-        // Update active link
-        navLinks.forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
-      });
+    // --- Notification Bell Code ---
+    const bell = document.querySelector('.notification-icon');
+    const dropdown = document.getElementById('notificationDropdown'); 
+    
+    bell.addEventListener('click', (event) => {
+      event.stopPropagation(); 
+      dropdown.classList.toggle('show');
+      bell.classList.add('read'); 
     });
 
-    // Highlight current page based on URL
-    navLinks.forEach(link => {
-      if (link.href === window.location.href) {
-        link.classList.add("active");
+    document.addEventListener('click', (event) => {
+      if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('show');
       }
     });
+    // -----------------------------------------------------------------
 
-    // Hero Button Redirect
+
+    // --- Image Slider JS ---
+    const images = document.querySelectorAll('.image-card img');
+    let current = 0;
+
+    function showNextImage() {
+      images[current].classList.remove('active');
+      current = (current + 1) % images.length;
+      images[current].classList.add('active');
+    }
+
+    setInterval(showNextImage, 5000); // switch every 10 seconds
+    
+    // --- Hero Button Redirect JS ---
     const goNowBtn = document.getElementById("goNowBtn");
     if (goNowBtn) {
       goNowBtn.addEventListener("click", (e) => {
@@ -220,7 +198,7 @@ if (!isset($_SESSION['user_id'])) {
       });
     }
 
-    // Fade-in for About section
+    // --- Other JS (Fade-in, etc.) ---
     const aboutSection = document.querySelector(".about");
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -230,6 +208,7 @@ if (!isset($_SESSION['user_id'])) {
       });
     }, { threshold: 0.3 });
     if (aboutSection) observer.observe(aboutSection);
+    
   </script>
 </body>
 </html>

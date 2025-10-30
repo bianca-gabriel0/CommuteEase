@@ -64,7 +64,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  margin-top: 40px;
+  margin-top: 0px;
   filter: none;
   overflow: hidden;
 }

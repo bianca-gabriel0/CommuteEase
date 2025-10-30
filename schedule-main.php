@@ -52,22 +52,40 @@
       <option value="Sunday">Sunday</option>
     </select>
 
+    <!-- UPDATED: Time Filter with 24-hour options -->
     <select id="timeFilter">
       <option value="">Time</option>
-      <option value="5 AM">5 AM</option>
-      <option value="6 AM">6 AM</option>
-      <option value="7 AM">7 AM</option>
-      <option value="8 AM">8 AM</option>
-      <option value="9 AM">9 AM</option>
-      <option value="10 AM">10 AM</option>
-      <option value="11 AM">11 AM</option>
-      <option value="12 PM">12 PM</option>
+      <option value="0">12 AM (Midnight)</option>
+      <option value="1">1 AM</option>
+      <option value="2">2 AM</option>
+      <option value="3">3 AM</option>
+      <option value="4">4 AM</option>
+      <option value="5">5 AM</option>
+      <option value="6">6 AM</option>
+      <option value="7">7 AM</option>
+      <option value="8">8 AM</option>
+      <option value="9">9 AM</option>
+      <option value="10">10 AM</option>
+      <option value="11">11 AM</option>
+      <option value="12">12 PM (Noon)</option>
+      <option value="13">1 PM</option>
+      <option value="14">2 PM</option>
+      <option value="15">3 PM</option>
+      <option value="16">4 PM</option>
+      <option value="17">5 PM</option>
+      <option value="18">6 PM</option>
+      <option value="19">7 PM</option>
+      <option value="20">8 PM</option>
+      <option value="21">9 PM</option>
+      <option value="22">10 PM</option>
+      <option value="23">11 PM</option>
     </select>
 
     <select id="typeFilter">
       <option value="">Types</option>
       <option value="Bus">Bus</option>
-      <option value="Mini Bus">Mini Bus</option>
+      <!-- FIXED: Changed "Mini Bus" to "Mini-bus" to match database value -->
+      <option value="Mini-bus">Mini-bus</option>
     </select>
 
     <button id="searchBtn">Search</button>
@@ -152,20 +170,21 @@
   let currentPage = 1;      // 🟩 The page we're on
   const rowsPerPage = 10;   // 🟩 Max rows per page
 
-  // 4. renderTable function (This is your old function, it's perfect)
-  //    It just renders whatever 10-item "slice" we give it.
+  // 4. renderTable function
   function renderTable(data) {
     tableBody.innerHTML = ""; // Clear the table first
 
     data.forEach(schedule => {
       const row = document.createElement("tr");
+      // FIXED: Changed s.route, s.departure, and s.arrival
+      // to the new fields from fetch_schedules.php
       row.innerHTML = `
         <td>${schedule.day}</td>
         <td>${schedule.location}</td>
         <td>${schedule.type}</td>
-        <td>${schedule.route}</td>
-        <td>${schedule.departure}</td>
-        <td>${schedule.arrival}</td>
+        <td>${schedule.route_formatted}</td>
+        <td>${schedule.departure_formatted}</td>
+        <td>${schedule.arrival_formatted}</td>
         <td>${schedule.frequency}</td>
       `;
 
@@ -179,7 +198,8 @@
       saveIcon.classList.add("save-icon");
       saveBtn.appendChild(saveIcon);
       saveBtn.addEventListener("click", () => {
-        alert(`Saved schedule: ${schedule.route}`);
+        // FIXED: Changed schedule.route to schedule.route_formatted
+        alert(`Saved schedule: ${schedule.route_formatted}`);
       });
       saveCell.appendChild(saveBtn);
       row.appendChild(saveCell);
@@ -190,7 +210,6 @@
   }
 
   // 🟩 5. NEW "Master" Display Function
-  //    This is the new boss. It does all the work.
   function updateDisplay() {
     // Calculate the "slice" of data we need for the current page
     const startIndex = (currentPage - 1) * rowsPerPage;
@@ -201,19 +220,21 @@
     renderTable(pageItems);
 
     // Update the next/prev button states
-    // 'true' means disabled
     prevPageBtn.disabled = (currentPage === 1);
     nextPageBtn.disabled = (endIndex >= currentView.length);
   }
 
   // 6. Fetching data (Modified)
   document.addEventListener("DOMContentLoaded", () => {
+    // We are fetching from the same PHP file as the admin panel
+    // This file provides 'departure_time' (raw HH:mm:ss)
+    // and 'departure_formatted' (friendly "g:iA")
     fetch('php/fetch_schedules.php')
       .then(response => response.json())
       .then(data => {
         allSchedules = data;    // Fill our "master list"
         currentView = data;     // Set the "current view" to be the master list
-        updateDisplay();        // 🟩 Call our new function (instead of renderTable)
+        updateDisplay();        // 🟩 Call our new function
       })
       .catch(error => {
         console.error('Error fetching schedules:', error);
@@ -226,20 +247,47 @@
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
     const typeValue = document.getElementById("typeFilter").value;
     const dayValue = document.getElementById("dayFilter").value;
+    // UPDATED: Get the time value
+    const timeValue = document.getElementById("timeFilter").value;
 
-    const filtered = allSchedules.filter(s =>
-      (s.route.toLowerCase().includes(searchValue) || s.location.toLowerCase().includes(searchValue)) &&
-      (typeValue === "" || s.type === typeValue) &&
-      (dayValue === "" || s.day === dayValue)
-    );
+    const filtered = allSchedules.filter(s => {
+      
+      // UPDATED: Time filter logic
+      // We check the raw 'departure_time' (e.g., "08:45:00")
+      // and extract the hour part (e.g., "08")
+      let scheduleHour = -1; // Default to a non-matching value
+      if (s.departure_time) {
+        // Get "08" from "08:45:00" and turn it into the number 8
+        scheduleHour = parseInt(s.departure_time.split(':')[0], 10);
+      }
+      
+      // Check all filters
+      const matchesSearch = s.route_formatted.toLowerCase().includes(searchValue) || s.location.toLowerCase().includes(searchValue);
+      const matchesType = (typeValue === "" || s.type === typeValue);
+      const matchesDay = (dayValue === "" || s.day === dayValue);
+      // Compare the schedule's hour (8) to the filter's hour (e.g., parseInt("8", 10))
+      const matchesTime = (timeValue === "" || scheduleHour === parseInt(timeValue, 10));
+
+      return matchesSearch && matchesType && matchesDay && matchesTime;
+    });
 
     currentView = filtered;   // 🟩 Set the "current view" to the filtered list
     currentPage = 1;        // 🟩 Reset to page 1
-    updateDisplay();          // 🟩 Call our new function (instead of renderTable)
+    updateDisplay();        // 🟩 Call our new function
   });
 
   // 8. Your 'auto-update on day filter' code (this was correct)
   document.getElementById("dayFilter").addEventListener("change", () => {
+    document.getElementById("searchBtn").click();
+  });
+  
+  // 8.5. Auto-update on type filter (NEW)
+  document.getElementById("typeFilter").addEventListener("change", () => {
+    document.getElementById("searchBtn").click();
+  });
+
+  // 8.6. UPDATED: Auto-update on time filter (NEW)
+  document.getElementById("timeFilter").addEventListener("change", () => {
     document.getElementById("searchBtn").click();
   });
 
@@ -265,7 +313,7 @@
 
 // --- Notification Bell Code ---
   const bell = document.querySelector('.notification-icon');
-  const dropdown = document.getElementById('notificationDropdown'); // 🟩 This was the missing line!
+  const dropdown = document.getElementById('notificationDropdown'); // This was the missing line!
   
   bell.addEventListener('click', (event) => {
     // Stop the click from closing the dropdown immediately
@@ -285,3 +333,4 @@
 </script> 
 </body>
 </html>
+

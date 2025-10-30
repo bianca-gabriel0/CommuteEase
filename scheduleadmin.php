@@ -11,6 +11,110 @@
   <link rel="stylesheet" href="scheduleadmin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
+  <style>
+    /* Add this to your scheduleadmin.css file */
+    .action-button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      color: white;
+    }
+    .action-button.edit {
+      background-color: #3498db; /* Blue */
+    }
+    .action-button.edit:hover {
+      background-color: #2980b9;
+    }
+    .action-button .fa-solid {
+      margin-right: 5px;
+    }
+    .actions-cell {
+      text-align: center;
+    }
+    /* Simple modal styles if they aren't in scheduleadmin.css */
+    .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgb(0,0,0); 
+        background-color: rgba(0,0,0,0.4); 
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    /* Simple form styling */
+    .modal-content label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    .modal-content input, .modal-content select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box; /* Important */
+    }
+    .modal-content button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    /* UPDATED: Styles for the pagination buttons */
+    .table-arrows {
+        text-align: center;
+        margin-top: 15px;
+    }
+    .arrow-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 10px;
+        transition: background-color 0.3s;
+    }
+    .arrow-btn:hover:not(:disabled) {
+        background-color: #2980b9;
+    }
+    .arrow-btn:disabled {
+        background-color: #bdc3c7;
+        cursor: not-allowed;
+    }
+  </style>
 </head>
 
 <body>
@@ -38,7 +142,7 @@
         <button onclick="filterByDay('Thursday')">Thursday</button>
         <button onclick="filterByDay('Friday')">Friday</button>
         <button onclick="filterByDay('Saturday')">Saturday</button>
-        <button class="add-schedule" onclick="openModal()">Add Schedule</button>
+        <button class="add-schedule" onclick="openAddModal()">Add Schedule</button>
         <a href="export.php" target="_blank" class="export-button"> Export to Excel </a>
       </div>
 
@@ -53,18 +157,28 @@
             <th>Departure Time</th>
             <th>Estimated Arrival</th>
             <th>Frequency</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
+
+      <!-- UPDATED: Added pagination buttons -->
+      <div class="table-arrows">
+        <button id="prevPageBtn" class="arrow-btn">&lt;</button>
+        <button id="nextPageBtn" class="arrow-btn">&gt;</button>
+      </div>
+
     </div>
   </div>
 
-  <!-- ✅ Add Schedule Modal -->
+  <!-- ✅ Add/Edit Schedule Modal -->
   <div id="scheduleModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <h2>Add a New Schedule</h2>
+      <h2 id="modalTitle">Add a New Schedule</h2>
+
+      <input type="hidden" id="schedule_id">
 
       <label for="day">Day:</label>
       <select id="day">
@@ -106,22 +220,42 @@
         <option>Every 40 minutes</option>
       </select>
 
-      <button onclick="addNewSchedule()">Add Schedule</button>
+      <button id="modalButton" onclick="saveSchedule()">Add Schedule</button>
     </div>
   </div>
 
   <script>
-    let schedules = [];
+    // UPDATED: Renamed 'schedules' to 'allSchedules'
+    let allSchedules = [];
+    // UPDATED: Added new variables for pagination
+    let currentView = [];     
+    let currentPage = 1;      
+    const rowsPerPage = 8; // As you requested
+    
+    // UPDATED: Get button elements
+    const prevPageBtn = document.getElementById("prevPageBtn");
+    const nextPageBtn = document.getElementById("nextPageBtn");
 
     // 🟢 Fetch from PHP (MySQL)
     async function loadSchedules() {
       const res = await fetch("php/fetch_schedules.php");
-      schedules = await res.json();
-      displaySchedules(schedules);
+      if (!res.ok) {
+        console.error("Failed to fetch schedules:", res.status, res.statusText);
+        return;
+      }
+      try {
+        allSchedules = await res.json();
+        currentView = allSchedules; // Set the view to all schedules
+        currentPage = 1; // Reset to page 1
+        updateDisplay(); // UPDATED: Call the new master display function
+      } catch (e) {
+        console.error("Could not parse JSON from fetch_schedules.php:", e);
+      }
     }
 
-    // 🟢 Display table rows
-    function displaySchedules(list) {
+    // UPDATED: Renamed from 'displaySchedules' to 'renderTable'
+    // Its only job is to render the rows it's given
+    function renderTable(list) {
       const tableBody = document.querySelector("#scheduleTable tbody");
       tableBody.innerHTML = "";
       list.forEach(s => {
@@ -130,23 +264,87 @@
           <td>${s.day}</td>
           <td>${s.location}</td>
           <td>${s.type}</td>
-          <td>${s.route}</td>
-          <td>${s.departure}</td>
-          <td>${s.arrival}</td>
+          <td>${s.route_formatted}</td>
+          <td>${s.departure_formatted}</td>
+          <td>${s.arrival_formatted}</td>
           <td>${s.frequency}</td>
+          <td class="actions-cell">
+            <button class="action-button edit" onclick="openEditModal(${s.schedule_id})">
+              <i class="fa-solid fa-pencil"></i> Edit
+            </button>
+          </td>
         `;
         tableBody.appendChild(row);
       });
     }
 
+    // UPDATED: New master display function (copied from schedule-main.php)
+    function updateDisplay() {
+      // Calculate the "slice" of data we need for the current page
+      const startIndex = (currentPage - 1) * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      const pageItems = currentView.slice(startIndex, endIndex);
+
+      // Render just that slice
+      renderTable(pageItems);
+
+      // Update the next/prev button states
+      prevPageBtn.disabled = (currentPage === 1);
+      nextPageBtn.disabled = (endIndex >= currentView.length);
+    }
+
     // 🟢 Filter by day
+    // UPDATED: This function now filters 'currentView' and calls 'updateDisplay'
     function filterByDay(day) {
-      if (day === "All") displaySchedules(schedules);
-      else displaySchedules(schedules.filter(s => s.day === day));
+      if (day === "All") {
+        currentView = allSchedules;
+      } else {
+        currentView = allSchedules.filter(s => s.day === day);
+      }
+      currentPage = 1; // Reset to page 1
+      updateDisplay(); // Re-render the table
     }
 
     // 🟢 Modal controls
-    function openModal() {
+    
+    function openAddModal() {
+      // Clear the form for a new entry
+      document.getElementById("schedule_id").value = "";
+      document.getElementById("day").value = "Monday";
+      document.getElementById("type").value = "Bus";
+      document.getElementById("location").value = "";
+      document.getElementById("route").value = "";
+      document.getElementById("time").value = "";
+      document.getElementById("arrival").value = "";
+      document.getElementById("frequency").value = "Every 10 minutes";
+      
+      document.getElementById("modalTitle").innerText = "Add a New Schedule";
+      document.getElementById("modalButton").innerText = "Add Schedule";
+      
+      document.getElementById("scheduleModal").style.display = "block";
+    }
+
+    function openEditModal(id) {
+      // UPDATED: Find schedule in 'allSchedules' instead of 'schedules'
+      const s = allSchedules.find(s => s.schedule_id == id);
+      if (!s) {
+        console.error("Could not find schedule with id:", id);
+        return;
+      }
+
+      // Populate the form with data
+      document.getElementById("schedule_id").value = s.schedule_id;
+      document.getElementById("day").value = s.day;
+      document.getElementById("type").value = s.type;
+      document.getElementById("location").value = s.location;
+      document.getElementById("route").value = s.destination; 
+      document.getElementById("time").value = s.departure_time; 
+      document.getElementById("arrival").value = s.estimated_arrival; 
+      document.getElementById("frequency").value = s.frequency;
+
+      document.getElementById("modalTitle").innerText = "Edit Schedule";
+      document.getElementById("modalButton").innerText = "Save Changes";
+
       document.getElementById("scheduleModal").style.display = "block";
     }
 
@@ -154,8 +352,7 @@
       document.getElementById("scheduleModal").style.display = "none";
     }
 
-    // 🟢 Add new schedule to DB
-    async function addNewSchedule() {
+    async function saveSchedule() {
       const data = {
         day: document.getElementById("day").value,
         type: document.getElementById("type").value,
@@ -165,13 +362,23 @@
         arrival: document.getElementById("arrival").value,
         frequency: document.getElementById("frequency").value
       };
+      
+      const scheduleId = document.getElementById("schedule_id").value;
+      
+      let endpoint = "";
+      if (scheduleId) {
+        endpoint = "php/update_schedule.php";
+        data.schedule_id = scheduleId;
+      } else {
+        endpoint = "php/add_schedules.php";
+      }
 
       if (!data.location || !data.destination || !data.departure || !data.arrival) {
-        alert("Please fill in all fields");
+        alert("Please fill in all fields"); 
         return;
       }
 
-      const res = await fetch("php/add_schedules.php", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -180,22 +387,42 @@
       const result = await res.json();
       if (result.status === "success") {
         closeModal();
-        loadSchedules();
+        // This is still correct. loadSchedules() will fetch all data
+        // and our new updateDisplay() will handle the pagination.
+        loadSchedules(); 
       } else {
-        alert("Error: " + result.message);
+        alert("Error: " + result.message); 
       }
     }
 
-  window.onload = function() {
-    fetch('php/fetch_schedules.php')
-      .then(response => response.json())
-      .then(data => {
-        schedules = data;
-        displaySchedules(schedules);
-      })
-      .catch(error => console.error('Error fetching schedules:', error));
-  };
+    window.onload = function() {
+      loadSchedules().catch(error => console.error('Error fetching schedules:', error));
+    };
+
+    // UPDATED: Add click listeners for pagination
+    prevPageBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateDisplay(); // Re-render the new page
+      }
+    });
+
+    nextPageBtn.addEventListener("click", () => {
+      // Calculate if there's a next page
+      const maxPage = Math.ceil(currentView.length / rowsPerPage);
+      if (currentPage < maxPage) {
+        currentPage++;
+        updateDisplay(); // Re-render the new page
+      }
+    });
+
+    // Placeholder for logout
+    function logout() {
+        console.log("Logout clicked");
+        // Add your logout logic here, e.g., window.location.href = 'php/logout.php';
+    }
 
   </script>
 </body>
 </html>
+

@@ -6,8 +6,49 @@ if (!isset($_SESSION['user_id'])) {
     exit(); 
 }
 
+// NOTE: Uses your confirmed 'php/db.php' file which returns the $conn object.
 include 'php/db.php'; 
 
+$current_user_id = $_SESSION['user_id'];
+$firstName = 'Guest';
+$lastName = ''; 
+$userEmail = 'email.not.found@example.com'; 
+$fullName = '';
+
+// --- 1. FETCH USER DETAILS FOR FORM PRE-FILL ---
+// We fetch the current details directly from the database for accuracy.
+// UPDATED: Fetches first_name, last_name, and email based on your table structure.
+$sql_user = "SELECT first_name, last_name, email FROM users WHERE user_id = ?";
+$stmt_user = $conn->prepare($sql_user);
+
+if ($stmt_user) {
+    $stmt_user->bind_param("i", $current_user_id);
+    $stmt_user->execute();
+    $user_result = $stmt_user->get_result();
+
+    if ($user_result->num_rows === 1) {
+        $user_row = $user_result->fetch_assoc();
+        $firstName = htmlspecialchars($user_row['first_name']);
+        $lastName = htmlspecialchars($user_row['last_name']);
+        $userEmail = htmlspecialchars($user_row['email']);
+        
+        // Update session variables if necessary (optional, but keeps session fresh)
+        $_SESSION['first_name'] = $user_row['first_name'];
+        $_SESSION['last_name'] = $user_row['last_name'];
+        $_SESSION['email'] = $user_row['email'];
+        
+    } else {
+        // Logged-in user ID not found in database
+        error_log("CRITICAL: User ID $current_user_id not found in DB.");
+    }
+    $stmt_user->close();
+} else {
+    error_log("Error preparing user fetch statement: " . $conn->error);
+}
+
+$fullName = trim($firstName . ' ' . $lastName);
+
+// --- 2. EXISTING SCHEDULE FETCHING LOGIC (Unchanged from your original code) ---
 $items_per_page = 7; 
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($current_page < 1) {
@@ -15,12 +56,9 @@ if ($current_page < 1) {
 }
 $offset = ($current_page - 1) * $items_per_page;
 
-
-$current_user_id = $_SESSION['user_id'];
 $saved_schedules = []; 
 $total_items = 0;
 $total_pages = 0;
-
 
 $count_sql = "SELECT COUNT(ss.saved_id)
               FROM schedule s
@@ -33,7 +71,6 @@ $count_stmt->execute();
 $count_result = $count_stmt->get_result();
 $total_items = $count_result->fetch_row()[0]; 
 $count_stmt->close();
-
 
 if ($total_items > 0) {
     $total_pages = ceil($total_items / $items_per_page);
@@ -69,11 +106,6 @@ if ($total_items > 0) {
     $stmt->close();
 }
 
-$firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
-$lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
-$userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 
-$fullName = trim($firstName . ' ' . $lastName);
-
 $conn->close();
 ?>
 
@@ -90,6 +122,17 @@ $conn->close();
 <body>
 
   <div id="notification-toast"></div>
+  <div id="cancelEditModal" class="custom-modal-backdrop">
+    <div class="custom-modal-content">
+      <h4>Discard Changes?</h4>
+      <p>Any unsaved profile changes will be lost if you cancel.</p>
+      <div class="custom-modal-buttons">
+        <button id="cancelCancelBtn" class="modal-btn cancel">Continue Editing</button>
+        <button id="confirmCancelBtn" class="modal-btn confirm-cancel">Discard & Exit</button>
+      </div>
+    </div>
+  </div>
+
 
   <header class="navbar">
     <div class="logo">
@@ -124,26 +167,52 @@ $conn->close();
         <div class="profile-details">
           <h3>Edit Personal Information</h3>
           <hr>
+          <!-- Added required 'currentPassword' field for security -->
           <form id="editProfileForm">
             <div class="form-group">
               <label for="firstName">First Name:</label>
-              <input type="text" id="firstName" placeholder="Enter first name" value="<?php echo $firstName; ?>">
+              <input type="text" id="firstName" name="firstName" placeholder="Enter first name" value="<?php echo $firstName; ?>">
             </div>
             <div class="form-group">
               <label for="lastName">Last Name:</label>
-              <input type="text" id="lastName" placeholder="Enter last name" value="<?php echo $lastName; ?>">
+              <input type="text" id="lastName" name="lastName" placeholder="Enter last name" value="<?php echo $lastName; ?>">
             </div>
             <div class="form-group">
               <label for="email">Email:</label>
-              <input type="email" id="email" placeholder="Enter email address" value="<?php echo $userEmail; ?>">
+              <!-- MODIFIED: Added 'disabled' attribute to make email non-editable -->
+              <input type="email" id="email" name="email" disabled placeholder="Enter email address" value="<?php echo $userEmail; ?>">
             </div>
+            
+            <!-- NEW PASSWORD FIELD with EYE ICON -->
             <div class="form-group">
-              <label for="password">New Password:</label>
-              <input type="password" id="password" placeholder="Enter new password">
+              <label for="password">New Password (Optional):</label>
+              <div class="password-input-container">
+                <input type="password" id="password" name="newPassword" placeholder="Enter new password">
+                <i class="fa-solid fa-eye-slash password-toggle" onclick="togglePasswordVisibility('password')"></i>
+              </div>
             </div>
+            
+            <!-- CONFIRM PASSWORD FIELD with EYE ICON -->
             <div class="form-group">
-              <label for="confirmPassword">Confirm Password:</label>
-              <input type="password" id="confirmPassword" placeholder="Confirm new password">
+              <label for="confirmPassword">Confirm New Password:</label>
+              <div class="password-input-container">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                <i class="fa-solid fa-eye-slash password-toggle" onclick="togglePasswordVisibility('confirmPassword')"></i>
+              </div>
+            </div>
+            
+            <!-- NEW: Local Error Message Display Container -->
+            <div id="password-error" class="error-message"></div>
+
+            <hr>
+            
+            <!-- CURRENT PASSWORD FIELD with EYE ICON (Required for save) -->
+            <div class="form-group required-field">
+              <label for="currentPassword">Current Password (Required to Save):</label>
+              <div class="password-input-container">
+                <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password">
+                <i class="fa-solid fa-eye-slash password-toggle" onclick="togglePasswordVisibility('currentPassword')"></i>
+              </div>
             </div>
           </form>
         </div>
@@ -230,7 +299,6 @@ $conn->close();
           <button id="backToTop">Back to Top ↑</button>
         </div>
       </div>
-      <!-- --- NEW: Added greeting to footer --- -->
       <div class="footer-bottom">
         <p>Hi, <?php echo $firstName; ?>!</p>
         <p>&copy; 2025 CommuteEase. All rights reserved.</p>
@@ -238,7 +306,7 @@ $conn->close();
     </div>
   </footer>
 
-  <!-- --- NEW: Delete Schedule Confirmation Modal --- -->
+  <!-- Delete Schedule Confirmation Modal -->
   <div id="deleteScheduleModal" class="custom-modal-backdrop">
     <div class="custom-modal-content">
       <h4>Confirm Delete</h4>
@@ -259,36 +327,157 @@ $conn->close();
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    function saveProfile() {
-      // (Your existing saveProfile logic is unchanged)
-      const first = document.getElementById("firstName").value.trim();
-      const last = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const confirmPassword = document.getElementById("confirmPassword").value.trim();
-
-      if (!first || !last || !email) {
-        alert("Please fill out all fields.");
-        return;
-      }
-
-      if (password && password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
-
-      // NOTE: This is where you would have your backend AJAX call
-      // to actually save the profile data.
-      alert(`Profile updated for: ${first} ${last}`);
-      window.location.href = "accountinfo.php";
+    // --- NEW PASSWORD VISIBILITY TOGGLE ---
+    function togglePasswordVisibility(fieldId) {
+        const input = document.getElementById(fieldId);
+        const icon = input.nextElementSibling; // Assuming the icon is the next sibling
+        
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
     }
 
-    // Cancel edit (Original)
+
+    // --- NEW: Notification Toast Logic ---
+    function showNotification(message, type = 'success') {
+      const toast = document.getElementById("notification-toast");
+      toast.innerHTML = message;
+      toast.className = "show " + type; 
+      setTimeout(() => { 
+        toast.className = toast.className.replace("show", ""); 
+        
+        // Clean up the URL (maintains pagination)
+        if (window.history.replaceState) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const pageParam = urlParams.has('page') ? '?page=' + urlParams.get('page') : '';
+          const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname + pageParam;
+          window.history.replaceState({path: cleanURL}, '', cleanURL);
+        }
+      }, 3000); 
+    }
+
+    // NEW: Function to clear local password errors
+    function clearPasswordErrors() {
+        document.getElementById("password-error").textContent = "";
+    }
+
+
+    // --- UPDATED saveProfile function using AJAX/Fetch ---
+    async function saveProfile() {
+      const form = document.getElementById("editProfileForm");
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      
+      clearPasswordErrors(); // Clear any previous local errors on new submit
+
+      // Client-side Validation (Basic)
+      if (!data.firstName || !data.lastName || !data.currentPassword) {
+        showNotification("Please fill out all required fields (First Name, Last Name, Current Password).", "error");
+        return;
+      }
+      
+      const newPass = data.newPassword;
+      const confirmPass = data.confirmPassword;
+      
+      // Client-side Password Checks (if user started entering a new password)
+      if (newPass || confirmPass) {
+          if (!newPass || !confirmPass) {
+              document.getElementById("password-error").textContent = "Please confirm your new password in both fields.";
+              return;
+          }
+          if (newPass !== confirmPass) {
+              document.getElementById("password-error").textContent = "New Passwords do not match.";
+              return;
+          }
+          // Optional: Add client-side check for 8 characters and 1 number for immediate feedback
+          if (newPass.length < 8) {
+             document.getElementById("password-error").textContent = "Password must be at least 8 characters long.";
+             return;
+          }
+          if (!/\d/.test(newPass)) {
+             document.getElementById("password-error").textContent = "Password must contain at least one number.";
+             return;
+          }
+      }
+      
+      // Show temporary message while loading
+      showNotification("Saving changes...", "info");
+
+      try {
+        const response = await fetch('update_profile.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showNotification(result.message, "success");
+          // UPDATED: Redirect to accountinfo.php after success
+          setTimeout(() => {
+              window.location.href = "accountinfo.php";
+          }, 1500); 
+
+        } else {
+          // Determine if the error is password-related or a generic failure
+          const passwordErrors = [
+              'Password must be at least 8 characters long.',
+              'Password must contain at least one number.',
+              'New and Confirmation passwords do not match.', // Server-side check is redundant but kept for robustness
+              'The new password must be different from your current password.'
+          ];
+
+          if (passwordErrors.includes(result.message)) {
+              // Show the specific password error below the fields
+              document.getElementById("password-error").textContent = result.message;
+          } else {
+              // Show all other errors (like "Incorrect current password") in the toast
+              showNotification(result.message, "error");
+          }
+
+          // Clear sensitive fields on error
+          document.getElementById("currentPassword").value = "";
+          document.getElementById("password").value = "";
+          document.getElementById("confirmPassword").value = "";
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        showNotification("An unexpected error occurred. Please try again.", "error");
+      }
+    }
+
+    // --- UPDATED cancelEdit function using a Modal ---
+    const cancelModal = document.getElementById('cancelEditModal');
+    const cancelCancelBtn = document.getElementById('cancelCancelBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    
+    function closeCancelModal() {
+        cancelModal.classList.remove('show');
+    }
+
     function cancelEdit() {
-      if (confirm("Discard changes?")) {
-        window.location.href = "accountinfo.php";
-      }
+        cancelModal.classList.add('show');
     }
+
+    cancelCancelBtn.addEventListener('click', closeCancelModal);
+    confirmCancelBtn.addEventListener('click', () => {
+        closeCancelModal();
+        window.location.href = "accountinfo.php"; // Redirect as planned
+    });
+    cancelModal.addEventListener('click', (event) => {
+      if (event.target == cancelModal) {
+        closeCancelModal();
+      }
+    });
 
     // Notification Bell (Original)
     const bell = document.querySelector('.notification-icon');
@@ -337,30 +526,6 @@ $conn->close();
       }
     });
 
-    
-    // --- NEW: Notification Toast Logic ---
-    
-    // 1. The function to show the toast
-    function showNotification(message, type = 'success') {
-      const toast = document.getElementById("notification-toast");
-      toast.innerHTML = message;
-      toast.className = "show " + type; 
-      setTimeout(() => { 
-        toast.className = toast.className.replace("show", ""); 
-        // Clean up the URL
-        if (window.history.replaceState) {
-          const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-          // We need to preserve the ?page= param if it exists
-          const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.has('page')) {
-            window.history.replaceState({path: cleanURL}, '', cleanURL + '?page=' + urlParams.get('page'));
-          } else {
-            window.history.replaceState({path: cleanURL}, '', cleanURL);
-          }
-        }
-      }, 3000); 
-    }
-
     // 2. Check for the status on page load
     document.addEventListener("DOMContentLoaded", () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -375,4 +540,3 @@ $conn->close();
 
 </body>
 </html>
-

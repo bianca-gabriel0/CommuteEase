@@ -87,7 +87,7 @@ body {
 .profile-card {
   flex: 1;
   width: 100%;
-  height: 500px;
+  height: 830px;
   max-width: 400px;
   background: #fff;
   border-radius: 6px;
@@ -339,13 +339,11 @@ footer {
   color: #e6f2ef;
   margin-top: 20px;
   
-  /* --- NEW: Styling the text elements inside --- */
   display: flex;
   flex-direction: column;
-  gap: 5px; /* Adds a small gap between lines */
+  gap: 5px; 
 }
 
-/* Notification Icon */
 .notification-icon {
   position: relative;
   cursor: pointer;
@@ -362,7 +360,6 @@ footer {
   transform: scale(1.1);
 }
 
-/* Optional small red badge for new notifications */
 .notification-icon::after {
   content: "";
   position: absolute;
@@ -403,19 +400,6 @@ footer {
   transform: scale(1.05);
 }
 
-/* Profile Card */
-.profile-card {
-  flex: 1;
-  width: 100%;
-  height: 800px;
-  max-width: 400px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  text-align: center;
-  padding: 20px;
-}
-
 .profile-details {
   padding: 20px 25px;
   background-color: #ffffff;
@@ -437,7 +421,6 @@ footer {
   margin-bottom: 20px;
 }
 
-/* Input Fields */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -468,7 +451,6 @@ footer {
   background: #ffffff;
 }
 
-/* Buttons */
 .edit-buttons {
   margin-top: 10px;
   display: flex;
@@ -509,11 +491,10 @@ footer {
   box-shadow: 0 5px 15px rgba(192, 57, 43, 0.3);
 }
 
-/* Notification Dropdown */
 .notification-dropdown {
   display: none;
   position: absolute;
-  top: 60px; /* Adjust based on navbar height */
+  top: 60px; 
   right: 40px;
   width: 260px;
   background-color: #fff;
@@ -531,7 +512,6 @@ footer {
   text-align: center;
 }
 
-/* Optional fade-in effect */
 .notification-dropdown.show {
   display: block;
   animation: fadeIn 0.2s ease-in-out;
@@ -546,7 +526,6 @@ footer {
   display: none;
 }
 
-    /* Notification Toast CSS */
     #notification-toast {
       visibility: hidden; min-width: 250px; margin-left: -125px;
       background-color: #333; color: #fff; text-align: center; 
@@ -554,7 +533,7 @@ footer {
       z-index: 1000; left: 50%; bottom: 30px; font-size: 17px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    #notification-toast.info { background-color: #0284c7; } /* Blue for info */
+    #notification-toast.info { background-color: #0284c7; }
     #notification-toast.show {
       visibility: visible; 
       -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
@@ -565,7 +544,6 @@ footer {
     @-webkit-keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-    /* Red delete button for modal */
     .custom-modal-buttons .confirm-delete {
       background-color: #e11d48;
     }
@@ -573,7 +551,6 @@ footer {
       background-color: #be123c;
     }
     
-    /* Pagination Styles (from accountinfo.css) */
     .pagination-controls {
         display: flex;
         justify-content: center;
@@ -602,3 +579,186 @@ footer {
         color: #888;
         cursor: not-allowed;
     }
+.custom-modal-backdrop {
+    display: none; 
+    position: fixed;
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); 
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-modal-backdrop.show {
+    display: flex;
+}
+
+.custom-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.custom-modal-backdrop.show .custom-modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.custom-modal-content h4 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.custom-modal-content p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.custom-modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.modal-btn.cancel {
+    background-color: #ccc;
+    color: #333;
+}
+
+.modal-btn.cancel:hover {
+    background-color: #bbb;
+}
+
+.modal-btn.confirm-delete, .modal-btn.confirm-cancel {
+    background-color: #e74c3c; 
+    color: white;
+}
+
+.modal-btn.confirm-delete:hover, .modal-btn.confirm-cancel:hover {
+    background-color: #c0392b;
+}
+
+#notification-toast {
+    visibility: hidden; 
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 999;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+#notification-toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+#notification-toast.success { background-color: #2ecc71; }
+#notification-toast.error { background-color: #e74c3c; }
+#notification-toast.info { background-color: #3498db; }
+#notification-toast.black { background-color: #000000; color: white; }
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+.profile-details .form-group {
+    margin-bottom: 15px;
+}
+
+.profile-details label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+.password-input-container {
+    position: relative;
+}
+
+.profile-details input[type="text"], 
+.profile-details input[type="email"], 
+.profile-details input[type="password"] {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding-right: 40px; 
+}
+
+.profile-details input[disabled] {
+    background-color: #f5f5f5;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    z-index: 2; 
+}
+
+.profile-details hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+.error-message {
+    color: #e74c3c; 
+    font-size: 0.90em;
+    font-weight: normal; 
+    min-height: -10px; 
+}

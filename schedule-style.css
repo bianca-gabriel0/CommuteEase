@@ -546,3 +546,57 @@ footer {
   color: #555; /* Looks good with your #333 icon color */
   font-size: 14px;
 }
+
+    #notification-toast {
+      visibility: hidden; 
+      min-width: 250px; 
+      margin-left: -125px; 
+      background-color: #333; 
+      color: #fff; 
+      text-align: center; 
+      border-radius: 8px; 
+      padding: 16px; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 50%; 
+      bottom: 30px; 
+      font-size: 17px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Style for success (green) */
+    #notification-toast.success {
+       background-color: #059669; /* A nice green */
+    }
+
+    /* Style for info/warning (blue) */
+    #notification-toast.info {
+       background-color: #0284c7; /* A nice blue */
+    }
+
+    /* Animation to show and hide */
+    #notification-toast.show {
+      visibility: visible; 
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+      from {bottom: 0; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+
+    @keyframes fadein {
+      from {bottom: 0; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+
+    @-webkit-keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 0; opacity: 0;}
+    }
+
+    @keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 0; opacity: 0;}
+    }

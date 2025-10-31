@@ -8,14 +8,94 @@ if (!isset($_SESSION['user_id'])) {
     exit(); // Stop the page from loading
 }
 
-// Prepare dynamic data using session variables
-// We assume the login/signup scripts are correctly saving these three keys:
+// 2. --- MODIFIED: DATABASE LOGIC ---
+include 'php/db.php'; // Include your database connection
+
+// NEW: --- PAGINATION SETUP ---
+$items_per_page = 7; // You wanted 7 per page
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($current_page < 1) {
+    $current_page = 1; // Safety check, can't be on page 0
+}
+// Calculate the starting point for the SQL query
+$offset = ($current_page - 1) * $items_per_page;
+// --- END: PAGINATION SETUP ---
+
+
+// Get the current user's ID
+$current_user_id = $_SESSION['user_id'];
+$saved_schedules = []; // Initialize an empty array to hold the schedules
+
+// NEW: --- TOTAL COUNT QUERY ---
+// We need to know the total number of items *before* we get the paged items
+$total_items = 0;
+$total_pages = 0;
+
+// This query MUST match the WHERE clause of the main query below
+$count_sql = "SELECT COUNT(ss.saved_id)
+              FROM schedule s
+              JOIN saved_schedules ss ON s.schedule_id = ss.schedule_id
+              WHERE ss.user_id = ? AND s.is_deleted = FALSE";
+
+$count_stmt = $conn->prepare($count_sql);
+$count_stmt->bind_param("i", $current_user_id);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_items = $count_result->fetch_row()[0]; // Gets the first column of the first row (the count)
+$count_stmt->close();
+
+// Only run the main query if there are items to show
+if ($total_items > 0) {
+    // Calculate total pages
+    $total_pages = ceil($total_items / $items_per_page);
+
+    // This is your original SQL query that links the tables
+    // NEW: Added 'ORDER BY' and 'LIMIT / OFFSET'
+    $sql = "SELECT 
+                s.location, 
+                s.type, 
+                s.destination, 
+                s.departure_time, 
+                s.estimated_arrival, 
+                s.frequency, 
+                ss.saved_id 
+            FROM 
+                schedule s
+            JOIN 
+                saved_schedules ss ON s.schedule_id = ss.schedule_id
+            WHERE 
+                ss.user_id = ? AND s.is_deleted = FALSE
+            ORDER BY 
+                ss.saved_id DESC -- It's good practice to have an ORDER BY for pagination
+            LIMIT ? OFFSET ?"; // <-- NEW: Added placeholders
+
+    $stmt = $conn->prepare($sql);
+    // NEW: Bind 3 params: user_id (i), limit (i), offset (i)
+    $stmt->bind_param("iii", $current_user_id, $items_per_page, $offset);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $saved_schedules[] = $row; // Add each saved schedule to the array
+        }
+    }
+    $stmt->close();
+}
+// $conn->close(); // MOVED: This was line 37, moved down
+// --- END MODIFIED DATABASE LOGIC ---
+
+
+// 3. Prepare dynamic data using session variables (Original Code)
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 $lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
 $userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 
 
-// NEW: Combine first and last name for single display
+// Combine first and last name for single display
 $fullName = trim($firstName . ' ' . $lastName);
+
+// NEW: We must close the connection *after* ALL database work is done
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -24,14 +104,19 @@ $fullName = trim($firstName . ' ' . $lastName);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CommuteEase - Account</title>
-  <link rel="stylesheet" href="accountinfo.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="accountinfo.css"> <!-- This links to your correct CSS file -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   
+  <!-- 
+    NOTE: I removed the <style> block from here because
+    you confirmed the styles are in your accountinfo.css file.
+    This is cleaner!
+  -->
   
 </head>
 <body>
 
-  <!-- nav bar -->
+  <!-- nav bar (NO CHANGES) -->
   <header class="navbar">
     <div class="logo">
       <img src="assets/CE-logo.png" a href="Home.php" alt="Commute Ease Logo">
@@ -41,7 +126,7 @@ $fullName = trim($firstName . ' ' . $lastName);
       <a href="schedule-main.php">SCHEDULE</a>
       <a href="Home.php#about">ABOUT</a>
       <a href="accountinfo.php" class="active">ACCOUNT</a>
-           
+            
       <div class="welcome-message">
         Hi, <?php echo $firstName; ?>!
       </div>
@@ -56,12 +141,12 @@ $fullName = trim($firstName . ' ' . $lastName);
     </nav>
   </header>
 
-  <!-- Account Section -->
+  <!-- Account Section (NO CHANGES) -->
   <section class="account-section">
     <h2 class="account-heading">Account Information</h2>
 
     <div class="account-container">
-      <!-- Profile Card -->
+      <!-- Profile Card (NO CHANGES) -->
       <div class="profile-card">
         <div class="profile-header">
           <div class="profile-pic">
@@ -74,11 +159,9 @@ $fullName = trim($firstName . ' ' . $lastName);
           <h3><?php echo $fullName; ?></h3> 
           <a href="#" class="edit-link" onclick="goToEdit()"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
           <hr>
-          <!-- UPDATED: Display actual email -->
           <p><b>Email:</b> <?php echo $userEmail; ?></p>
         </div>
 
-        <!-- UPDATED: This button now opens the modal -->
         <button class="logout-btn" onclick="openLogoutModal()">↳ Log out</button>
       </div>
 
@@ -98,36 +181,72 @@ $fullName = trim($firstName . ' ' . $lastName);
             </tr>
           </thead>
           <tbody id="scheduleTable">
-            <tr>
-              <td>SM Mall</td>
-              <td>Bus</td>
-              <td>Dagupan – Manaoag</td>
-              <td>5:30 AM</td>
-              <td>6:30 AM</td>
-              <td>Every 30 minutes</td>
-              <td><span class="delete-btn" onclick="deleteRow(this)">🗑️</span></td>
-            </tr>
-            <tr>
-              <td>SM Mall</td>
-              <td>Jeepney</td>
-              <td>Dagupan – Lingayen</td>
-              <td>6:00 AM</td>
-              <td>7:20 AM</td>
-              <td>Every 15 minutes</td>
-              <td><span class="delete-btn" onclick="deleteRow(this)">🗑️</span></td>
-            </tr>
+            
+            <!-- --- This PHP Loop is the same --- -->
+            <?php if (empty($saved_schedules)): ?>
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 20px;">You have no saved schedules yet.</td>
+              </tr>
+            <?php else: ?>
+              <?php foreach ($saved_schedules as $schedule): ?>
+                <tr>
+                  <td><?php echo htmlspecialchars($schedule['location']); ?></td>
+                  <td><?php echo htmlspecialchars($schedule['type']); ?></td>
+                  <td>Dagupan → <?php echo htmlspecialchars($schedule['destination']); ?></td>
+                  <td><?php echo date("g:iA", strtotime($schedule['departure_time'])); ?></td>
+                  <td><?php echo date("g:iA", strtotime($schedule['estimated_arrival'])); ?></td>
+                  <td><?php echo htmlspecialchars($schedule['frequency']); ?></td>
+                  <td>
+                    <!-- This form is the same -->
+                    <form action="unsave_schedule.php" method="POST" style="display: inline;">
+                      <input type="hidden" name="saved_id" value="<?php echo $schedule['saved_id']; ?>">
+                      <button type="submit" class="delete-btn" title="Unsave this schedule">🗑️</button>
+                    </form>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
+            <!-- --- END: PHP Loop --- -->
+            
           </tbody>
         </table>
-                  <div class="table-arrows">
-  <button>&lt;</button>
-  <button>&gt;</button>
-</div>
+            
+            <!-- 
+              ==============================================================
+              --- THIS IS THE IMPORTANT PART ---
+              This HTML block uses the class names that your CSS file
+              is looking for. This will fix the "all white" button issue.
+              ==============================================================
+            -->
+            <?php if ($total_pages > 1): ?>
+              <div class="pagination-controls">
+                  
+                  <!-- 'Previous' Link -->
+                  <?php if ($current_page > 1): ?>
+                      <a href="?page=<?php echo $current_page - 1; ?>" class="page-link">&lt;</a>
+                  <?php else: ?>
+                      <!-- This is the disabled state -->
+                      <span class="page-link-disabled">&lt;</span>
+                  <?php endif; ?>
+                  
+                  <!-- 'Next' Link -->
+                  <?php if ($current_page < $total_pages): ?>
+                      <a href="?page=<?php echo $current_page + 1; ?>" class="page-link">&gt;</a>
+                  <?php else: ?>
+                      <!-- This is the disabled state -->
+                      <span class="page-link-disabled">&gt;</span>
+                  <?php endif; ?>
+                  
+              </div>
+            <?php endif; ?>
+            <!-- --- END: PAGINATION LINKS --- -->
+            
       </div>
     </div>
     
   </section>
 
-  <!-- Footer -->
+  <!-- Footer (NO CHANGES) -->
   <footer>
     <div class="footer-container">
       <div class="footer-top">
@@ -160,7 +279,7 @@ $fullName = trim($firstName . ' ' . $lastName);
     </div>
   </footer>
 
-  <!-- NEW: Logout Confirmation Modal HTML -->
+  <!-- Logout Modal (NO CHANGES) -->
   <div id="logoutModal" class="custom-modal-backdrop">
     <div class="custom-modal-content">
       <h4>Confirm Log Out</h4>
@@ -173,10 +292,8 @@ $fullName = trim($firstName . ' ' . $lastName);
   </div>
 
 
-  <!-- JS Functions -->
+  <!-- JS Functions (NO CHANGES) -->
   <script>
-    // This querySelector might fail if #backToTop is not on this page.
-    // Added a check to prevent errors.
     const backToTop = document.getElementById("backToTop");
     if(backToTop) {
         backToTop.addEventListener("click", () => {
@@ -184,24 +301,15 @@ $fullName = trim($firstName . ' ' . $lastName);
         });
     }
 
-    function deleteRow(button) {
-      const row = button.closest("tr");
-      row.remove();
-    }
-
-    // UPDATED: This function now OPENS the modal instead of logging out
     function openLogoutModal() {
       document.getElementById('logoutModal').classList.add('show');
     }
 
-    // NEW: Function to CLOSE the modal
     function closeLogoutModal() {
       document.getElementById('logoutModal').classList.remove('show');
     }
 
-    // NEW: Function to CONFIRM the logout
     function confirmLogout() {
-      // This is the original action
       window.location.href = 'logout.php';
     }
 
@@ -225,7 +333,7 @@ $fullName = trim($firstName . ' ' . $lastName);
       }
     });
 
-    // --- NEW: Event Listeners for Logout Modal ---
+    // --- Event Listeners for Logout Modal ---
     const logoutModal = document.getElementById('logoutModal');
     const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
     const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');

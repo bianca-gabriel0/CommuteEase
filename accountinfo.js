@@ -66,3 +66,4 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚍 CommuteEase backend running at http://localhost:${PORT}`);
 });
+

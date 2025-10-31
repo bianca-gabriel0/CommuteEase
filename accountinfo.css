@@ -196,7 +196,12 @@ th {
   font-weight: 600;
 }
 
+/* This is for the 🗑️ icon */
 td .delete-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
   cursor: pointer;
   font-size: 18px;
   transition: color 0.3s ease;
@@ -360,34 +365,6 @@ footer {
   display: block;
 }
 
-/* Arrows*/
-.schedule-card .table-arrows {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  margin-top: 12px;
-}
-
-.schedule-card .table-arrows button {
-  background-color: #6BBBAE;
-  color: white;
-  border: none;
-  width: 35px;
-  height: 35px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-.schedule-card .table-arrows button:hover {
-  background-color: #58a193;
-  transform: scale(1.05);
-}
-
 /* Notification Dropdown */
 .notification-dropdown {
   display: none;
@@ -456,7 +433,7 @@ footer {
    width: 90%;
    max-width: 400px;
    text-align: center;
-      /* Animation */
+       /* Animation */
    transform: scale(0.9);
    transition: transform 0.3s ease;
 }
@@ -492,7 +469,7 @@ footer {
    width: 130px;
 }
  .modal-btn:hover {
-    transform: translateY(-2px);
+     transform: translateY(-2px);
 }
  .modal-btn.cancel {
    background-color: #f0f0f0;
@@ -503,9 +480,50 @@ footer {
    background-color: #e6e6e6;
 }
 .modal-btn.confirm {
-   background-color: #d9534f; /* Red for logout */
+   background-color: #d9534f; 
    color: white;
 }
 .modal-btn.confirm:hover {
    background-color: #c9302c;
+}
+
+.pagination-controls {
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px; 
+}
+
+.page-link,
+.page-link-disabled {
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  width: 40px; 
+  height: 40px; 
+  background-color: #64C5B1; 
+  color: white; 
+  text-decoration: none;
+  border-radius: 8px; 
+  font-weight: bold;
+  font-size: 1.2em; 
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.page-link:hover {
+  background-color: #51a393; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+  transform: translateY(-2px); 
+}
+
+.page-link-disabled {
+  background-color: #d1e7e4; 
+  color: #a0a0a0; 
+  pointer-events: none; 
+  cursor: default; 
+  box-shadow: none; 
+  opacity: 0.7;
 }

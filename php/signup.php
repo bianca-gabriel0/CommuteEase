@@ -35,20 +35,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     // Hash the password
                     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                    // Insert new user
                     $insert = $conn->prepare("INSERT INTO users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)");
                     $insert->bind_param("ssss", $firstName, $lastName, $email, $hashedPassword);
                     if ($insert->execute()) {
                         echo "Signup successful!";
                     } else {
-                        echo "Error: " . $insert->error;
+                        $errors[] = "Signup failed. Please try again.";
                     }
                     $insert->close();
                 }
                 $stmt->close();
-            } else {
+            }
+            // Display errors if any
+            if (!empty($errors)) {
                 foreach ($errors as $error) {
-                    echo "<p>$error</p>";
+                    echo "<p style='color:red;'>$error</p>";
                 }
             }
         }

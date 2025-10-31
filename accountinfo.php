@@ -26,6 +26,8 @@ $fullName = trim($firstName . ' ' . $lastName);
   <title>CommuteEase - Account</title>
   <link rel="stylesheet" href="accountinfo.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  
+  
 </head>
 <body>
 
@@ -76,7 +78,8 @@ $fullName = trim($firstName . ' ' . $lastName);
           <p><b>Email:</b> <?php echo $userEmail; ?></p>
         </div>
 
-        <button class="logout-btn" onclick="logout()">↳ Log out</button>
+        <!-- UPDATED: This button now opens the modal -->
+        <button class="logout-btn" onclick="openLogoutModal()">↳ Log out</button>
       </div>
 
       <!-- Saved Schedules -->
@@ -157,20 +160,48 @@ $fullName = trim($firstName . ' ' . $lastName);
     </div>
   </footer>
 
+  <!-- NEW: Logout Confirmation Modal HTML -->
+  <div id="logoutModal" class="custom-modal-backdrop">
+    <div class="custom-modal-content">
+      <h4>Confirm Log Out</h4>
+      <p>Are you sure you want to log out?</p>
+      <div class="custom-modal-buttons">
+        <button id="cancelLogoutBtn" class="modal-btn cancel">Cancel</button>
+        <button id="confirmLogoutBtn" class="modal-btn confirm">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+
   <!-- JS Functions -->
   <script>
+    // This querySelector might fail if #backToTop is not on this page.
+    // Added a check to prevent errors.
     const backToTop = document.getElementById("backToTop");
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    if(backToTop) {
+        backToTop.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
 
     function deleteRow(button) {
       const row = button.closest("tr");
       row.remove();
     }
 
-    function logout() {
-      // Correctly sends the user to the PHP script that destroys the session.
+    // UPDATED: This function now OPENS the modal instead of logging out
+    function openLogoutModal() {
+      document.getElementById('logoutModal').classList.add('show');
+    }
+
+    // NEW: Function to CLOSE the modal
+    function closeLogoutModal() {
+      document.getElementById('logoutModal').classList.remove('show');
+    }
+
+    // NEW: Function to CONFIRM the logout
+    function confirmLogout() {
+      // This is the original action
       window.location.href = 'logout.php';
     }
 
@@ -193,8 +224,25 @@ $fullName = trim($firstName . ' ' . $lastName);
         dropdown.classList.remove('show');
       }
     });
+
+    // --- NEW: Event Listeners for Logout Modal ---
+    const logoutModal = document.getElementById('logoutModal');
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+
+    // Add event listeners
+    cancelLogoutBtn.addEventListener('click', closeLogoutModal);
+    confirmLogoutBtn.addEventListener('click', confirmLogout);
+    
+    // Close if user clicks on the gray backdrop
+    logoutModal.addEventListener('click', (event) => {
+      if (event.target == logoutModal) {
+        closeLogoutModal();
+      }
+    });
     
   </script>
 
 </body>
 </html>
+

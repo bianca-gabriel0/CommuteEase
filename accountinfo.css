@@ -424,3 +424,88 @@ footer {
 .notification-icon.read::after {
   display: none;
 }
+.custom-modal-backdrop {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5); /* Dim background */
+  /* Use flex to center the modal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+      /* Animation */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.custom-modal-backdrop.show {
+   display: flex; /* Re-enable flex for centering */
+   opacity: 1;
+   pointer-events: auto;
+}
+.custom-modal-content {
+   background-color: #fff;
+   padding: 25px 30px;
+   border-radius: 8px;
+   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+   width: 90%;
+   max-width: 400px;
+   text-align: center;
+      /* Animation */
+   transform: scale(0.9);
+   transition: transform 0.3s ease;
+}
+.custom-modal-backdrop.show .custom-modal-content {
+    transform: scale(1);
+}
+.custom-modal-content h4 {
+   font-size: 22px;
+   font-weight: 600;
+   color: #333;
+   margin-top: 10px;
+   margin-bottom: 15px;
+}
+.custom-modal-content p {
+   font-size: 16px;
+   margin-bottom: 25px;
+   color: #555;
+   line-height: 1.5;
+}
+.custom-modal-buttons {
+   display: flex;
+   justify-content: center;
+   gap: 15px;
+}
+.modal-btn {
+   padding: 10px 20px;
+   border: none;
+   border-radius: 5px;
+   font-size: 16px;
+   font-weight: bold;
+   cursor: pointer;
+   transition: background-color 0.3s, transform 0.2s;
+   width: 130px;
+}
+ .modal-btn:hover {
+    transform: translateY(-2px);
+}
+ .modal-btn.cancel {
+   background-color: #f0f0f0;
+   color: #333;
+   border: 1px solid #ccc;
+}
+.modal-btn.cancel:hover {
+   background-color: #e6e6e6;
+}
+.modal-btn.confirm {
+   background-color: #d9534f; /* Red for logout */
+   color: white;
+}
+.modal-btn.confirm:hover {
+   background-color: #c9302c;
+}

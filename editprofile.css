@@ -197,9 +197,18 @@ th {
 }
 
 td .delete-btn {
+  /* --- FIX: Removing default button styles --- */
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1.25rem; /* Make it a little bigger for the icon */
   transition: color 0.3s ease;
+  
+  /* CRITICAL FIXES: Overrides default button and table cell padding */
+  border: none !important; /* Forces no border */
+  background: none !important; /* Forces no background color */
+  padding: 0; /* Remove padding if the original button has it */
+  margin: 0;
+  display: inline-block;
+  color: #333; /* Default color */
 }
 
 td .delete-btn:hover {
@@ -321,6 +330,7 @@ footer {
 }
 
 /* Bottom Section */
+/* Bottom Section */
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.3);
   text-align: center;
@@ -328,6 +338,11 @@ footer {
   font-size: 14px;
   color: #e6f2ef;
   margin-top: 20px;
+  
+  /* --- NEW: Styling the text elements inside --- */
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Adds a small gap between lines */
 }
 
 /* Notification Icon */
@@ -530,3 +545,60 @@ footer {
 .notification-icon.read::after {
   display: none;
 }
+
+    /* Notification Toast CSS */
+    #notification-toast {
+      visibility: hidden; min-width: 250px; margin-left: -125px;
+      background-color: #333; color: #fff; text-align: center; 
+      border-radius: 8px; padding: 16px; position: fixed; 
+      z-index: 1000; left: 50%; bottom: 30px; font-size: 17px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    #notification-toast.info { background-color: #0284c7; } /* Blue for info */
+    #notification-toast.show {
+      visibility: visible; 
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+    @-webkit-keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @-webkit-keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+    /* Red delete button for modal */
+    .custom-modal-buttons .confirm-delete {
+      background-color: #e11d48;
+    }
+    .custom-modal-buttons .confirm-delete:hover {
+      background-color: #be123c;
+    }
+    
+    /* Pagination Styles (from accountinfo.css) */
+    .pagination-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    .page-link, .page-link-disabled {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 18px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .page-link {
+        background-color: #6BBBAE;
+        color: white;
+        cursor: pointer;
+    }
+    .page-link:hover {
+        background-color: #5ea398;
+        transform: scale(1.05);
+    }
+    .page-link-disabled {
+        background-color: #ccc;
+        color: #888;
+        cursor: not-allowed;
+    }

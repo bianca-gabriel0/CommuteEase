@@ -90,38 +90,6 @@ $conn->close();
   <link rel="stylesheet" href="accountinfo.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   
-  <!-- --- NEW: CSS for Notifications & Modal Button --- -->
-  <style>
-    /* Notification Toast CSS */
-    #notification-toast {
-      visibility: hidden; min-width: 250px; margin-left: -125px;
-      background-color: #333; color: #fff; text-align: center; 
-      border-radius: 8px; padding: 16px; position: fixed; 
-      z-index: 1000; left: 50%; bottom: 30px; font-size: 17px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    #notification-toast.success { background-color: #059669; }
-    #notification-toast.info { background-color: #0284c7; } /* Blue for info */
-    #notification-toast.show {
-      visibility: visible; 
-      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-      animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    }
-    @-webkit-keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-    @-webkit-keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
-    /* Red delete button for modal */
-    /* (You can add this to accountinfo.css if you want) */
-    .custom-modal-buttons .confirm-delete {
-      background-color: #e11d48; /* A sharp red */
-    }
-    .custom-modal-buttons .confirm-delete:hover {
-      background-color: #be123c; /* A darker red */
-    }
-  </style>
-  
 </head>
 <body>
 

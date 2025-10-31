@@ -387,7 +387,6 @@ footer {
   text-align: center;
 }
 
-/* Optional fade-in effect */
 .notification-dropdown.show {
   display: block;
   animation: fadeIn 0.2s ease-in-out;
@@ -402,7 +401,7 @@ footer {
   display: none;
 }
 .custom-modal-backdrop {
-  display: none; /* Hidden by default */
+  display: none; 
   position: fixed;
   z-index: 2000;
   left: 0;
@@ -410,18 +409,16 @@ footer {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0,0,0,0.5); /* Dim background */
-  /* Use flex to center the modal */
+  background-color: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-      /* Animation */
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 .custom-modal-backdrop.show {
-   display: flex; /* Re-enable flex for centering */
+   display: flex; 
    opacity: 1;
    pointer-events: auto;
 }
@@ -433,7 +430,6 @@ footer {
    width: 90%;
    max-width: 400px;
    text-align: center;
-       /* Animation */
    transform: scale(0.9);
    transition: transform 0.3s ease;
 }
@@ -526,4 +522,30 @@ footer {
   cursor: default; 
   box-shadow: none; 
   opacity: 0.7;
+}
+#notification-toast {
+  visibility: hidden; min-width: 250px; margin-left: -125px;
+  background-color: #333; color: #fff; text-align: center; 
+  border-radius: 8px; padding: 16px; position: fixed; 
+  z-index: 1000; left: 50%; bottom: 30px; font-size: 17px; 
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+#notification-toast.success { background-color: #059669; }
+#notification-toast.info { background-color: #0284c7; } /* Blue for info */
+#notification-toast.show {
+  visibility: visible; 
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+  @-webkit-keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+  @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+  @-webkit-keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+  @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+.custom-modal-buttons .confirm-delete {
+   background-color: #d9534f; 
+   color: white;
+}
+.custom-modal-buttons .confirm-delete:hover {
+   background-color: #c9302c;
 }

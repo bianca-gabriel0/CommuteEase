@@ -20,9 +20,19 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="schedule-style.css">
+
+
+
 </head>
 
 <body>
+
+  <!-- --- NEW: Notification Toast HTML --- -->
+  <!-- This is the empty element that our JavaScript will grab -->
+  <div id="notification-toast"></div>
+  <!-- --- END NEW HTML --- -->
+
+
   <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
@@ -177,6 +187,9 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 
   <!-- JavaScript -->
 <script>
+  // --- Pass PHP login status to JavaScript ---
+  const isUserLoggedIn = <?php echo json_encode($is_logged_in); ?>;
+  
   // --- Back-to-top code ---
   const backToTop = document.getElementById("backToTop");
   backToTop.addEventListener("click", () => {
@@ -194,7 +207,7 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   let currentPage = 1; 
   const rowsPerPage = 10; 
 
-  // Renders the table rows for the given data (a "slice")
+ // Renders the table rows for the given data (a "slice")
   function renderTable(list) {
     tableBody.innerHTML = "";
     list.forEach(schedule => {
@@ -209,21 +222,63 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
         <td>${schedule.frequency}</td>
       `;
 
-      // --- save button code (only functional if logged in, but visible to all) ---
+      // --- UPDATED Save Button Logic ---
       const saveCell = document.createElement("td");
-      const saveBtn = document.createElement("button");
-      saveBtn.classList.add("save-btn");
-      const saveIcon = document.createElement("img");
-      saveIcon.src = "assets/bookmark-icon.png";
-      saveIcon.alt = "Save";
-      saveIcon.classList.add("save-icon");
-      saveBtn.appendChild(saveIcon);
       
-      saveBtn.addEventListener("click", () => {
-        alert("You must be logged in to save a schedule!"); 
-      });
+      if (isUserLoggedIn) {
+        // --- User is LOGGED IN: Create a real submission form ---
+        const saveForm = document.createElement("form");
+        saveForm.action = "save_schedule.php"; // Point to your backend script
+        saveForm.method = "POST";
+        saveForm.classList.add("save-form"); // Optional: for styling
+
+        // Create the hidden input to send the schedule_id
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "schedule_id";
+        
+        // This code assumes 'schedule_id' exists in the JSON from fetch_schedules.php
+        hiddenInput.value = schedule.schedule_id; 
+        
+        // Create the submit button
+        const saveBtn = document.createElement("button");
+        saveBtn.type = "submit"; // This makes it submit the form
+        saveBtn.classList.add("save-btn"); // Use your existing class
+        saveBtn.title = "Save this schedule"; 
+
+        // Create and add the icon (using your original code)
+        const saveIcon = document.createElement("img");
+        saveIcon.src = "assets/bookmark-icon.png";
+        saveIcon.alt = "Save";
+        saveIcon.classList.add("save-icon");
+        saveBtn.appendChild(saveIcon);
+
+        // Assemble the form
+        saveForm.appendChild(hiddenInput);
+        saveForm.appendChild(saveBtn);
+        
+        // Add the form to the cell
+        saveCell.appendChild(saveForm);
+
+      } else {
+        // --- User is a GUEST: Keep the original "alert" button ---
+        const saveBtn = document.createElement("button");
+        saveBtn.classList.add("save-btn");
+        saveBtn.title = "Log in to save schedules";
+
+        const saveIcon = document.createElement("img");
+        saveIcon.src = "assets/bookmark-icon.png";
+        saveIcon.alt = "Save";
+        saveIcon.classList.add("save-icon");
+        saveBtn.appendChild(saveIcon);
+        
+        saveBtn.addEventListener("click", () => {
+          alert("You must be logged in to save a schedule!"); 
+        });
+        
+        saveCell.appendChild(saveBtn);
+      }
       
-      saveCell.appendChild(saveBtn);
       row.appendChild(saveCell);
       // --- end save button code ---
       
@@ -243,8 +298,43 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
     nextPageBtn.disabled = (endIndex >= currentView.length);
   }
 
+  // --- NEW: Function to show the notification toast ---
+  function showNotification(message, type = 'success') {
+    const toast = document.getElementById("notification-toast");
+    toast.innerHTML = message;
+    
+    // Set class based on type
+    toast.className = "show " + type; // e.g., "show success" or "show info"
+
+    // After 3 seconds, remove the show class
+    setTimeout(() => { 
+      toast.className = toast.className.replace("show", ""); 
+      
+      // Clean up the URL so the message doesn't pop up again on refresh
+      // We use history.replaceState to do this without reloading the page
+      if (window.history.replaceState) {
+        const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({path: cleanURL}, '', cleanURL);
+      }
+    }, 3000); // 3000ms = 3 seconds
+  }
+
+
   // Fetches data when the page loads
   document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- NEW: Check for URL parameters to show notification ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+
+    if (status === 'saved') {
+      showNotification("Schedule saved successfully!", "success");
+    } else if (status === 'exists') {
+      showNotification("This schedule is already in your list.", "info");
+    }
+    // --- END NEW NOTIFICATION CHECK ---
+    
+    
     fetch('php/fetch_schedules.php')
       .then(response => response.json())
       .then(data => {
@@ -348,3 +438,4 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 </script> 
 </body>
 </html>
+

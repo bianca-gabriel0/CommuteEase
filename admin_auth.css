@@ -1,15 +1,12 @@
-/* CSS for Admin Login, Signup, and Forgot Password
-  This file styles all three pages.
-*/
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Albert Sans', sans-serif; /* Match your dashboard font */
+  font-family: 'Albert Sans', sans-serif; 
 }
 
 body {
-  background-color: #f4f4f9; /* Light gray background */
+  background-color: #f4f4f9; 
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -146,7 +143,7 @@ body {
 .auth-btn {
   width: 100%;
   padding: 16px;
-  background-color: #007bff; /* Blue to match dashboard theme */
+  background-color: #007bff; 
   border: none;
   color: white;
   font-size: 17px;
@@ -192,4 +189,22 @@ body {
   background-color: #d4edda; 
   color: #155724; 
   border: 1px solid #c3e6cb;
+}
+.form-group.password-container {
+  position: relative;
+    }
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: unset; 
+  transform: unset;
+  bottom: 15px; 
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  fill: #888;
+  transition: fill 0.2s, opacity 0.2s;
+}
+.toggle-password:hover {
+  fill: #333;
 }

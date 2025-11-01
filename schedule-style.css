@@ -9,7 +9,6 @@ body {
   background-color: #F2F2F2;
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -47,7 +46,6 @@ body {
   color: #222;
 }
 
-/* TABLE */
 table {
   width: 80%;
   margin: 20px auto;
@@ -88,7 +86,6 @@ h3 {
   margin: 80px;
 }
 
-/* ===== PERFECT SAVE ICON BUTTON ===== */
 .save-btn {
   background-color: #6BBBAE;
   border: none;
@@ -98,7 +95,7 @@ h3 {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 45px;  /* slightly smaller for perfect fit */
+  width: 45px;  
   height: 45px;
   margin: 0 auto;
 }
@@ -108,13 +105,12 @@ h3 {
 }
 
 .save-icon {
-  width: 22px;  /* perfectly balanced icon size */
+  width: 22px; 
   height: 22px;
   display: block;
   object-fit: contain;
 }
 
-/* Search + Filter */
 .table-controls {
   display: flex;
   justify-content: flex-end;
@@ -148,21 +144,19 @@ h3 {
   font-size: 14px;
 }
 
-/* FIXED TRANSITION ON SEARCH BUTTON */
 #searchBtn {
   background-color: #6BBBAE;
   color: rgb(0, 0, 0);
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* fixed */
+  transition: background-color 0.3s ease; 
 }
 
 #searchBtn:hover {
   background-color: #5ea398;
 }
 
-/* Notification Icon */
 .notification-icon {
   position: relative;
   cursor: pointer;
@@ -594,9 +588,8 @@ footer {
         justify-content: center;
         align-items: center;
     }
-    /* This is the red dot */
     .notification-icon {
-        position: relative; /* Needed for the dot */
+        position: relative; 
     }
     .notification-icon::after {
         content: "";
@@ -607,16 +600,13 @@ footer {
         height: 8px;
         background: #e74c3c;
         border-radius: 50%;
-        display: block; /* Show by default */
+        display: block; 
     }
-    /* This hides the dot when the .read class is added */
     .notification-icon.read::after {
         display: none;
     }
 
-    /* Styles for the items in the dropdown */
     .notification-dropdown {
-        /* Add these if your dropdown-menu is missing sizing */
         min-width: 300px;
         max-height: 400px;
         overflow-y: auto;
@@ -627,7 +617,7 @@ footer {
         border-bottom: 1px solid #eee;
         text-decoration: none;
         color: #333;
-        white-space: normal; /* Allow text to wrap */
+        white-space: normal; 
     }
     .notification-item:last-child {
         border-bottom: none;
@@ -635,9 +625,8 @@ footer {
     .notification-item:hover {
         background-color: #f9f9f9;
     }
-    /* Style for unread messages */
     .notification-item.unread {
-        background-color: #f4f8ff; /* Light blue */
+        background-color: #f4f8ff;
         font-weight: bold;
     }
     .notification-item p {

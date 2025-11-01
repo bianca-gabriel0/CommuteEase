@@ -1,9 +1,6 @@
 <?php
-// --- Admin Security Check ---
-// We MUST start the session to check for a valid admin
 session_start();
 
-// If the admin is not logged in (session not set), kick them to the login page
 if (!isset($_SESSION['admin_user_id'])) {
     header("Location: admin_login.php");
     exit;
@@ -29,7 +26,6 @@ if (!isset($_SESSION['admin_user_id'])) {
     <div class="sidebar">
         <img src="assets/CE-logo.png" alt="" class="signup-image">
         <a href="dashboard.php"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <!-- Set this link to active -->
         <a href="scheduleadmin.php" class="active"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
         <a href="view_users_admin.php"><i class="fa-solid fa-user-gear"></i> View Users</a>
         <button class="logout-button" onclick="logout()">
@@ -41,7 +37,6 @@ if (!isset($_SESSION['admin_user_id'])) {
         <div class="card2">
             <h2>Schedules</h2>
 
-            <!-- ✅ Day Filter Buttons -->
             <div class="days-row">
                 <button onclick="filterByDay('All')">All</button>
                 <button onclick="filterByDay('Sunday')">Sunday</button>
@@ -55,7 +50,6 @@ if (!isset($_SESSION['admin_user_id'])) {
                 <a href="export.php" target="_blank" class="export-button"> Export</a>
             </div>
 
-            <!-- ✅ Schedule Table -->
             <table id="scheduleTable" class="schedule-table">
                 <thead>
                     <tr>
@@ -72,10 +66,8 @@ if (!isset($_SESSION['admin_user_id'])) {
                 <tbody></tbody>
             </table>
 
-            <!-- UPDATED: Added pagination buttons AND page indicator -->
             <div class="table-arrows">
                 <button id="prevPageBtn" class="arrow-btn">&lt;</button>
-                <!-- NEW: Page indicator -->
                 <span id="pageIndicator" class="page-indicator">1 of 1</span>
                 <button id="nextPageBtn" class="arrow-btn">&gt;</button>
             </div>
@@ -83,7 +75,6 @@ if (!isset($_SESSION['admin_user_id'])) {
         </div>
     </div>
 
-    <!-- ✅ Add/Edit Schedule Modal -->
     <div id="scheduleModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -131,10 +122,8 @@ if (!isset($_SESSION['admin_user_id'])) {
                 <option>Every 40 minutes</option>
             </select>
             
-            <!-- 🆕 NEW BUTTON CONTAINER -->
             <div class="modal-actions">
                 <button id="modalButton" onclick="saveSchedule()">Add Schedule</button>
-                <!-- 🆕 TRASH BUTTON (Only visible during edit) -->
                 <button id="deleteButton" class="delete-button" onclick="deleteSchedule()" style="display: none;">
                     <i class="fa-solid fa-trash-alt"></i> Delete
                 </button>
@@ -144,23 +133,16 @@ if (!isset($_SESSION['admin_user_id'])) {
     </div>
 
     <script>
-        // UPDATED: Renamed 'schedules' to 'allSchedules'
         let allSchedules = [];
-        // UPDATED: Added new variables for pagination
         let currentView = []; 
         let currentPage = 1; 
-        const rowsPerPage = 7; // As you requested
+        const rowsPerPage = 7; 
         
-        // UPDATED: Get button elements
         const prevPageBtn = document.getElementById("prevPageBtn");
         const nextPageBtn = document.getElementById("nextPageBtn");
-        // NEW: Get page indicator element
         const pageIndicator = document.getElementById("pageIndicator");
 
-        // 🟢 Fetch from PHP (MySQL)
         async function loadSchedules() {
-            // IMPORTANT: Your fetch_schedules.php MUST now include "WHERE is_deleted = FALSE" 
-            // in its SQL query to only show active schedules.
             const res = await fetch("php/fetch_schedules.php");
             if (!res.ok) {
                 console.error("Failed to fetch schedules:", res.status, res.statusText);
@@ -168,21 +150,18 @@ if (!isset($_SESSION['admin_user_id'])) {
             }
             try {
                 allSchedules = await res.json();
-                currentView = allSchedules; // Set the view to all schedules
-                currentPage = 1; // Reset to page 1
-                updateDisplay(); // UPDATED: Call the new master display function
+                currentView = allSchedules; 
+                currentPage = 1; 
+                updateDisplay(); 
             } catch (e) {
                 console.error("Could not parse JSON from fetch_schedules.php:", e);
             }
         }
 
-        // UPDATED: Renamed from 'displaySchedules' to 'renderTable'
-        // Its only job is to render the rows it's given
         function renderTable(list) {
             const tableBody = document.querySelector("#scheduleTable tbody");
             tableBody.innerHTML = "";
 
-            // NEW: Show a message if the list is empty
             if (list.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No schedules found for this day.</td></tr>`;
                 return;
@@ -208,42 +187,31 @@ if (!isset($_SESSION['admin_user_id'])) {
             });
         }
 
-        // UPDATED: New master display function (copied from schedule-main.php)
         function updateDisplay() {
-            // Calculate the "slice" of data we need for the current page
             const startIndex = (currentPage - 1) * rowsPerPage;
             const endIndex = startIndex + rowsPerPage;
             const pageItems = currentView.slice(startIndex, endIndex);
 
-            // Render just that slice
             renderTable(pageItems);
 
-            // Update the next/prev button states
             prevPageBtn.disabled = (currentPage === 1);
             nextPageBtn.disabled = (endIndex >= currentView.length);
 
-            // --- NEW: Update page indicator text ---
-            const maxPage = Math.ceil(currentView.length / rowsPerPage) || 1; // || 1 to prevent "0 of 0" if empty
+            const maxPage = Math.ceil(currentView.length / rowsPerPage) || 1;
             pageIndicator.textContent = `${currentPage} of ${maxPage}`;
-            // --- END NEW ---
         }
 
-        // 🟢 Filter by day
-        // UPDATED: This function now filters 'currentView' and calls 'updateDisplay'
         function filterByDay(day) {
             if (day === "All") {
                 currentView = allSchedules;
             } else {
                 currentView = allSchedules.filter(s => s.day === day);
             }
-            currentPage = 1; // Reset to page 1
-            updateDisplay(); // Re-render the table
+            currentPage = 1; 
+            updateDisplay(); 
         }
-
-        // 🟢 Modal controls
         
         function openAddModal() {
-            // Clear the form for a new entry
             document.getElementById("schedule_id").value = "";
             document.getElementById("day").value = "Monday";
             document.getElementById("type").value = "Bus";
@@ -256,21 +224,18 @@ if (!isset($_SESSION['admin_user_id'])) {
             document.getElementById("modalTitle").innerText = "Add a New Schedule";
             document.getElementById("modalButton").innerText = "Add Schedule";
             
-            // 🆕 HIDE THE DELETE BUTTON WHEN ADDING
             document.getElementById("deleteButton").style.display = "none";
             
             document.getElementById("scheduleModal").style.display = "block";
         }
 
         function openEditModal(id) {
-            // UPDATED: Find schedule in 'allSchedules' instead of 'schedules'
             const s = allSchedules.find(s => s.schedule_id == id);
             if (!s) {
                 console.error("Could not find schedule with id:", id);
                 return;
             }
 
-            // Populate the form with data
             document.getElementById("schedule_id").value = s.schedule_id;
             document.getElementById("day").value = s.day;
             document.getElementById("type").value = s.type;
@@ -283,7 +248,6 @@ if (!isset($_SESSION['admin_user_id'])) {
             document.getElementById("modalTitle").innerText = "Edit Schedule";
             document.getElementById("modalButton").innerText = "Save Changes";
             
-            // 🆕 SHOW THE DELETE BUTTON WHEN EDITING
             document.getElementById("deleteButton").style.display = "inline-block";
 
             document.getElementById("scheduleModal").style.display = "block";
@@ -314,10 +278,8 @@ if (!isset($_SESSION['admin_user_id'])) {
                 endpoint = "php/add_schedules.php";
             }
 
-            // Using console.error instead of alert for better non-blocking feedback
             if (!data.location || !data.destination || !data.departure || !data.arrival) {
                 console.error("Please fill in all required fields"); 
-                // You might replace this with a custom modal message in a production app
                 return;
             }
 
@@ -336,11 +298,9 @@ if (!isset($_SESSION['admin_user_id'])) {
             }
         }
         
-        // 🆕 NEW FUNCTION TO HANDLE DELETION (SOFT DELETE)
         async function deleteSchedule() {
             const scheduleId = document.getElementById("schedule_id").value;
             
-            // Replaced alert/confirm with console output/custom message logic for safety
             if (!scheduleId) {
                 console.error("No schedule ID found for deletion.");
                 return;
@@ -353,7 +313,6 @@ if (!isset($_SESSION['admin_user_id'])) {
             const res = await fetch("php/delete_schedule.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // Send the ID of the schedule to be deleted
                 body: JSON.stringify({ schedule_id: scheduleId })
             });
 
@@ -361,7 +320,6 @@ if (!isset($_SESSION['admin_user_id'])) {
             
             if (result.status === "success") {
                 closeModal();
-                // Reload and re-render the list after deletion
                 loadSchedules(); 
             } else {
                 console.error("Error deleting schedule: " + result.message); 
@@ -372,27 +330,22 @@ if (!isset($_SESSION['admin_user_id'])) {
             loadSchedules().catch(error => console.error('Error fetching schedules:', error));
         };
 
-        // UPDATED: Add click listeners for pagination
         prevPageBtn.addEventListener("click", () => {
             if (currentPage > 1) {
                 currentPage--;
-                updateDisplay(); // Re-render the new page
+                updateDisplay(); 
             }
         });
 
         nextPageBtn.addEventListener("click", () => {
-            // Calculate if there's a next page
             const maxPage = Math.ceil(currentView.length / rowsPerPage);
             if (currentPage < maxPage) {
                 currentPage++;
-                updateDisplay(); // Re-render the new page
+                updateDisplay(); 
             }
         });
 
-        // --- THIS IS THE FIX ---
-        // Updated the logout function to point to the correct admin logout file
         function logout() {
-            // I removed the 'confirm()' box and console.log
             window.location.href = "admin_logout.php";
         }
 

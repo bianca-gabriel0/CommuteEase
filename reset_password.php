@@ -1,10 +1,8 @@
 <?php
 session_start();
 
-// 1. Get the token from the URL
 $token = $_GET['token'] ?? null;
 
-// 2. Validate the token
 $is_valid_token = $token &&
                   isset($_SESSION['reset_token']) &&
                   $_SESSION['reset_token'] == $token &&
@@ -12,11 +10,9 @@ $is_valid_token = $token &&
                   time() < $_SESSION['reset_token_expiry'];
 
 if (!$is_valid_token) {
-    // If token is invalid, missing, or expired, stop.
     die("This password reset link is invalid or has expired. Please <a href='forgotpassword.php'>try again</a>.");
 }
 
-// Token is valid, show the form.
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +20,7 @@ if (!$is_valid_token) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reset Your Password</title>
-  <link rel="stylesheet" href="forgotpassword.css"/> <!-- Using same CSS for style -->
+  <link rel="stylesheet" href="forgotpassword.css"/>
 </head>
 <body>
   <div class="container">
@@ -35,10 +31,8 @@ if (!$is_valid_token) {
       <h2>Set a New Password</h2>
       <p class="subtitle">Enter and confirm your new password.</p>
       
-      <!-- This form submits to your existing update_password.php file -->
       <form action="update_password.php" method="POST" id="resetForm" novalidate>
         
-        <!-- Pass the token along secretly -->
         <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
         
         <div class="form-group">
@@ -59,7 +53,6 @@ if (!$is_valid_token) {
   </div>
 
 <script>
-  // --- Password Strength & Match Validation (from your signup.php) ---
   const newPassword = document.getElementById("new_password");
   const confirmPassword = document.getElementById("confirm_password");
   const passwordError = document.getElementById("passwordError");
@@ -73,7 +66,6 @@ if (!$is_valid_token) {
     const passVal = newPassword.value;
     const confirmVal = confirmPassword.value;
 
-    // Rule 1: Check password strength (min 8 chars, 1 number)
     if (passVal.length > 0 && passVal.length < 8) {
       passwordError.textContent = "Password must be at least 8 characters.";
       passwordError.style.display = "block";
@@ -87,7 +79,6 @@ if (!$is_valid_token) {
         passwordError.style.display = "none";
     }
 
-    // Rule 2: Check if passwords match
     if (confirmVal.length > 0 && passVal !== confirmVal) {
       confirmError.textContent = "Passwords do not match.";
       confirmError.style.display = "block";
@@ -98,7 +89,6 @@ if (!$is_valid_token) {
         confirmError.style.display = "none";
     }
 
-    // Enable button only if both are valid
     submitBtn.disabled = !(isPasswordValid && isConfirmValid);
   }
 

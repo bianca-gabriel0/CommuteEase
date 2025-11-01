@@ -23,15 +23,12 @@
           <h2>Welcome!</h2>
 
           <?php
-            // Check if an 'error' was sent from the login script
             if (isset($_GET['error']) && $_GET['error'] == 'invalid_credentials') {
-              // Display the error notification
               echo '<div class="error-notification">
                       ⚠️ Incorrect email or password. Please try again.
                     </div>';
             }
             
-            // Check for a success message (like after logging out)
             if (isset($_GET['message']) && $_GET['message'] == 'logged_out') {
               echo '<div class="success-notification">
                       ✅ You have been logged out successfully.
@@ -71,8 +68,6 @@
   </div>
 
   <script>
-    // Note: The fake submit event listener remains commented out here.
-    // The rest of your JavaScript validation code is untouched.
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const emailError = document.getElementById("emailError");
@@ -154,12 +149,6 @@
       alert("Redirecting to Sign Up page...");
       window.location.href = "signup.php";
     });
-
-    /* The original fake submit handler remains commented out to ensure PHP backend works
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
-      // ... (code removed for PHP submission) ...
-    });
-    */
     
   </script>
 </body>

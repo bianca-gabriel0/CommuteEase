@@ -1,12 +1,9 @@
 <?php
-// We MUST start the session to store the captcha answer
 session_start();
 
-// Generate two random numbers for the math problem
 $num1 = rand(1, 9);
 $num2 = rand(1, 9);
 
-// Store the correct answer in the session
 $_SESSION['captcha_answer'] = $num1 + $num2;
 ?>
 <!DOCTYPE html>
@@ -18,7 +15,6 @@ $_SESSION['captcha_answer'] = $num1 + $num2;
   <link rel="stylesheet" href="admin_auth.css">
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Add-on style for the captcha box */
     .captcha-box {
       margin-top: 20px;
       margin-bottom: 25px;
@@ -29,7 +25,7 @@ $_SESSION['captcha_answer'] = $num1 + $num2;
       color: #333;
     }
     .captcha-box input {
-      width: 100px !important; /* Overriding default */
+      width: 100px !important; 
       padding: 12px 16px !important;
       font-size: 1.1rem !important;
       text-align: center;
@@ -74,7 +70,7 @@ $_SESSION['captcha_answer'] = $num1 + $num2;
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
         </div>
         
-        <!-- NEW: Math problem "captcha" -->
+        <!-- Math problem "captcha" -->
         <div class="captcha-box">
           <label for="captcha_input">What is <?php echo $num1; ?> + <?php echo $num2; ?> ?</label>
           <input type="text" id="captcha_input" name="captcha_input" required />

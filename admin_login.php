@@ -1,10 +1,7 @@
 <?php 
 session_start(); 
 
-// --- FIX ---
-// Initialize $message to an empty string to prevent warnings
 $message = "";
-// --- END FIX ---
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +10,6 @@ $message = "";
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard - Login</title>
   
-  <!-- Add cache-buster to CSS to make sure it loads -->
   <link rel="stylesheet" href="admin_auth.css?v=<?php echo time(); ?>"/>
   
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -46,22 +42,17 @@ $message = "";
         
         // Check for success (e.g., from logout or password reset)
         if (isset($_GET['message'])) {
-            // --- FIX ---
-            // We now check for all possible success messages
             if ($_GET['message'] == 'logged_out') {
               $message = '✅ You have been logged out successfully.';
             } else if ($_GET['message'] == 'password_updated') {
               $message = '✅ Password updated. Please log in.';
             } else if ($_GET['message'] == 'signup_success' || $_GET['message'] == 'account_created') {
-              // This new check will catch the message from the signup page
               $message = '✅ Admin account created. Please log in.';
             }
             
-            // Only echo if $message was set to something
             if (!empty($message)) {
                 echo '<div class="success-notification">' . $message . '</div>';
             }
-            // --- END FIX ---
         }
       ?>
 
@@ -70,7 +61,6 @@ $message = "";
         <div class="form-group">
           <label for="email">Email</label>
           <input type="email" id="email" name="email" placeholder="Enter your email" required />
-          <!-- Note: Client-side validation removed for simplicity, can be added back -->
         </div>
         
         <div class="form-group">

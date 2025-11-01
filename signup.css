@@ -2,26 +2,26 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  background-color: #dcdcdc;  /* gray full background */
+  background-color: #dcdcdc;  
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* White box (same size as login) */
+
 .container {
   position: relative;  
   background: white;
-  padding: 50px;                /* same padding as login */
+  padding: 50px;              
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  width: 95%;                   /* same width rule */
-  max-width: 850px;             /* same max size as login */
+  width: 95%;               
+  max-width: 850px;           
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 50px;                    /* match spacing */
+  gap: 50px; 
 }
 
 /* Left side image */
@@ -33,7 +33,7 @@ body {
 }
 
 .left img {
-  width: 360px;                 /* same image size as login */
+  width: 360px; 
   max-width: 100%;
   border-radius: 8px;
 }
@@ -109,7 +109,6 @@ input {
   display: block;
 }
 
-/* Button */
 .btn {
   width: 100%;
   padding: 16px;
@@ -126,7 +125,6 @@ input {
   background-color: #4a8c7f;
 }
 
-/* Sign In text under button */
 .signin-text {
   text-align: center;
   margin-top: 20px;

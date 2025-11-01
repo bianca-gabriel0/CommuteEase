@@ -9,7 +9,6 @@ body {
   background-color: #F2F2F2;
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -203,10 +202,6 @@ body {
 }
 
 
-
-
-
-/* Available Vehicles Section */
 .terminal {
   text-align: center;
   background: #ffffff;
@@ -264,7 +259,7 @@ body {
   left: 0;
   width: 100%;
   text-align: center;
-  background: rgba(0, 0, 0, 0.45); /* subtle dark overlay */
+  background: rgba(0, 0, 0, 0.45); 
   color: #fff;
   font-size: 20px;
   font-weight: 600;
@@ -276,11 +271,6 @@ body {
   background: rgba(0, 0, 0, 0.65);
 }
 
-
-
-
-
-/* Notification Icon */
 .notification-icon {
   position: relative;
   cursor: pointer;
@@ -297,7 +287,6 @@ body {
   transform: scale(1.1);
 }
 
-/* Optional small red badge for new notifications */
 .notification-icon::after {
   content: "";
   position: absolute;
@@ -310,10 +299,6 @@ body {
   display: block;
 }
 
-
-
-
-/* Footer Section */
 footer {
   background-color: #6BBBAE;
   color: #e6f2ef;
@@ -327,7 +312,6 @@ footer {
   margin: 0 auto;
 }
 
-/* Top Footer Layout */
 .footer-top {
   display: flex;
   justify-content: space-between;
@@ -336,7 +320,6 @@ footer {
   gap: 30px;
 }
 
-/* Left Section: Logo */
 .footer-logo {
   display: flex;
   flex-direction: column;
@@ -361,7 +344,6 @@ footer {
   color: #e6f2ef;
 }
 
-/* Center Section: Links */
 .footer-links {
   display: flex;
   flex-direction: column;
@@ -388,7 +370,6 @@ footer {
   text-decoration: underline;
 }
 
-/* Right Section: Contact + Button */
 .footer-contact {
   display: flex;
   flex-direction: column;
@@ -438,11 +419,10 @@ footer {
   
 }
 
-/* Notification Dropdown */
 .notification-dropdown {
   display: none;
   position: absolute;
-  top: 60px; /* Adjust based on navbar height */
+  top: 60px; 
   right: 40px;
   width: 260px;
   background-color: #fff;
@@ -460,7 +440,6 @@ footer {
   text-align: center;
 }
 
-/* Optional fade-in effect */
 .notification-dropdown.show {
   display: block;
   animation: fadeIn 0.2s ease-in-out;
@@ -475,79 +454,74 @@ footer {
   display: none;
 }
 
-    /* This is the red dot */
-    .notification-icon {
-        position: relative; /* Needed for the dot */
-    }
-    .notification-icon::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: -5px;
-        width: 8px;
-        height: 8px;
-        background: #e74c3c;
-        border-radius: 50%;
-        display: block; /* Show by default */
-    }
-    /* This hides the dot when the .read class is added */
-    .notification-icon.read::after {
-        display: none;
-    }
+.notification-icon {
+  position: relative; 
 
-    /* Styles for the items in the dropdown */
-    .notification-dropdown {
-        /* Add these if your dropdown-menu is missing sizing */
-        min-width: 300px;
-        max-height: 400px;
-        overflow-y: auto;
-        /* Position it correctly */
-        position: absolute;
-        top: 60px; /* Adjust based on navbar height */
-        right: 40px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        padding: 12px;
-        z-index: 999;
-        display: none; /* Hidden by default */
-    }
-    .notification-dropdown.show {
-        display: block; /* Show when bell is clicked */
-    }
-    .notification-item {
-        display: block;
-        padding: 10px 15px;
-        border-bottom: 1px solid #eee;
-        text-decoration: none;
-        color: #333;
-        white-space: normal; /* Allow text to wrap */
-    }
-    .notification-item:last-child {
-        border-bottom: none;
-    }
-    .notification-item:hover {
-        background-color: #f9f9f9;
-    }
-    /* Style for unread messages */
-    .notification-item.unread {
-        background-color: #f4f8ff; /* Light blue */
-        font-weight: bold;
-    }
-    .notification-item p {
-        margin: 0 0 5px 0;
-        font-size: 0.9em;
-        color: #333;
-        text-align: left;
-    }
-    .notification-item small {
-        font-size: 0.75em;
-        color: #777;
-        font-weight: normal;
-    }
-    .no-notifications {
-        padding: 15px;
-        text-align: center;
-        color: #888;
-    }
+}
+.notification-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  background: #e74c3c;
+  border-radius: 50%;
+  display: block; 
+}
+.notification-icon.read::after {
+  display: none;
+}
+
+.notification-dropdown {
+  min-width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  position: absolute;
+  top: 60px; 
+  right: 40px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 12px;
+  z-index: 999;
+  display: none; 
+}
+.notification-dropdown.show {
+  display: block;
+}
+.notification-item {
+  display: block;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  color: #333;
+  white-space: normal;
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+.notification-item:hover {
+  background-color: #f9f9f9;
+}
+.notification-item.unread {
+  background-color: #f4f8ff; 
+  font-weight: bold;
+}
+.notification-item p {
+  margin: 0 0 5px 0;
+  font-size: 0.9em;
+  color: #333;
+  text-align: left;
+}
+.notification-item small {
+  font-size: 0.75em;
+  color: #777;
+  font-weight: normal;
+}
+.no-notifications {
+  padding: 15px;
+  text-align: center;
+  color: #888;
+}

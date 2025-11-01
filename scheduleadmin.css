@@ -83,7 +83,7 @@ body {
     padding: 10px;
     margin-bottom: 20px;
     font-family:'albert sans';
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 .card2 h2{
@@ -95,9 +95,9 @@ body {
 
 
 .img{
-    margin-right: 50px; /* Space between image and form */
-    max-width: 300px; /* Adjust the size of the image */
-    height: auto; /* Maintain aspect ratio */
+    margin-right: 50px; 
+    max-width: 300px; 
+    height: auto; 
 }
 
 
@@ -110,13 +110,13 @@ h1 {
 
 p {
     font-weight: 300;
-    margin-top: 10px; /* Add margin for spacing */
+    margin-top: 10px; 
 }
 
 
 .card-container {
-    display: flex; /* Use flexbox to arrange cards side by side */
-    gap: 20px; /* Space between cards */
+    display: flex; 
+    gap: 20px; 
 }
 
 .card {
@@ -145,16 +145,16 @@ p {
 
 .edit{
     background-color: #6BBBAE; 
-    border: none; /* Remove borders */
-    color: white; /* White text */
-    padding: 7px 20px; /* Some padding */
-    text-align: center; /* Centered text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Make the button inline */
-    font-size: 16px; /* Increase font size */
-    margin: 20px 0; /* Some margin */
-    cursor: pointer; /* Pointer/hand icon */
-    border-radius: 4px; /* Rounded corners */
+    border: none; 
+    color: white; 
+    padding: 7px 20px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px; 
+    margin: 20px 0; 
+    cursor: pointer; 
+    border-radius: 4px; 
 }
 
 
@@ -242,9 +242,6 @@ p {
   background-color: #23706a;
 }
 
-
-
-/* Modal background */
 .modal {
   display: none; 
   position: fixed; 
@@ -258,8 +255,6 @@ p {
   align-items: center;
 }
 
-/* Modal content */
-/* Modal background */
 .modal {
   display: none;
   position: fixed;
@@ -317,7 +312,6 @@ p {
   margin-left: 5px;
 }
 
-/* Close button */
 .close {
   float: right;
   font-size: 20px;
@@ -373,7 +367,6 @@ p {
   background-color: #5ea398;
   transform: scale(1.05);
 }
- /* Basic styles needed for the new modal layout */
 .modal-actions {
    display: flex;
    justify-content: space-between;
@@ -381,10 +374,9 @@ p {
    gap: 10px;
 }
 #modalButton {
-            /* Primary Save/Add button */
    flex-grow: 1;
    padding: 10px 20px;
-   background-color: #6BBBAE; /* Primary brand color */
+   background-color: #6BBBAE; 
    color: white;
    border: none;
    border-radius: 6px;
@@ -396,12 +388,10 @@ p {
 #modalButton:hover {
     background-color: #5ea398;
 } 
-        /* Style for the new Delete (Trash) button */
 .delete-button {
-            /* Secondary/Danger action button */
     flex-grow: 1;
     padding: 10px 1px;
-    background-color: #dc3545; /* Red for danger/delete */
+    background-color: #dc3545; 
     color: white;
     border: none;
     border-radius: 8px;
@@ -467,7 +457,7 @@ p {
     margin-top: 15px;
 }
 .arrow-btn:disabled {
-    background-color: #bdc3c7;
+    background-color: #5ea398;
     cursor: not-allowed;
 }
 .page-indicator {

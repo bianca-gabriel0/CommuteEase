@@ -16,7 +16,6 @@ body {
   min-height: 100vh;
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -29,12 +28,10 @@ body {
   z-index: 1000;
 }
 
-/* Logo */
 .logo img {
   height: 75px;
 }
 
-/* Navigation links */
 .nav-links {
   display: flex;
   gap: 50px;
@@ -57,7 +54,6 @@ body {
   color: #222;
 }
 
-/* Account Section */
 .account-section {
   flex: 1;
   margin: 50px auto;
@@ -74,7 +70,6 @@ body {
   padding-bottom: 5px;
 }
 
-/* Two-column layout */
 .account-container {
   display: flex;
   justify-content: space-between;
@@ -83,7 +78,6 @@ body {
   width: 100%;
 }
 
-/* Profile Card */
 .profile-card {
   flex: 1;
   width: 100%;
@@ -196,7 +190,6 @@ th {
   font-weight: 600;
 }
 
-/* This is for the 🗑️ icon */
 td .delete-btn {
   background: none;
   border: none;
@@ -211,7 +204,6 @@ td .delete-btn:hover {
   color: red;
 }
 
-/* Footer Section */
 footer {
   background-color: #6BBBAE;
   color: #e6f2ef;
@@ -225,7 +217,6 @@ footer {
   margin: 0 auto;
 }
 
-/* Top Footer Layout */
 .footer-top {
   display: flex;
   justify-content: space-between;
@@ -234,7 +225,6 @@ footer {
   gap: 30px;
 }
 
-/* Left Section: Logo */
 .footer-logo {
   display: flex;
   flex-direction: column;
@@ -259,7 +249,6 @@ footer {
   color: #e6f2ef;
 }
 
-/* Center Section: Links */
 .footer-links {
   display: flex;
   flex-direction: column;
@@ -286,7 +275,6 @@ footer {
   text-decoration: underline;
 }
 
-/* Right Section: Contact + Button */
 .footer-contact {
   display: flex;
   flex-direction: column;
@@ -325,7 +313,7 @@ footer {
   transform: translateY(-2px);
 }
 
-/* Bottom Section */
+
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.3);
   text-align: center;
@@ -335,7 +323,7 @@ footer {
   margin-top: 20px;
 }
 
-/* Notification Icon */
+
 .notification-icon {
   position: relative;
   cursor: pointer;
@@ -352,7 +340,7 @@ footer {
   transform: scale(1.1);
 }
 
-/* Optional small red badge for new notifications */
+
 .notification-icon::after {
   content: "";
   position: absolute;
@@ -365,11 +353,10 @@ footer {
   display: block;
 }
 
-/* Notification Dropdown */
 .notification-dropdown {
   display: none;
   position: absolute;
-  top: 60px; /* Adjust based on navbar height */
+  top: 60px; 
   right: 40px;
   width: 260px;
   background-color: #fff;
@@ -531,7 +518,7 @@ footer {
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 #notification-toast.success { background-color: #059669; }
-#notification-toast.info { background-color: #0284c7; } /* Blue for info */
+#notification-toast.info { background-color: #0284c7; } 
 #notification-toast.show {
   visibility: visible; 
   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
@@ -549,7 +536,6 @@ footer {
 .custom-modal-buttons .confirm-delete:hover {
    background-color: #c9302c;
 }
-/* --- ADD THIS TO YOUR accountinfo.css --- */
 
 .notification-item {
     display: block;
@@ -557,7 +543,7 @@ footer {
     border-bottom: 1px solid #eee;
     text-decoration: none;
     color: #333;
-    white-space: normal; /* Allow text to wrap */
+    white-space: normal; 
 }
 .notification-item:last-child {
     border-bottom: none;
@@ -565,16 +551,15 @@ footer {
 .notification-item:hover {
     background-color: #f9f9f9;
 }
-/* Style for unread messages */
 .notification-item.unread {
-    background-color: #f4f8ff; /* Light blue */
+    background-color: #f4f8ff; 
     font-weight: bold;
 }
 .notification-item p {
     margin: 0 0 5px 0;
     font-size: 0.9em;
-    color: #333; /* Ensure text color is set */
-    text-align: left; /* Override parent's center align */
+    color: #333; 
+    text-align: left; 
 }
 .notification-item small {
     font-size: 0.75em;

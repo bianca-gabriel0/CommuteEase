@@ -1,23 +1,18 @@
 <?php
-// 
-// --- AUTH GUARD ---
+
 session_start();
 
 $is_logged_in = isset($_SESSION['user_id']); 
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 
-// --- NEW: NOTIFICATION LOGIC ---
-// We must include the DB file to make queries
 include 'php/db.php'; 
 
 $unread_count = 0;
 $notifications = [];
 
-// Only fetch notifications if the user is logged in
 if ($is_logged_in) {
     $current_user_id = $_SESSION['user_id'];
 
-    // 1. Get the count of *unread* notifications
     $unread_sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0";
     $unread_stmt = $conn->prepare($unread_sql);
     $unread_stmt->bind_param("i", $current_user_id);
@@ -26,7 +21,6 @@ if ($is_logged_in) {
     $unread_count = $unread_result->fetch_row()[0];
     $unread_stmt->close();
 
-    // 2. Get the 5 most recent notifications (read or unread)
     $notif_sql = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5";
     $notif_stmt = $conn->prepare($notif_sql);
     $notif_stmt->bind_param("i", $current_user_id);
@@ -41,7 +35,7 @@ if ($is_logged_in) {
     $notif_stmt->close();
 }
 
-$conn->close(); // Close the database connection
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,22 +48,12 @@ $conn->close(); // Close the database connection
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="schedule-style.css">
 
-  <!-- 
-    NEW: CSS for notification dot and dropdown. 
-    You can move this to your schedule-style.css file if you want!
-  -->
-
-
 </head>
 
 <body>
 
-  <!-- --- NEW: Notification Toast HTML --- -->
   <div id="notification-toast"></div>
-  <!-- --- END NEW HTML --- -->
 
-
-  <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
       <img src="assets/CE-logo.png" a href="Home.php" alt="Commute Ease Logo">
@@ -79,7 +63,6 @@ $conn->close(); // Close the database connection
       <a href="schedule-main.php" class="active">SCHEDULE</a>
       <a href="Home.php#about">ABOUT</a>
       
-      <!-- DYNAMIC LINKS -->
       <?php if ($is_logged_in): ?>
         <a href="accountinfo.php">ACCOUNT</a>
       <?php else: ?>
@@ -93,10 +76,6 @@ $conn->close(); // Close the database connection
         <?php endif; ?>
       </div>
       
-      <!-- 
-        UPDATED: Notification Bell and Dropdown 
-        Now only shows if logged in, and uses the PHP variables
-      -->
       <?php if ($is_logged_in): ?>
           <div class="notification-icon <?php if ($unread_count == 0) echo 'read'; ?>">
             <i class="fa-solid fa-bell"></i>
@@ -115,12 +94,10 @@ $conn->close(); // Close the database connection
               <?php endif; ?>
           </div> 
       <?php endif; ?>
-      <!-- END UPDATED NOTIFICATION -->
 
     </nav>
   </header>
 
-  <!-- TABLE FOR SCHED -->
   <h3><span class="underlinesched">TRIP SCHEDULES</span></h3>
 
   <div class="table-controls right-align">
@@ -129,7 +106,6 @@ $conn->close(); // Close the database connection
       <i class="fa fa-search"></i>
     </div>
 
-    <!-- Day Filter -->
     <select id="dayFilter">
       <option value="">Day</option>
       <option value="Monday">Monday</option>
@@ -141,7 +117,6 @@ $conn->close(); // Close the database connection
       <option value="Sunday">Sunday</option>
     </select>
 
-    <!-- UPDATED: Time Filter with 24-hour options -->
     <select id="timeFilter">
       <option value="">Time</option>
       <option value="0">12 AM</option>
@@ -179,7 +154,6 @@ $conn->close(); // Close the database connection
     <button id="searchBtn">Search</button>
   </div>
 
-  <!-- Schedule table inside bordered card -->
   <div class="schedule-card">
     <div class="table-wrapper">
       <table id="scheduleTable">
@@ -200,14 +174,12 @@ $conn->close(); // Close the database connection
     </div>
   </div>
 
-  <!-- next + previous arrows -->
 <div class="table-arrows">
   <button id="prevPageBtn" class="arrow-btn">&lt;</button>
   <span id="pageIndicator" class="page-indicator">1 of 1</span>
   <button id="nextPageBtn" class="arrow-btn">&gt;</button>
 </div>
 
-  <!-- Footer -->
   <footer>
     <div class="footer-container">
       <div class="footer-top">
@@ -240,18 +212,14 @@ $conn->close(); // Close the database connection
     </div>
   </footer>
 
-  <!-- JavaScript -->
 <script>
-  // --- Pass PHP login status to JavaScript ---
   const isUserLoggedIn = <?php echo json_encode($is_logged_in); ?>;
   
-  // --- Back-to-top code ---
   const backToTop = document.getElementById("backToTop");
   backToTop.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // --- START OF PAGINATION CODE ---
   const tableBody = document.querySelector("#scheduleTable tbody");
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
@@ -324,7 +292,6 @@ $conn->close(); // Close the database connection
         saveBtn.appendChild(saveIcon);
         
         saveBtn.addEventListener("click", () => {
-          // MODIFIED: Use the notification toast instead of alert()
           showNotification("You must be logged in to save a schedule.", "info"); 
         });
         
@@ -456,8 +423,6 @@ $conn->close(); // Close the database connection
     }
   });
 
-// --- UPDATED: Notification Bell Code ---
-// We only run this if the user is logged in (meaning the bell exists)
 if (isUserLoggedIn) {
     const bell = document.querySelector('.notification-icon');
     const dropdown = document.getElementById('notificationDropdown'); 
@@ -466,32 +431,26 @@ if (isUserLoggedIn) {
         event.stopPropagation(); 
         dropdown.classList.toggle("show");
         
-        // Check if it does NOT have the 'read' class (meaning it's unread)
         if (!bell.classList.contains('read')) {
             
-            // 1. Add the 'read' class immediately to hide the dot
             bell.classList.add('read');
             
-            // 2. Send a request to the server to mark all as read
             fetch('php/mark_notifications_read.php', {
                 method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // 3. Mark all items in dropdown as read (remove blue background)
                     dropdown.querySelectorAll('.notification-item.unread').forEach(item => {
                         item.classList.remove('unread');
                     });
                 } else {
                     console.error('Failed to mark notifications as read');
-                    // If it failed, remove the 'read' class to show the dot again
                     bell.classList.remove('read');
                 }
             })
             .catch(error => {
                 console.error('Error with fetch:', error);
-                // Also remove 'read' class on error
                 bell.classList.remove('read');
             });
         }

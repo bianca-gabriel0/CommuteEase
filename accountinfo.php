@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
 
 include 'php/db.php'; 
 
-// --- SAVED SCHEDULES LOGIC (Unchanged) ---
 $items_per_page = 7; 
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($current_page < 1) {
@@ -61,14 +60,12 @@ if ($total_items > 0) {
     }
     $stmt->close();
 }
-// --- END OF SAVED SCHEDULES LOGIC ---
 
 
-// --- NEW: NOTIFICATION LOGIC ---
+// --- NOTIFICATION LOGIC ---
 $unread_count = 0;
 $notifications = [];
 
-// 1. Get the count of *unread* notifications
 $unread_sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0";
 $unread_stmt = $conn->prepare($unread_sql);
 $unread_stmt->bind_param("i", $current_user_id);
@@ -76,8 +73,6 @@ $unread_stmt->execute();
 $unread_result = $unread_stmt->get_result();
 $unread_count = $unread_result->fetch_row()[0];
 $unread_stmt->close();
-
-// 2. Get the 5 most recent notifications (read or unread)
 $notif_sql = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5";
 $notif_stmt = $conn->prepare($notif_sql);
 $notif_stmt->bind_param("i", $current_user_id);
@@ -93,7 +88,7 @@ $notif_stmt->close();
 // --- END OF NOTIFICATION LOGIC ---
 
 
-// --- User Info (Unchanged) ---
+// --- User Info ---
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 $lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
 $userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 
@@ -110,17 +105,6 @@ $conn->close();
   <title>CommuteEase - Account</title>
   <link rel="stylesheet" href="accountinfo.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  
-  <!-- 
-    NOTE: 
-    I've removed the inline <style> block as you said it's in your CSS file.
-    Just make sure your 'accountinfo.css' file contains these rules:
-    
-    .notification-icon::after { ... display: block; }
-    .notification-icon.read::after { display: none; }
-    .notification-item.unread { background-color: #f4f8ff; font-weight: bold; }
-    ... (and the other styles for .notification-item, p, small, .no-notifications)
-  -->
 
 </head>
 <body>
@@ -137,17 +121,10 @@ $conn->close();
       <a href="Home.php#about">ABOUT</a>
       <a href="accountinfo.php" class="active">ACCOUNT</a>
       <div class="welcome-message">Hi, <?php echo $firstName; ?>!</div>
-      
-      <!-- 
-        FIX 1: PHP LOGIC
-        Changed this to add the '.read' class if count is 0
-        to match your CSS file.
-      -->
       <div class="notification-icon <?php if ($unread_count == 0) echo 'read'; ?>">
         <i class="fa-solid fa-bell"></i>
       </div>
       
-      <!-- UPDATED: Dropdown is populated by PHP -->
       <div class="notification-dropdown" id="notificationDropdown">
           <?php if (empty($notifications)): ?>
               <p class="no-notifications">No new notifications</p>
@@ -299,7 +276,7 @@ $conn->close();
     function confirmLogout() { window.location.href = 'logout.php'; }
     function goToEdit() { window.location.href = "editprofile.php"; }
     
-    // --- UPDATED: Notification Bell Logic ---
+    // --- Notification Bell Logic ---
     const bell = document.querySelector('.notification-icon');
     const dropdown = document.getElementById('notificationDropdown');
     
@@ -307,33 +284,26 @@ $conn->close();
       event.stopPropagation();
       dropdown.classList.toggle('show');
       
-      // FIX 2: JAVASCRIPT LOGIC
-      // Check if it does NOT have the 'read' class (meaning it's unread)
       if (!bell.classList.contains('read')) {
           
-          // 1. Add the 'read' class immediately to hide the dot
           bell.classList.add('read');
-          
-          // 2. Send a request to the server to mark all as read
+  
           fetch('php/mark_notifications_read.php', {
               method: 'POST'
           })
           .then(response => response.json())
           .then(data => {
               if (data.status === 'success') {
-                  // 3. Mark all items in dropdown as read (remove blue background)
                   dropdown.querySelectorAll('.notification-item.unread').forEach(item => {
                       item.classList.remove('unread');
                   });
               } else {
                   console.error('Failed to mark notifications as read');
-                  // If it failed, remove the 'read' class to show the dot again
                   bell.classList.remove('read');
               }
           })
           .catch(error => {
               console.error('Error with fetch:', error);
-              // Also remove 'read' class on error
               bell.classList.remove('read');
           });
       }
@@ -344,7 +314,6 @@ $conn->close();
         dropdown.classList.remove('show');
       }
     });
-    // --- END OF UPDATED Notification Bell Logic ---
 
     const logoutModal = document.getElementById('logoutModal');
     const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
@@ -355,8 +324,6 @@ $conn->close();
       if (event.target == logoutModal) { closeLogoutModal(); }
     });
     
-    
-    // --- Delete Schedule Modal Logic (Unchanged) ---
     let formToSubmit = null; 
     const deleteModal = document.getElementById('deleteScheduleModal');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
@@ -389,7 +356,7 @@ $conn->close();
     });
 
     
-    // --- Notification Toast Logic (Unchanged) ---
+    // --- Notification Toast Logic  ---
     
     function showNotification(message, type = 'success') {
       const toast = document.getElementById("notification-toast");

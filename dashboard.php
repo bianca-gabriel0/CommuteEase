@@ -1,35 +1,23 @@
 <?php
-// --- ADMIN SECURITY CHECK ---
 session_start();
-// If 'admin_user_id' is not set in the session, redirect to the login page
 if (!isset($_SESSION['admin_user_id'])) {
     header("Location: admin_login.php");
     exit;
 }
 
-// include the database connection
 require_once __DIR__ . '/php/db.php';
 
-// --- 1.A. GET TOTAL USERS (for Overview Chart) ---
 $sql_total_users = "SELECT COUNT(user_id) AS count FROM users";
 $result_total_users = $conn->query($sql_total_users);
 $total_users = $result_total_users->fetch_assoc()['count'];
-
-// --- 1.B. GET NEW USERS LAST 7 DAYS (for "NEW USER" card) ---
 $sql_new_users = "SELECT COUNT(user_id) AS count 
                   FROM users 
                   WHERE created_at >= CURDATE() - INTERVAL 6 DAY";
 $result_new_users = $conn->query($sql_new_users);
 $new_users_last_7_days = $result_new_users->fetch_assoc()['count'];
-
-
-// --- 2. GET TOTAL SCHEDULES (for "VEHICLE SUMMARY" card & Overview Chart) ---
 $sql_total_schedules = "SELECT COUNT(schedule_id) AS count FROM schedule WHERE is_deleted = 0";
 $result_total_schedules = $conn->query($sql_total_schedules);
 $total_schedules = $result_total_schedules->fetch_assoc()['count'];
-
-
-// --- 3. GET RECENT USERS LIST (for "Registered Users" table) ---
 $sql_recent_users = "SELECT first_name, last_name, email 
                      FROM users 
                      ORDER BY created_at DESC 
@@ -44,22 +32,17 @@ while ($row = $result_recent_users->fetch_assoc()) {
     ];
 }
 
-
-// --- 4. GET DATA FOR 7-DAY MINI CHARTS ---
-
-// A. Create a placeholder for the last 7 days (FOR NEW USER CHART)
 $user_chart_labels_array = [];
 $user_chart_data_map = [];
 for ($i = 6; $i >= 0; $i--) {
     $date = new DateTime("-$i days");
-    $day_key = $date->format('Y-m-d'); // e.g., '2025-11-01'
-    $day_label = $date->format('D');   // e.g., 'Sat'
+    $day_key = $date->format('Y-m-d'); 
+    $day_label = $date->format('D'); 
     
     $user_chart_labels_array[] = $day_label;
     $user_chart_data_map[$day_key] = 0;
 }
 
-// B. Get User counts for the last 7 days
 $sql_user_chart = "SELECT DATE(created_at) AS creation_date, COUNT(user_id) AS count
                    FROM users
                    WHERE created_at >= CURDATE() - INTERVAL 6 DAY
@@ -71,7 +54,6 @@ while ($row = $result_user_chart->fetch_assoc()) {
     }
 }
 
-// C. Get Schedule (Vehicle) counts PER DAY OF THE WEEK (FOR VEHICLE CHART)
 $schedule_chart_labels_array = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 $schedule_chart_data_map = [
     'Sunday' => 0, 'Monday' => 0, 'Tuesday' => 0, 'Wednesday' => 0,
@@ -92,7 +74,6 @@ if ($result_schedule_chart) {
     }
 }
 
-// D. Finalize data arrays for JavaScript
 $user_chart_values = array_values($user_chart_data_map);
 $schedule_chart_values = [
     $schedule_chart_data_map['Sunday'],
@@ -132,10 +113,8 @@ $schedule_chart_values = [
   <div class="main-content">
     <div class="dashboard-content">
 
-      <!-- Top row: new user, client, overview -->
       <div class="top-row">
         <div class="card small">
-          <!-- UPDATED: Card title and stat -->
           <p class="card-title">NEW USERS (Last 7 Days)</p>
           <div class="stat"><span class="dot green"></span><span id="newUsers"></span></div> 
           <div class="mini-graph"><canvas id="newUserChart"></canvas></div>
@@ -148,15 +127,13 @@ $schedule_chart_values = [
         </div>
       </div>
 
-      <!-- table + vehicle summary card -->
       <div class="bottom-row">
         <div class="card user-table-card">
-          <p class="card-title">Recently Registered Users</p> <!-- Title updated -->
+          <p class="card-title">Recently Registered Users</p> 
           <table id="usersTable" class="users-table">
             <thead>
               <tr><th>Username</th><th>Email</th></tr>
             </thead>
-            <!-- The table body is empty, JS will fill it -->
             <tbody></tbody>
           </table>
         </div>
@@ -173,26 +150,13 @@ $schedule_chart_values = [
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // --- START: DYNAMIC DATA FROM PHP ---
-    
-    // 1. Set the numbers for the stat cards
-    // UPDATED: Use the new 7-day user count
     document.getElementById("newUsers").textContent = <?php echo $new_users_last_7_days; ?>;
     document.getElementById("totalVehicles").textContent = <?php echo $total_schedules; ?>;
-
-    // 2. Populate user table
     const users = <?php echo json_encode($recent_users_list); ?>;
-
-    // 3. Get Chart Data
     const userChartLabels = <?php echo json_encode($user_chart_labels_array); ?>;
     const userChartData = <?php echo json_encode($user_chart_values); ?>;
-    
     const vehicleChartLabels = <?php echo json_encode($schedule_chart_labels_array); ?>;
     const vehicleChartData = <?php echo json_encode($schedule_chart_values); ?>;
-    
-    // --- END: DYNAMIC DATA FROM PHP ---
-
-
     const tbody = document.querySelector("#usersTable tbody");
     if (users.length > 0) {
         users.forEach(u => {
@@ -213,11 +177,9 @@ $schedule_chart_values = [
         labels: userChartLabels,
         datasets: [{ data: userChartData, borderColor: "#00c853", fill: false, tension: 0.3 }]
       },
-      // UPDATED: Removed scales to make labels visible on hover
       options: { plugins:{legend:{display:false}} }
     });
     
-    // This chart "clientChart" doesn't exist in your HTML, so it might throw an error.
     if (document.getElementById("clientChart")) {
         new Chart(document.getElementById("clientChart"), {
           type: "line",
@@ -229,11 +191,10 @@ $schedule_chart_values = [
         });
     }
 
-    // Overview Chart
     new Chart(document.getElementById("overviewChart"), {
       type: "bar",
       data: {
-        labels: ["Total Users", "Total Schedules"], // Updated labels
+        labels: ["Total Users", "Total Schedules"], 
         datasets: [{
           label: "Overview",
           data: [<?php echo $total_users; ?>, <?php echo $total_schedules; ?>],
@@ -250,11 +211,9 @@ $schedule_chart_values = [
         labels: vehicleChartLabels,
         datasets: [{ data: vehicleChartData, borderColor: "#2196f3", fill: false, tension: 0.3 }]
       },
-      // UPDATED: Removed scales to make labels visible on hover
       options: { plugins:{legend:{display:false}} }
     });
     
-    // Logout function pointing to the correct admin logout file
     function logout() {
       if (confirm("Are you sure you want to log out?")) {
         window.location.href = "admin_logout.php";

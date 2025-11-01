@@ -83,7 +83,7 @@ body {
     padding: 10px;
     margin-bottom: 20px;
     font-family:'albert sans';
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 .card2 h2{
@@ -95,9 +95,9 @@ body {
 
 
 .img{
-    margin-right: 50px; /* Space between image and form */
-    max-width: 300px; /* Adjust the size of the image */
-    height: auto; /* Maintain aspect ratio */
+    margin-right: 50px; 
+    max-width: 300px; 
+    height: auto; 
 }
 
 
@@ -110,13 +110,13 @@ h1 {
 
 p {
     font-weight: 300;
-    margin-top: 10px; /* Add margin for spacing */
+    margin-top: 10px; 
 }
 
 
 .card-container {
-    display: flex; /* Use flexbox to arrange cards side by side */
-    gap: 20px; /* Space between cards */
+    display: flex; 
+    gap: 20px; 
 }
 
 .card {
@@ -147,16 +147,16 @@ p {
 
 .edit{
     background-color: #6BBBAE; 
-    border: none; /* Remove borders */
-    color: white; /* White text */
-    padding: 10px 20px; /* Some padding */
-    text-align: center; /* Centered text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Make the button inline */
-    font-size: 16px; /* Increase font size */
-    margin: 20px 0; /* Some margin */
-    cursor: pointer; /* Pointer/hand icon */
-    border-radius: 4px; /* Rounded corners */
+    border: none; 
+    color: white; 
+    padding: 10px 20px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px; 
+    margin: 20px 0; 
+    cursor: pointer; 
+    border-radius: 4px; 
 }
 
 
@@ -261,4 +261,5 @@ p {
   right: 10px;
   color: #888;
 }
+
 

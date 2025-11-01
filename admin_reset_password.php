@@ -1,9 +1,7 @@
 <?php
 session_start();
 
-// Security Check:
-// If the user hasn't passed the captcha step, they have no
-// 'user_id_to_reset' in their session. Kick them back.
+
 if (!isset($_SESSION['user_id_to_reset'])) {
     header("Location: admin_forgot_password.php");
     exit;
@@ -75,7 +73,6 @@ if (!isset($_SESSION['user_id_to_reset'])) {
         
         <div class="form-group">
           <label for="password">New Password</label>
-          <!-- UPDATED: Added password-container and eye icon -->
           <div class="password-container">
             <input type="password" id="password" name="password" placeholder="At least 8 characters" required>
             <svg id="eyeIconNew" class="toggle-password" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -87,7 +84,6 @@ if (!isset($_SESSION['user_id_to_reset'])) {
         
         <div class="form-group">
           <label for="confirmPassword">Confirm New Password</label>
-          <!-- UPDATED: Added password-container and eye icon -->
           <div class="password-container">
             <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-type your password" required>
             <svg id="eyeIconConfirm" class="toggle-password" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -103,7 +99,6 @@ if (!isset($_SESSION['user_id_to_reset'])) {
 
   </div>
 
-  <!-- UPDATED: Added JavaScript for eye icons -->
   <script>
     const form = document.getElementById("resetPasswordForm");
     const newPass = document.getElementById("password");
@@ -111,14 +106,11 @@ if (!isset($_SESSION['user_id_to_reset'])) {
     const eyeIconNew = document.getElementById("eyeIconNew");
     const eyeIconConfirm = document.getElementById("eyeIconConfirm");
 
-    // Helper function to toggle password visibility
     function togglePassword(input, icon) {
         const isHidden = input.type === "password";
         input.type = isHidden ? "text" : "password";
         icon.style.opacity = isHidden ? "0.6" : "1";
     }
-
-    // Add click listeners to both icons
     eyeIconNew.addEventListener("click", () => {
         togglePassword(newPass, eyeIconNew);
     });
@@ -127,12 +119,9 @@ if (!isset($_SESSION['user_id_to_reset'])) {
         togglePassword(confirmPass, eyeIconConfirm);
     });
 
-    // Add client-side validation to check for match
     form.addEventListener("submit", function(e) {
         if (newPass.value !== confirmPass.value) {
             e.preventDefault(); 
-            // The server-side check is the real security,
-            // this is just for better user experience.
             alert("Passwords do not match. Please try again.");
         }
     });

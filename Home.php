@@ -1,25 +1,18 @@
 <?php
-// Start the session to check for login status
 session_start();
 
-// FLEXIBLE ACCESS: We check the login status but DO NOT redirect if false.
 $is_logged_in = isset($_SESSION['user_id']); 
 
-// If the user is logged in, we grab their name for the greeting.
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 
-// --- NEW: NOTIFICATION LOGIC ---
-// We must include the DB file to make queries
 include 'php/db.php'; 
 
 $unread_count = 0;
 $notifications = [];
 
-// Only fetch notifications if the user is logged in
 if ($is_logged_in) {
     $current_user_id = $_SESSION['user_id'];
 
-    // 1. Get the count of *unread* notifications
     $unread_sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0";
     $unread_stmt = $conn->prepare($unread_sql);
     $unread_stmt->bind_param("i", $current_user_id);
@@ -28,7 +21,6 @@ if ($is_logged_in) {
     $unread_count = $unread_result->fetch_row()[0];
     $unread_stmt->close();
 
-    // 2. Get the 5 most recent notifications (read or unread)
     $notif_sql = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5";
     $notif_stmt = $conn->prepare($notif_sql);
     $notif_stmt->bind_param("i", $current_user_id);
@@ -43,7 +35,7 @@ if ($is_logged_in) {
     $notif_stmt->close();
 }
 
-$conn->close(); // Close the database connection
+$conn->close(); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,7 +53,6 @@ $conn->close(); // Close the database connection
 
 <body>
 
-  <!-- nav bar -->
   <header class="navbar">
     <div class="logo">
       <img src="assets/CE-logo.png" a href = "Home.php" alt="Commute Ease Logo">
@@ -71,7 +62,6 @@ $conn->close(); // Close the database connection
       <a href="schedule-main.php">SCHEDULE</a>
       <a href="#about">ABOUT</a>
       
-      <!-- DYNAMIC LINKS: Shows LOGIN/SIGN UP for guests, ACCOUNT for members -->
       <?php if ($is_logged_in): ?>
         <a href="accountinfo.php">ACCOUNT</a>
       <?php else: ?>
@@ -80,16 +70,11 @@ $conn->close(); // Close the database connection
       <?php endif; ?>
       
       <div class="welcome-message">
-        <!-- FIX: Display the user's name if they are logged in -->
         <?php if ($is_logged_in): ?>
           Hi, <?php echo $firstName; ?>!
         <?php endif; ?>
       </div>
       
-      <!-- 
-        UPDATED: Notification Bell and Dropdown 
-        Now only shows if logged in, and uses the PHP variables
-      -->
       <?php if ($is_logged_in): ?>
           <div class="notification-icon <?php if ($unread_count == 0) echo 'read'; ?>">
             <i class="fa-solid fa-bell"></i>
@@ -108,18 +93,15 @@ $conn->close(); // Close the database connection
               <?php endif; ?>
           </div> 
       <?php endif; ?>
-      <!-- END UPDATED NOTIFICATION -->
 
     </nav>
   </header>
 
-  <!-- Hero Section -->
   <section class="hero">
     <h2>Get the schedules you need,<br>when you need them!</h2>
     <a href="schedule-main.php" class="btn" id="goNowBtn">Go now!</a>
   </section>
 
-  <!-- Available terminal Section -->
   <section class="terminals">
 
   <div class="terminal-cards">
@@ -146,7 +128,6 @@ $conn->close(); // Close the database connection
   </div>
 </section>
 
-  <!-- About Section -->
   <section id="about" class="about">
   <div class="about-text">
     <h3><span class="underline">ABOUT</span></h3>
@@ -200,14 +181,13 @@ $conn->close(); // Close the database connection
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2025 CommuteEase.</p> <!-- Corrected the missing closing tag -->
+      <p>&copy; 2025 CommuteEase.</p> 
     </div>
   </div>
 </footer>
 
 
 <script>
-  // --- NEW: Pass PHP login status to JavaScript ---
   const isUserLoggedIn = <?php echo json_encode($is_logged_in); ?>;
 
   const backToTop = document.getElementById("backToTop");
@@ -215,8 +195,6 @@ $conn->close(); // Close the database connection
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // --- UPDATED: Notification Bell Code ---
-  // We only run this if the user is logged in (meaning the bell exists)
   if (isUserLoggedIn) {
       const bell = document.querySelector('.notification-icon');
       const dropdown = document.getElementById('notificationDropdown'); 
@@ -225,62 +203,51 @@ $conn->close(); // Close the database connection
           event.stopPropagation(); 
           dropdown.classList.toggle("show");
           
-          // Check if it does NOT have the 'read' class (meaning it's unread)
           if (!bell.classList.contains('read')) {
               
-              // 1. Add the 'read' class immediately to hide the dot
               bell.classList.add('read');
               
-              // 2. Send a request to the server to mark all as read
               fetch('php/mark_notifications_read.php', {
                   method: 'POST'
               })
               .then(response => response.json())
               .then(data => {
                   if (data.status === 'success') {
-                      // 3. Mark all items in dropdown as read (remove blue background)
                       dropdown.querySelectorAll('.notification-item.unread').forEach(item => {
                           item.classList.remove('unread');
                       });
                   } else {
                       console.error('Failed to mark notifications as read');
-                      // If it failed, remove the 'read' class to show the dot again
                       bell.classList.remove('read');
                   }
               })
               .catch(error => {
                   console.error('Error with fetch:', error);
-                  // Also remove 'read' class on error
                   bell.classList.remove('read');
               });
           }
       });
 
       document.addEventListener("click", (event) => {
-        // Must check if bell and dropdown exist before checking contains
         if (bell && dropdown && !bell.contains(event.target) && !dropdown.contains(event.target)) {
           dropdown.classList.remove("show");
         }
       });
   }
-  // -----------------------------------------------------------------
 
-
-  // --- Image Slider JS ---
   const images = document.querySelectorAll('.image-card img');
   let current = 0;
 
   function showNextImage() {
-    if (images.length > 0) { // Only run if images exist
+    if (images.length > 0) { 
         images[current].classList.remove('active');
         current = (current + 1) % images.length;
         images[current].classList.add('active');
     }
   }
 
-  setInterval(showNextImage, 5000); // switch every 5 seconds
+  setInterval(showNextImage, 5000); 
   
-  // --- Hero Button Redirect JS ---
   const goNowBtn = document.getElementById("goNowBtn");
   if (goNowBtn) {
     goNowBtn.addEventListener("click", (e) => {
@@ -293,7 +260,6 @@ $conn->close(); // Close the database connection
     });
   }
 
-  // --- Other JS (Fade-in, etc.) ---
   const aboutSection = document.querySelector(".about");
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {

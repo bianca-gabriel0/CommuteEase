@@ -82,7 +82,7 @@ $_SESSION['captcha_answer'] = $num1 + $num2;
         
         <!-- NEW: Math problem "captcha" -->
         <div class="captcha-box">
-          <label for="captcha_input">Human Check: What is <?php echo $num1; ?> + <?php echo $num2; ?> ?</label>
+          <label for="captcha_input">CAPTCHA: What is <?php echo $num1; ?> + <?php echo $num2; ?> ?</label>
           <input type="text" id="captcha_input" name="captcha_input" required />
         </div>
 

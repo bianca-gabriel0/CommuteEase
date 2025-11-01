@@ -1,24 +1,19 @@
 <?php
-// Start the session
 session_start();
 
-// 1. STRICT AUTH GUARD
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit(); 
 }
 
-// 2. --- MODIFIED: DATABASE LOGIC ---
 include 'php/db.php'; 
 
-// --- PAGINATION SETUP ---
 $items_per_page = 7; 
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($current_page < 1) {
     $current_page = 1;
 }
 $offset = ($current_page - 1) * $items_per_page;
-// --- END: PAGINATION SETUP ---
 
 
 $current_user_id = $_SESSION['user_id'];
@@ -26,7 +21,6 @@ $saved_schedules = [];
 $total_items = 0;
 $total_pages = 0;
 
-// --- TOTAL COUNT QUERY ---
 $count_sql = "SELECT COUNT(ss.saved_id)
               FROM schedule s
               JOIN saved_schedules ss ON s.schedule_id = ss.schedule_id
@@ -42,7 +36,6 @@ $count_stmt->close();
 if ($total_items > 0) {
     $total_pages = ceil($total_items / $items_per_page);
 
-    // --- MAIN QUERY ---
     $sql = "SELECT 
                 s.location, s.type, s.destination, s.departure_time, 
                 s.estimated_arrival, s.frequency, ss.saved_id 
@@ -68,16 +61,13 @@ if ($total_items > 0) {
     }
     $stmt->close();
 }
-// --- END MODIFIED DATABASE LOGIC ---
 
 
-// 3. Prepare dynamic data
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 $lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
 $userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 
 $fullName = trim($firstName . ' ' . $lastName);
 
-// We must close the connection *after* ALL database work is done
 $conn->close();
 ?>
 
@@ -93,10 +83,8 @@ $conn->close();
 </head>
 <body>
 
-  <!-- --- NEW: Notification Toast HTML --- -->
   <div id="notification-toast"></div>
 
-  <!-- nav bar (unchanged) -->
   <header class="navbar">
     <div class="logo">
       <img src="assets/CE-logo.png" a href="Home.php" alt="Commute Ease Logo">
@@ -112,11 +100,9 @@ $conn->close();
     </nav>
   </header>
 
-  <!-- Account Section (unchanged) -->
   <section class="account-section">
     <h2 class="account-heading">Account Information</h2>
     <div class="account-container">
-      <!-- Profile Card (unchanged) -->
       <div class="profile-card">
         <div class="profile-header"><div class="profile-pic"><img src="assets/profile.png" alt="User Profile"></div></div>
         <div class="profile-details">
@@ -129,7 +115,6 @@ $conn->close();
         <button class="logout-btn" onclick="openLogoutModal()">↳ Log out</button>
       </div>
 
-      <!-- Saved Schedules -->
       <div class="schedule-card">
         <h3>My Saved Schedules:</h3>
         <table>
@@ -146,7 +131,6 @@ $conn->close();
           </thead>
           <tbody id="scheduleTable">
             
-            <!-- --- This PHP Loop is the same --- -->
             <?php if (empty($saved_schedules)): ?>
               <tr>
                 <td colspan="7" style="text-align: center; padding: 20px;">You have no saved schedules yet.</td>
@@ -161,29 +145,20 @@ $conn->close();
                   <td><?php echo date("g:iA", strtotime($schedule['estimated_arrival'])); ?></td>
                   <td><?php echo htmlspecialchars($schedule['frequency']); ?></td>
                   <td>
-                    <!-- 
-                      --- CHANGE ---
-                      1. Added class "delete-schedule-form"
-                    -->
+
                     <form action="unsave_schedule.php" method="POST" class="delete-schedule-form" style="display: inline;">
                       <input type="hidden" name="saved_id" value="<?php echo $schedule['saved_id']; ?>">
-                      <!-- 
-                        --- CHANGE ---
-                        2. Changed type="submit" to type="button"
-                           This stops the instant delete.
-                      -->
+
                       <button type="button" class="delete-btn" title="Unsave this schedule">🗑️</button>
                     </form>
                   </td>
                 </tr>
               <?php endforeach; ?>
             <?php endif; ?>
-            <!-- --- END: PHP Loop --- -->
             
           </tbody>
         </table>
             
-            <!-- Pagination links (unchanged) -->
             <?php if ($total_pages > 1): ?>
               <div class="pagination-controls">
                   <?php if ($current_page > 1): ?>
@@ -199,16 +174,13 @@ $conn->close();
                   <?php endif; ?>
               </div>
             <?php endif; ?>
-            <!-- --- END: PAGINATION LINKS --- -->
             
       </div>
     </div>
     
   </section>
 
-  <!-- Footer (unchanged) -->
   <footer>
-    <!-- (Your footer code is unchanged) -->
     <div class="footer-container">
       <div class="footer-top">
         <div class="footer-logo"><img src="assets/CE-logo-white.png" alt="CommuteEase Logo"><p class="footer-tagline">Making your daily commute easier.</p></div>
@@ -228,7 +200,6 @@ $conn->close();
     </div>
   </footer>
 
-  <!-- Logout Modal (unchanged) -->
   <div id="logoutModal" class="custom-modal-backdrop">
     <div class="custom-modal-content">
       <h4>Confirm Log Out</h4><p>Are you sure you want to log out?</p>
@@ -239,7 +210,6 @@ $conn->close();
     </div>
   </div>
 
-  <!-- --- NEW: Delete Schedule Confirmation Modal --- -->
   <div id="deleteScheduleModal" class="custom-modal-backdrop">
     <div class="custom-modal-content">
       <h4>Confirm Delete</h4>
@@ -252,9 +222,7 @@ $conn->close();
   </div>
 
 
-  <!-- JS Functions -->
   <script>
-    // Back-to-top (unchanged)
     const backToTop = document.getElementById("backToTop");
     if(backToTop) {
         backToTop.addEventListener("click", () => {
@@ -262,13 +230,11 @@ $conn->close();
         });
     }
 
-    // Logout Modal Functions (unchanged)
     function openLogoutModal() { document.getElementById('logoutModal').classList.add('show'); }
     function closeLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
     function confirmLogout() { window.location.href = 'logout.php'; }
     function goToEdit() { window.location.href = "editprofile.php"; }
     
-    // Notification Bell (unchanged)
     const bell = document.querySelector('.notification-icon');
     const dropdown = document.getElementById('notificationDropdown');
     bell.addEventListener('click', (event) => {
@@ -282,7 +248,6 @@ $conn->close();
       }
     });
 
-    // Logout Modal Listeners (unchanged)
     const logoutModal = document.getElementById('logoutModal');
     const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
     const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');

@@ -1,23 +1,35 @@
 <?php
+// --- ADMIN SECURITY CHECK ---
+session_start();
+// If 'admin_user_id' is not set in the session, redirect to the login page
+if (!isset($_SESSION['admin_user_id'])) {
+    header("Location: admin_login.php");
+    exit;
+}
+
 // include the database connection
 require_once __DIR__ . '/php/db.php';
 
-// --- 1. GET TOTAL USERS (for "NEW USER" card) ---
-// This is correct based on your view_users_admin.php
+// --- 1.A. GET TOTAL USERS (for Overview Chart) ---
 $sql_total_users = "SELECT COUNT(user_id) AS count FROM users";
 $result_total_users = $conn->query($sql_total_users);
 $total_users = $result_total_users->fetch_assoc()['count'];
 
+// --- 1.B. GET NEW USERS LAST 7 DAYS (for "NEW USER" card) ---
+$sql_new_users = "SELECT COUNT(user_id) AS count 
+                  FROM users 
+                  WHERE created_at >= CURDATE() - INTERVAL 6 DAY";
+$result_new_users = $conn->query($sql_new_users);
+$new_users_last_7_days = $result_new_users->fetch_assoc()['count'];
 
-// --- 2. GET TOTAL SCHEDULES (for "VEHICLE SUMMARY" card) ---
-// This is correct based on your fetch_schedules.php
+
+// --- 2. GET TOTAL SCHEDULES (for "VEHICLE SUMMARY" card & Overview Chart) ---
 $sql_total_schedules = "SELECT COUNT(schedule_id) AS count FROM schedule WHERE is_deleted = 0";
 $result_total_schedules = $conn->query($sql_total_schedules);
 $total_schedules = $result_total_schedules->fetch_assoc()['count'];
 
 
 // --- 3. GET RECENT USERS LIST (for "Registered Users" table) ---
-// This will get the 5 most recently created users
 $sql_recent_users = "SELECT first_name, last_name, email 
                      FROM users 
                      ORDER BY created_at DESC 
@@ -26,7 +38,6 @@ $result_recent_users = $conn->query($sql_recent_users);
 
 $recent_users_list = [];
 while ($row = $result_recent_users->fetch_assoc()) {
-    // We create the 'username' field for the JavaScript, just like your static data
     $recent_users_list[] = [
         'username' => htmlspecialchars($row['first_name'] . ' ' . $row['last_name']),
         'email' => htmlspecialchars($row['email'])
@@ -39,7 +50,6 @@ while ($row = $result_recent_users->fetch_assoc()) {
 // A. Create a placeholder for the last 7 days (FOR NEW USER CHART)
 $user_chart_labels_array = [];
 $user_chart_data_map = [];
-
 for ($i = 6; $i >= 0; $i--) {
     $date = new DateTime("-$i days");
     $day_key = $date->format('Y-m-d'); // e.g., '2025-11-01'
@@ -62,32 +72,28 @@ while ($row = $result_user_chart->fetch_assoc()) {
 }
 
 // C. Get Schedule (Vehicle) counts PER DAY OF THE WEEK (FOR VEHICLE CHART)
-// This is the new logic. We count schedules for 'Monday', 'Tuesday', etc.
 $schedule_chart_labels_array = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 $schedule_chart_data_map = [
     'Sunday' => 0, 'Monday' => 0, 'Tuesday' => 0, 'Wednesday' => 0,
     'Thursday' => 0, 'Friday' => 0, 'Saturday' => 0
 ];
 
-// This query groups your existing schedules by the 'day' column
 $sql_schedule_chart = "SELECT day, COUNT(schedule_id) AS count 
                        FROM schedule 
                        WHERE is_deleted = 0 
                        GROUP BY day";
                        
 $result_schedule_chart = $conn->query($sql_schedule_chart);
-if ($result_schedule_chart) { // Check if query was successful
+if ($result_schedule_chart) {
     while ($row = $result_schedule_chart->fetch_assoc()) {
         if (isset($schedule_chart_data_map[$row['day']])) {
             $schedule_chart_data_map[$row['day']] = (int)$row['count'];
         }
     }
 }
-// else: The query failed, so the graph will just show zeros.
 
 // D. Finalize data arrays for JavaScript
 $user_chart_values = array_values($user_chart_data_map);
-// Re-order the schedule data to match the labels (Sun, Mon, Tue...)
 $schedule_chart_values = [
     $schedule_chart_data_map['Sunday'],
     $schedule_chart_data_map['Monday'],
@@ -98,8 +104,6 @@ $schedule_chart_values = [
     $schedule_chart_data_map['Saturday']
 ];
 
-
-// We will inject these PHP variables into the JavaScript below
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,8 +135,8 @@ $schedule_chart_values = [
       <!-- Top row: new user, client, overview -->
       <div class="top-row">
         <div class="card small">
-          <p class="card-title">NEW USER (7 Days):</p>
-          <!-- The number '0' is removed, JS will add it -->
+          <!-- UPDATED: Card title and stat -->
+          <p class="card-title">NEW USERS (Last 7 Days)</p>
           <div class="stat"><span class="dot green"></span><span id="newUsers"></span></div> 
           <div class="mini-graph"><canvas id="newUserChart"></canvas></div>
         </div>
@@ -147,7 +151,7 @@ $schedule_chart_values = [
       <!-- table + vehicle summary card -->
       <div class="bottom-row">
         <div class="card user-table-card">
-          <p class="card-title">Registered Users</p>
+          <p class="card-title">Recently Registered Users</p> <!-- Title updated -->
           <table id="usersTable" class="users-table">
             <thead>
               <tr><th>Username</th><th>Email</th></tr>
@@ -159,8 +163,7 @@ $schedule_chart_values = [
 
         <div class="card small">
           <p class="card-title">VEHICLE SUMMARY</p>
-          <!-- The number '0' is removed, JS will add it -->
-          <div class="stat"><span class="dot blue"></span>Total Vehicle: <span id="totalVehicles"></span></div>
+          <div class="stat"><span class="dot blue"></span>Total Schedules: <span id="totalVehicles"></span></div> <!-- Title updated -->
           <div class="mini-graph"><canvas id="vehicleChart"></canvas></div>
         </div>
       </div>
@@ -173,12 +176,11 @@ $schedule_chart_values = [
     // --- START: DYNAMIC DATA FROM PHP ---
     
     // 1. Set the numbers for the stat cards
-    // We use the variables from our PHP script at the top
-    document.getElementById("newUsers").textContent = <?php echo $total_users; ?>;
+    // UPDATED: Use the new 7-day user count
+    document.getElementById("newUsers").textContent = <?php echo $new_users_last_7_days; ?>;
     document.getElementById("totalVehicles").textContent = <?php echo $total_schedules; ?>;
 
     // 2. Populate user table
-    // We replace the static 'users' array with our dynamic list from PHP
     const users = <?php echo json_encode($recent_users_list); ?>;
 
     // 3. Get Chart Data
@@ -191,8 +193,6 @@ $schedule_chart_values = [
     // --- END: DYNAMIC DATA FROM PHP ---
 
 
-    // This code block is the SAME as your old file.
-    // It now uses the 'users' variable we just filled from the database.
     const tbody = document.querySelector("#usersTable tbody");
     if (users.length > 0) {
         users.forEach(u => {
@@ -202,22 +202,22 @@ $schedule_chart_values = [
         });
     } else {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="2">No users found.</td>`;
+        tr.innerHTML = `<td colspan="2">No recent users found.</td>`;
         tbody.appendChild(tr);
     }
 
-    // Mini Graphs (This is still static data, you can make it dynamic later)
+    // New User Mini Graph
     new Chart(document.getElementById("newUserChart"), {
       type: "line",
       data: {
-        labels: userChartLabels, // <-- UPDATED
-        datasets: [{ data: userChartData, borderColor: "#00c853", fill: false, tension: 0.3 }] // <-- UPDATED
+        labels: userChartLabels,
+        datasets: [{ data: userChartData, borderColor: "#00c853", fill: false, tension: 0.3 }]
       },
-      options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
+      // UPDATED: Removed scales to make labels visible on hover
+      options: { plugins:{legend:{display:false}} }
     });
     
     // This chart "clientChart" doesn't exist in your HTML, so it might throw an error.
-    // I've wrapped it in a check to prevent errors.
     if (document.getElementById("clientChart")) {
         new Chart(document.getElementById("clientChart"), {
           type: "line",
@@ -230,37 +230,34 @@ $schedule_chart_values = [
     }
 
     // Overview Chart
-    // We will make the 'data' dynamic using our PHP variables
     new Chart(document.getElementById("overviewChart"), {
       type: "bar",
       data: {
-        labels: ["Users", "Schedules"], // Changed "Vehicles" to "Schedules"
+        labels: ["Total Users", "Total Schedules"], // Updated labels
         datasets: [{
           label: "Overview",
-          // Here we use the PHP variables for the chart data
           data: [<?php echo $total_users; ?>, <?php echo $total_schedules; ?>],
-          backgroundColor: ["#00c853", "#2196f3"] // Removed the red color
+          backgroundColor: ["#00c853", "#2196f3"]
         }]
       },
       options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
     });
 
-    // Vehicle mini graph (This is still static)
+    // Vehicle mini graph
     new Chart(document.getElementById("vehicleChart"), {
       type: "line",
       data: {
-        labels: vehicleChartLabels, // <-- UPDATED
-        datasets: [{ data: vehicleChartData, borderColor: "#2196f3", fill: false, tension: 0.3 }] // <-- UPDATED
+        labels: vehicleChartLabels,
+        datasets: [{ data: vehicleChartData, borderColor: "#2196f3", fill: false, tension: 0.3 }]
       },
-      options: { plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} }
+      // UPDATED: Removed scales to make labels visible on hover
+      options: { plugins:{legend:{display:false}} }
     });
     
-    // Add the logout function (copied from your view_users_admin.php)
+    // Logout function pointing to the correct admin logout file
     function logout() {
-      // Replaced confirm() with a custom modal for safety in embedded environments
-      // A simple 'if (true)' replacement for demo. You should build a modal.
       if (confirm("Are you sure you want to log out?")) {
-        window.location.href = "logout.php";
+        window.location.href = "admin_logout.php";
       }
     }
   </script>

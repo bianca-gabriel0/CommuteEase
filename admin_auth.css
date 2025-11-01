@@ -1,0 +1,195 @@
+/* CSS for Admin Login, Signup, and Forgot Password
+  This file styles all three pages.
+*/
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Albert Sans', sans-serif; /* Match your dashboard font */
+}
+
+body {
+  background-color: #f4f4f9; /* Light gray background */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.auth-container {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  min-height: 600px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Left Side  */
+.auth-sidebar {
+  flex-basis: 40%;
+  background-color: #fff; 
+  color: #fff;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.auth-sidebar img {
+  width: 150px;
+  margin-bottom: 25px;
+}
+
+.auth-sidebar h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.auth-sidebar p {
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Right Side (Form Area) */
+.auth-form-container {
+  flex-basis: 60%;
+  padding: 50px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.auth-form-container .back-link {
+  position: absolute;
+  top: 30px;
+  left: 60px;
+  color: #555;
+  text-decoration: none;
+  font-size: 15px;
+}
+.auth-form-container .back-link:hover {
+  text-decoration: underline;
+}
+
+.auth-form-container h2 {
+  font-size: 2.2rem;
+  color: #111;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.form-group input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+  outline: none;
+}
+
+.password-container {
+  position: relative;
+}
+.password-container input {
+  padding-right: 45px;
+}
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  fill: #555;
+}
+
+.auth-form-container .forgot-password {
+  text-align: right;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+.auth-form-container .forgot-password a {
+  font-size: 14px;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #007bff; /* Blue to match dashboard theme */
+  border: none;
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+.auth-btn:hover:enabled {
+  background-color: #0056b3;
+}
+.auth-btn:disabled {
+  background-color: #a0cfff;
+  cursor: not-allowed;
+}
+
+.auth-form-container .bottom-link {
+  margin-top: 25px;
+  font-size: 15px;
+  text-align: center;
+  color: #333;
+}
+.auth-form-container .bottom-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Error/Success Notifications */
+.error-notification, .success-notification {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+.error-notification {
+  background-color: #f8d7da; 
+  color: #721c24; 
+  border: 1px solid #f5c6cb;
+}
+.success-notification {
+  background-color: #d4edda; 
+  color: #155724; 
+  border: 1px solid #c3e6cb;
+}

@@ -1,4 +1,14 @@
 <?php
+// --- Admin Security Check ---
+// We MUST start the session to check for a valid admin
+session_start();
+
+// If the admin is not logged in (session not set), kick them to the login page
+if (!isset($_SESSION['admin_user_id'])) {
+    header("Location: admin_login.php");
+    exit;
+}
+
 // include the database connection using an explicit path so it works regardless of include_path
 require_once __DIR__ . '/php/db.php';
 
@@ -62,9 +72,9 @@ $result = $conn->query("SELECT user_id, first_name, last_name, email, created_at
 
   <script>
     function logout() {
-      if (confirm("Are you sure you want to log out?")) {
-        window.location.href = "logout.php";
-      }
+      // --- THIS IS THE FIX ---
+      // I removed the 'confirm()' box and pointed to the correct admin logout file.
+      window.location.href = "admin_logout.php";
     }
   </script>
 </body>

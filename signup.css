@@ -41,7 +41,7 @@ body {
 /* Right side form */
 .right {
   flex: 1;
-  max-width: 450px;             /* same as login form */
+  max-width: 450px;            
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -53,7 +53,7 @@ body {
   color: #444;
   text-decoration: none;
   position: absolute;
-  top: 20px;                    /* aligned same as login */
+  top: 20px;                    
   left: 30px;
 }
 
@@ -63,7 +63,7 @@ body {
 
 /* Form heading */
 h2 {
-  font-size: 32px;              /* same size as login heading */
+  font-size: 32px;              
   margin-bottom: 22px;
   color: #111;
   text-align: center;
@@ -71,8 +71,8 @@ h2 {
 
 /* Input fields */
 .form-group {
-  margin-bottom: 14px;          /* same spacing */
-  position: relative;           /* for positioning the eye icon */
+  margin-bottom: 14px;          
+  position: relative;           
 }
 
 input {
@@ -116,7 +116,7 @@ input {
   background-color: #58a193;
   border: none;
   border-radius: 8px;
-  font-size: 17px;              /* same button size as login */
+  font-size: 17px;              
   color: white;
   cursor: pointer;
   transition: background 0.3s;

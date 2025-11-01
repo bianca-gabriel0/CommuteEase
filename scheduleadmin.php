@@ -1,3 +1,14 @@
+<?php
+// --- Admin Security Check ---
+// We MUST start the session to check for a valid admin
+session_start();
+
+// If the admin is not logged in (session not set), kick them to the login page
+if (!isset($_SESSION['admin_user_id'])) {
+    header("Location: admin_login.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +30,8 @@
     <div class="sidebar">
         <img src="assets/CE-logo.png" alt="" class="signup-image">
         <a href="dashboard.php"><i class="fa-solid fa-house"></i> Dashboard</a>
-        <a href="scheduleadmin.php"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
+        <!-- Set this link to active -->
+        <a href="scheduleadmin.php" class="active"><i class="fa-solid fa-calendar-alt"></i> Schedules</a>
         <a href="view_users_admin.php"><i class="fa-solid fa-user-gear"></i> View Users</a>
         <button class="logout-button" onclick="logout()">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
@@ -134,8 +146,8 @@
         // UPDATED: Renamed 'schedules' to 'allSchedules'
         let allSchedules = [];
         // UPDATED: Added new variables for pagination
-        let currentView = [];     
-        let currentPage = 1;      
+        let currentView = [];     
+        let currentPage = 1;       
         const rowsPerPage = 7; // As you requested
         
         // UPDATED: Get button elements
@@ -362,10 +374,11 @@
             }
         });
 
-        // Placeholder for logout
+        // --- THIS IS THE FIX ---
+        // Updated the logout function to point to the correct admin logout file
         function logout() {
-            console.log("Logout clicked");
-            // Add your logout logic here, e.g., window.location.href = 'php/logout.php';
+            // I removed the 'confirm()' box and console.log
+            window.location.href = "admin_logout.php";
         }
 
     </script>

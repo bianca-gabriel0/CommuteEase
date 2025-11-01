@@ -549,3 +549,42 @@ footer {
 .custom-modal-buttons .confirm-delete:hover {
    background-color: #c9302c;
 }
+/* --- ADD THIS TO YOUR accountinfo.css --- */
+
+.notification-item {
+    display: block;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: #333;
+    white-space: normal; /* Allow text to wrap */
+}
+.notification-item:last-child {
+    border-bottom: none;
+}
+.notification-item:hover {
+    background-color: #f9f9f9;
+}
+/* Style for unread messages */
+.notification-item.unread {
+    background-color: #f4f8ff; /* Light blue */
+    font-weight: bold;
+}
+.notification-item p {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+    color: #333; /* Ensure text color is set */
+    text-align: left; /* Override parent's center align */
+}
+.notification-item small {
+    font-size: 0.75em;
+    color: #777;
+    font-weight: normal;
+}
+.no-notifications {
+    padding: 15px;
+    text-align: center;
+    color: #888;
+}
+
+/* --- END OF NEW CSS --- */

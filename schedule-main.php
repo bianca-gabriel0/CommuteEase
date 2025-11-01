@@ -1,14 +1,47 @@
 <?php
 // 
 // --- AUTH GUARD ---
-// We MUST start the session at the very top to check for the login "wristband"
 session_start();
 
-// FLEXIBLE ACCESS: We check the login status but DO NOT redirect if false.
 $is_logged_in = isset($_SESSION['user_id']); 
-
-// If the user is logged in, we grab their name for the greeting.
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
+
+// --- NEW: NOTIFICATION LOGIC ---
+// We must include the DB file to make queries
+include 'php/db.php'; 
+
+$unread_count = 0;
+$notifications = [];
+
+// Only fetch notifications if the user is logged in
+if ($is_logged_in) {
+    $current_user_id = $_SESSION['user_id'];
+
+    // 1. Get the count of *unread* notifications
+    $unread_sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0";
+    $unread_stmt = $conn->prepare($unread_sql);
+    $unread_stmt->bind_param("i", $current_user_id);
+    $unread_stmt->execute();
+    $unread_result = $unread_stmt->get_result();
+    $unread_count = $unread_result->fetch_row()[0];
+    $unread_stmt->close();
+
+    // 2. Get the 5 most recent notifications (read or unread)
+    $notif_sql = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5";
+    $notif_stmt = $conn->prepare($notif_sql);
+    $notif_stmt->bind_param("i", $current_user_id);
+    $notif_stmt->execute();
+    $notif_result = $notif_stmt->get_result();
+
+    if ($notif_result->num_rows > 0) {
+        while ($row = $notif_result->fetch_assoc()) {
+            $notifications[] = $row;
+        }
+    }
+    $notif_stmt->close();
+}
+
+$conn->close(); // Close the database connection
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,14 +54,17 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="schedule-style.css">
 
- 
+  <!-- 
+    NEW: CSS for notification dot and dropdown. 
+    You can move this to your schedule-style.css file if you want!
+  -->
+
 
 </head>
 
 <body>
 
   <!-- --- NEW: Notification Toast HTML --- -->
-  <!-- This is the empty element that our JavaScript will grab -->
   <div id="notification-toast"></div>
   <!-- --- END NEW HTML --- -->
 
@@ -43,7 +79,7 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
       <a href="schedule-main.php" class="active">SCHEDULE</a>
       <a href="Home.php#about">ABOUT</a>
       
-      <!-- DYNAMIC LINKS: Shows LOGIN/SIGN UP for guests, ACCOUNT for members -->
+      <!-- DYNAMIC LINKS -->
       <?php if ($is_logged_in): ?>
         <a href="accountinfo.php">ACCOUNT</a>
       <?php else: ?>
@@ -56,12 +92,30 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
           Hi, <?php echo $firstName; ?>!
         <?php endif; ?>
       </div>
-      <div class="notification-icon">
-        <i class="fa-solid fa-bell"></i>
-      </div>
-      <div class="notification-dropdown" id="notificationDropdown">
-        <p>No new notifications</p>
-      </div> 
+      
+      <!-- 
+        UPDATED: Notification Bell and Dropdown 
+        Now only shows if logged in, and uses the PHP variables
+      -->
+      <?php if ($is_logged_in): ?>
+          <div class="notification-icon <?php if ($unread_count == 0) echo 'read'; ?>">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          
+          <div class="notification-dropdown" id="notificationDropdown">
+              <?php if (empty($notifications)): ?>
+                  <p class="no-notifications">No new notifications</p>
+              <?php else: ?>
+                  <?php foreach ($notifications as $notif): ?>
+                      <div class="notification-item <?php if ($notif['is_read'] == 0) echo 'unread'; ?>">
+                          <p><?php echo htmlspecialchars($notif['message']); ?></p>
+                          <small><?php echo date("M j, g:i a", strtotime($notif['created_at'])); ?></small>
+                      </div>
+                  <?php endforeach; ?>
+              <?php endif; ?>
+          </div> 
+      <?php endif; ?>
+      <!-- END UPDATED NOTIFICATION -->
 
     </nav>
   </header>
@@ -149,7 +203,6 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   <!-- next + previous arrows -->
 <div class="table-arrows">
   <button id="prevPageBtn" class="arrow-btn">&lt;</button>
-  <!-- NEW: Page indicator -->
   <span id="pageIndicator" class="page-indicator">1 of 1</span>
   <button id="nextPageBtn" class="arrow-btn">&gt;</button>
 </div>
@@ -202,8 +255,7 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   const tableBody = document.querySelector("#scheduleTable tbody");
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
-  const searchInput = document.getElementById("searchInput"); // Get search input element
-  // NEW: Get the page indicator element
+  const searchInput = document.getElementById("searchInput"); 
   const pageIndicator = document.getElementById("pageIndicator");
 
   let allSchedules = []; 
@@ -211,11 +263,9 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   let currentPage = 1; 
   const rowsPerPage = 10; 
 
- // Renders the table rows for the given data (a "slice")
   function renderTable(list) {
     tableBody.innerHTML = "";
     
-    // NEW: Show a message if no results
     if (list.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No schedules match your filters.</td></tr>`;
         return;
@@ -233,46 +283,36 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
         <td>${schedule.frequency}</td>
       `;
 
-      // --- UPDATED Save Button Logic ---
       const saveCell = document.createElement("td");
       
       if (isUserLoggedIn) {
-        // --- User is LOGGED IN: Create a real submission form ---
         const saveForm = document.createElement("form");
-        saveForm.action = "save_schedule.php"; // Point to your backend script
+        saveForm.action = "save_schedule.php"; 
         saveForm.method = "POST";
-        saveForm.classList.add("save-form"); // Optional: for styling
+        saveForm.classList.add("save-form"); 
 
-        // Create the hidden input to send the schedule_id
         const hiddenInput = document.createElement("input");
         hiddenInput.type = "hidden";
         hiddenInput.name = "schedule_id";
-        
-        // This code assumes 'schedule_id' exists in the JSON from fetch_schedules.php
         hiddenInput.value = schedule.schedule_id; 
         
-        // Create the submit button
         const saveBtn = document.createElement("button");
-        saveBtn.type = "submit"; // This makes it submit the form
-        saveBtn.classList.add("save-btn"); // Use your existing class
+        saveBtn.type = "submit"; 
+        saveBtn.classList.add("save-btn"); 
         saveBtn.title = "Save this schedule"; 
 
-        // Create and add the icon (using your original code)
         const saveIcon = document.createElement("img");
         saveIcon.src = "assets/bookmark-icon.png";
         saveIcon.alt = "Save";
         saveIcon.classList.add("save-icon");
         saveBtn.appendChild(saveIcon);
 
-        // Assemble the form
         saveForm.appendChild(hiddenInput);
         saveForm.appendChild(saveBtn);
         
-        // Add the form to the cell
         saveCell.appendChild(saveForm);
 
       } else {
-        // --- User is a GUEST: Keep the original "alert" button ---
         const saveBtn = document.createElement("button");
         saveBtn.classList.add("save-btn");
         saveBtn.title = "Log in to save schedules";
@@ -284,20 +324,18 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
         saveBtn.appendChild(saveIcon);
         
         saveBtn.addEventListener("click", () => {
-          alert("You must be logged in to save a schedule!"); 
+          // MODIFIED: Use the notification toast instead of alert()
+          showNotification("You must be logged in to save a schedule.", "info"); 
         });
         
         saveCell.appendChild(saveBtn);
       }
       
       row.appendChild(saveCell);
-      // --- end save button code ---
-      
       tableBody.appendChild(row);
     });
   }
 
-  // Master" Display Function: Calculates the slice and updates buttons
   function updateDisplay() {
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
@@ -308,38 +346,29 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
     prevPageBtn.disabled = (currentPage === 1);
     nextPageBtn.disabled = (endIndex >= currentView.length);
     
-    // --- NEW: Update page indicator text ---
-    const maxPage = Math.ceil(currentView.length / rowsPerPage) || 1; // || 1 to prevent "0 of 0" if empty
+    const maxPage = Math.ceil(currentView.length / rowsPerPage) || 1; 
     pageIndicator.textContent = `${currentPage} of ${maxPage}`;
-    // --- END NEW ---
   }
 
-  // --- NEW: Function to show the notification toast ---
   function showNotification(message, type = 'success') {
     const toast = document.getElementById("notification-toast");
     toast.innerHTML = message;
     
-    // Set class based on type
-    toast.className = "show " + type; // e.g., "show success" or "show info"
+    toast.className = "show " + type; 
 
-    // After 3 seconds, remove the show class
     setTimeout(() => { 
       toast.className = toast.className.replace("show", ""); 
       
-      // Clean up the URL so the message doesn't pop up again on refresh
-      // We use history.replaceState to do this without reloading the page
       if (window.history.replaceState) {
         const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
         window.history.replaceState({path: cleanURL}, '', cleanURL);
       }
-    }, 3000); // 3000ms = 3 seconds
+    }, 3000); 
   }
 
 
-  // Fetches data when the page loads
   document.addEventListener("DOMContentLoaded", () => {
     
-    // --- NEW: Check for URL parameters to show notification ---
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get('status');
 
@@ -348,15 +377,14 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
     } else if (status === 'exists') {
       showNotification("This schedule is already in your list.", "info");
     }
-    // --- END NEW NOTIFICATION CHECK ---
     
     
     fetch('php/fetch_schedules.php')
       .then(response => response.json())
       .then(data => {
-        allSchedules = data;    
-        currentView = data;     
-        updateDisplay();        
+        allSchedules = data;    
+        currentView = data;    
+        updateDisplay();        
       })
       .catch(error => {
         console.error('Error fetching schedules:', error);
@@ -364,7 +392,6 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
       });
   });
 
-  // Search filter event listener
   document.getElementById("searchBtn").addEventListener("click", () => {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
     const typeValue = document.getElementById("typeFilter").value;
@@ -388,38 +415,32 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
       return matchesSearch && matchesType && matchesDay && matchesTime;
     });
 
-    currentView = filtered;   
-    currentPage = 1;        
-    updateDisplay();        
+    currentView = filtered;   
+    currentPage = 1;        
+    updateDisplay();        
   });
 
-  // UPDATED: Combined all filter change listeners into one
   const filters = [
     document.getElementById("dayFilter"),
     document.getElementById("typeFilter"),
     document.getElementById("timeFilter")
   ];
   
-  // Attach event listener to all dropdown filters (change)
   filters.forEach(filter => {
     filter.addEventListener("change", () => {
       document.getElementById("searchBtn").click();
     });
   });
   
-  // Attach keyup listener for instant search filtering on input
   searchInput.addEventListener("keyup", (event) => {
-    // UPDATED: Check for Enter key and prevent default browser action
     if (event.key === 'Enter') {
-        event.preventDefault(); // Stop the Enter key from causing a page refresh (robustness)
+        event.preventDefault(); 
         document.getElementById("searchBtn").click();
     } else {
-        // Instant search on every other key release (the existing behavior)
         document.getElementById("searchBtn").click();
     }
   });
 
-  // Click Listeners for Pagination
   prevPageBtn.addEventListener("click", () => {
     if (currentPage > 1) {
       currentPage--;
@@ -435,23 +456,54 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
     }
   });
 
-// --- Notification Bell Code ---
-  const bell = document.querySelector('.notification-icon');
-  const dropdown = document.getElementById('notificationDropdown'); 
-  
-  bell.addEventListener("click", (event) => {
-    event.stopPropagation(); 
-    dropdown.classList.toggle("show");
-    bell.classList.add("read"); 
-  });
+// --- UPDATED: Notification Bell Code ---
+// We only run this if the user is logged in (meaning the bell exists)
+if (isUserLoggedIn) {
+    const bell = document.querySelector('.notification-icon');
+    const dropdown = document.getElementById('notificationDropdown'); 
+    
+    bell.addEventListener("click", (event) => {
+        event.stopPropagation(); 
+        dropdown.classList.toggle("show");
+        
+        // Check if it does NOT have the 'read' class (meaning it's unread)
+        if (!bell.classList.contains('read')) {
+            
+            // 1. Add the 'read' class immediately to hide the dot
+            bell.classList.add('read');
+            
+            // 2. Send a request to the server to mark all as read
+            fetch('php/mark_notifications_read.php', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // 3. Mark all items in dropdown as read (remove blue background)
+                    dropdown.querySelectorAll('.notification-item.unread').forEach(item => {
+                        item.classList.remove('unread');
+                    });
+                } else {
+                    console.error('Failed to mark notifications as read');
+                    // If it failed, remove the 'read' class to show the dot again
+                    bell.classList.remove('read');
+                }
+            })
+            .catch(error => {
+                console.error('Error with fetch:', error);
+                // Also remove 'read' class on error
+                bell.classList.remove('read');
+            });
+        }
+    });
 
-  document.addEventListener("click", (event) => {
-    if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
-      dropdown.classList.remove("show");
-    }
-  });
+    document.addEventListener("click", (event) => {
+      if (bell && dropdown && !bell.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.remove("show");
+      }
+    });
+}
 
 </script> 
 </body>
 </html>
-

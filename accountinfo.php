@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include 'php/db.php'; 
 
+// --- SAVED SCHEDULES LOGIC (Unchanged) ---
 $items_per_page = 7; 
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($current_page < 1) {
@@ -15,16 +16,15 @@ if ($current_page < 1) {
 }
 $offset = ($current_page - 1) * $items_per_page;
 
-
 $current_user_id = $_SESSION['user_id'];
 $saved_schedules = []; 
 $total_items = 0;
 $total_pages = 0;
 
 $count_sql = "SELECT COUNT(ss.saved_id)
-              FROM schedule s
-              JOIN saved_schedules ss ON s.schedule_id = ss.schedule_id
-              WHERE ss.user_id = ? AND s.is_deleted = FALSE";
+             FROM schedule s
+             JOIN saved_schedules ss ON s.schedule_id = ss.schedule_id
+             WHERE ss.user_id = ? AND s.is_deleted = FALSE";
 
 $count_stmt = $conn->prepare($count_sql);
 $count_stmt->bind_param("i", $current_user_id);
@@ -61,8 +61,39 @@ if ($total_items > 0) {
     }
     $stmt->close();
 }
+// --- END OF SAVED SCHEDULES LOGIC ---
 
 
+// --- NEW: NOTIFICATION LOGIC ---
+$unread_count = 0;
+$notifications = [];
+
+// 1. Get the count of *unread* notifications
+$unread_sql = "SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0";
+$unread_stmt = $conn->prepare($unread_sql);
+$unread_stmt->bind_param("i", $current_user_id);
+$unread_stmt->execute();
+$unread_result = $unread_stmt->get_result();
+$unread_count = $unread_result->fetch_row()[0];
+$unread_stmt->close();
+
+// 2. Get the 5 most recent notifications (read or unread)
+$notif_sql = "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 5";
+$notif_stmt = $conn->prepare($notif_sql);
+$notif_stmt->bind_param("i", $current_user_id);
+$notif_stmt->execute();
+$notif_result = $notif_stmt->get_result();
+
+if ($notif_result->num_rows > 0) {
+    while ($row = $notif_result->fetch_assoc()) {
+        $notifications[] = $row;
+    }
+}
+$notif_stmt->close();
+// --- END OF NOTIFICATION LOGIC ---
+
+
+// --- User Info (Unchanged) ---
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 $lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
 $userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 
@@ -80,6 +111,17 @@ $conn->close();
   <link rel="stylesheet" href="accountinfo.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   
+  <!-- 
+    NOTE: 
+    I've removed the inline <style> block as you said it's in your CSS file.
+    Just make sure your 'accountinfo.css' file contains these rules:
+    
+    .notification-icon::after { ... display: block; }
+    .notification-icon.read::after { display: none; }
+    .notification-item.unread { background-color: #f4f8ff; font-weight: bold; }
+    ... (and the other styles for .notification-item, p, small, .no-notifications)
+  -->
+
 </head>
 <body>
 
@@ -95,8 +137,30 @@ $conn->close();
       <a href="Home.php#about">ABOUT</a>
       <a href="accountinfo.php" class="active">ACCOUNT</a>
       <div class="welcome-message">Hi, <?php echo $firstName; ?>!</div>
-      <div class="notification-icon"><i class="fa-solid fa-bell"></i></div>
-      <div class="notification-dropdown" id="notificationDropdown"><p>No new notifications</p></div>
+      
+      <!-- 
+        FIX 1: PHP LOGIC
+        Changed this to add the '.read' class if count is 0
+        to match your CSS file.
+      -->
+      <div class="notification-icon <?php if ($unread_count == 0) echo 'read'; ?>">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      
+      <!-- UPDATED: Dropdown is populated by PHP -->
+      <div class="notification-dropdown" id="notificationDropdown">
+          <?php if (empty($notifications)): ?>
+              <p class="no-notifications">No new notifications</p>
+          <?php else: ?>
+              <?php foreach ($notifications as $notif): ?>
+                  <div class="notification-item <?php if ($notif['is_read'] == 0) echo 'unread'; ?>">
+                      <p><?php echo htmlspecialchars($notif['message']); ?></p>
+                      <small><?php echo date("M j, g:i a", strtotime($notif['created_at'])); ?></small>
+                  </div>
+              <?php endforeach; ?>
+          <?php endif; ?>
+      </div>
+      
     </nav>
   </header>
 
@@ -235,18 +299,52 @@ $conn->close();
     function confirmLogout() { window.location.href = 'logout.php'; }
     function goToEdit() { window.location.href = "editprofile.php"; }
     
+    // --- UPDATED: Notification Bell Logic ---
     const bell = document.querySelector('.notification-icon');
     const dropdown = document.getElementById('notificationDropdown');
+    
     bell.addEventListener('click', (event) => {
       event.stopPropagation();
       dropdown.classList.toggle('show');
-      bell.classList.add('read');
+      
+      // FIX 2: JAVASCRIPT LOGIC
+      // Check if it does NOT have the 'read' class (meaning it's unread)
+      if (!bell.classList.contains('read')) {
+          
+          // 1. Add the 'read' class immediately to hide the dot
+          bell.classList.add('read');
+          
+          // 2. Send a request to the server to mark all as read
+          fetch('php/mark_notifications_read.php', {
+              method: 'POST'
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === 'success') {
+                  // 3. Mark all items in dropdown as read (remove blue background)
+                  dropdown.querySelectorAll('.notification-item.unread').forEach(item => {
+                      item.classList.remove('unread');
+                  });
+              } else {
+                  console.error('Failed to mark notifications as read');
+                  // If it failed, remove the 'read' class to show the dot again
+                  bell.classList.remove('read');
+              }
+          })
+          .catch(error => {
+              console.error('Error with fetch:', error);
+              // Also remove 'read' class on error
+              bell.classList.remove('read');
+          });
+      }
     });
+    
     document.addEventListener('click', (event) => {
       if (!bell.contains(event.target) && !dropdown.contains(event.target)) {
         dropdown.classList.remove('show');
       }
     });
+    // --- END OF UPDATED Notification Bell Logic ---
 
     const logoutModal = document.getElementById('logoutModal');
     const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
@@ -258,39 +356,32 @@ $conn->close();
     });
     
     
-    // --- NEW: Delete Schedule Modal Logic ---
-    let formToSubmit = null; // This will hold the form we want to submit
+    // --- Delete Schedule Modal Logic (Unchanged) ---
+    let formToSubmit = null; 
     const deleteModal = document.getElementById('deleteScheduleModal');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-    // 1. Find ALL delete buttons and add a click listener
     document.querySelectorAll('.delete-btn[type="button"]').forEach(button => {
       button.addEventListener('click', (event) => {
-        // Find the form that this button lives inside
         formToSubmit = event.target.closest('form.delete-schedule-form');
-        // Open the modal
         deleteModal.classList.add('show');
       });
     });
 
-    // 2. Function to close the delete modal
     function closeDeleteModal() {
       deleteModal.classList.remove('show');
-      formToSubmit = null; // Clear the stored form
+      formToSubmit = null; 
     }
 
-    // 3. Add listeners to the modal buttons
     cancelDeleteBtn.addEventListener('click', closeDeleteModal);
     
     confirmDeleteBtn.addEventListener('click', () => {
-      // If we have a form stored, submit it
       if (formToSubmit) {
         formToSubmit.submit();
       }
     });
 
-    // 4. Close modal if user clicks on the gray backdrop
     deleteModal.addEventListener('click', (event) => {
       if (event.target == deleteModal) {
         closeDeleteModal();
@@ -298,19 +389,16 @@ $conn->close();
     });
 
     
-    // --- NEW: Notification Toast Logic ---
+    // --- Notification Toast Logic (Unchanged) ---
     
-    // 1. The function to show the toast
     function showNotification(message, type = 'success') {
       const toast = document.getElementById("notification-toast");
       toast.innerHTML = message;
       toast.className = "show " + type; 
       setTimeout(() => { 
         toast.className = toast.className.replace("show", ""); 
-        // Also, clean up the URL (remove the ?status=unsaved)
         if (window.history.replaceState) {
           const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
-          // We need to preserve the ?page= param if it exists
           const urlParams = new URLSearchParams(window.location.search);
           if (urlParams.has('page')) {
             window.history.replaceState({path: cleanURL}, '', cleanURL + '?page=' + urlParams.get('page'));
@@ -321,13 +409,11 @@ $conn->close();
       }, 3000); 
     }
 
-    // 2. Check for the status on page load
     document.addEventListener("DOMContentLoaded", () => {
       const urlParams = new URLSearchParams(window.location.search);
       const status = urlParams.get('status');
 
       if (status === 'unsaved') {
-        // Use the "info" style (blue) for unsaving
         showNotification("Schedule unsaved.", "info");
       }
     });
@@ -336,4 +422,3 @@ $conn->close();
 
 </body>
 </html>
-

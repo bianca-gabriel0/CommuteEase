@@ -474,3 +474,80 @@ footer {
 .notification-icon.read::after {
   display: none;
 }
+
+    /* This is the red dot */
+    .notification-icon {
+        position: relative; /* Needed for the dot */
+    }
+    .notification-icon::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -5px;
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+        display: block; /* Show by default */
+    }
+    /* This hides the dot when the .read class is added */
+    .notification-icon.read::after {
+        display: none;
+    }
+
+    /* Styles for the items in the dropdown */
+    .notification-dropdown {
+        /* Add these if your dropdown-menu is missing sizing */
+        min-width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+        /* Position it correctly */
+        position: absolute;
+        top: 60px; /* Adjust based on navbar height */
+        right: 40px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        padding: 12px;
+        z-index: 999;
+        display: none; /* Hidden by default */
+    }
+    .notification-dropdown.show {
+        display: block; /* Show when bell is clicked */
+    }
+    .notification-item {
+        display: block;
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+        text-decoration: none;
+        color: #333;
+        white-space: normal; /* Allow text to wrap */
+    }
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+    .notification-item:hover {
+        background-color: #f9f9f9;
+    }
+    /* Style for unread messages */
+    .notification-item.unread {
+        background-color: #f4f8ff; /* Light blue */
+        font-weight: bold;
+    }
+    .notification-item p {
+        margin: 0 0 5px 0;
+        font-size: 0.9em;
+        color: #333;
+        text-align: left;
+    }
+    .notification-item small {
+        font-size: 0.75em;
+        color: #777;
+        font-weight: normal;
+    }
+    .no-notifications {
+        padding: 15px;
+        text-align: center;
+        color: #888;
+    }

@@ -19,7 +19,6 @@ if (!isset($_SESSION['admin_user_id'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Birthstone&family=Ephesis&display=swap" rel="stylesheet">
-    <!-- Note: scheduleadmin.css is external, so we add inline styles for the new buttons -->
     <link rel="stylesheet" href="scheduleadmin.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -73,9 +72,11 @@ if (!isset($_SESSION['admin_user_id'])) {
                 <tbody></tbody>
             </table>
 
-            <!-- UPDATED: Added pagination buttons -->
+            <!-- UPDATED: Added pagination buttons AND page indicator -->
             <div class="table-arrows">
                 <button id="prevPageBtn" class="arrow-btn">&lt;</button>
+                <!-- NEW: Page indicator -->
+                <span id="pageIndicator" class="page-indicator">1 of 1</span>
                 <button id="nextPageBtn" class="arrow-btn">&gt;</button>
             </div>
 
@@ -146,13 +147,15 @@ if (!isset($_SESSION['admin_user_id'])) {
         // UPDATED: Renamed 'schedules' to 'allSchedules'
         let allSchedules = [];
         // UPDATED: Added new variables for pagination
-        let currentView = [];     
-        let currentPage = 1;       
+        let currentView = []; 
+        let currentPage = 1; 
         const rowsPerPage = 7; // As you requested
         
         // UPDATED: Get button elements
         const prevPageBtn = document.getElementById("prevPageBtn");
         const nextPageBtn = document.getElementById("nextPageBtn");
+        // NEW: Get page indicator element
+        const pageIndicator = document.getElementById("pageIndicator");
 
         // 🟢 Fetch from PHP (MySQL)
         async function loadSchedules() {
@@ -178,6 +181,13 @@ if (!isset($_SESSION['admin_user_id'])) {
         function renderTable(list) {
             const tableBody = document.querySelector("#scheduleTable tbody");
             tableBody.innerHTML = "";
+
+            // NEW: Show a message if the list is empty
+            if (list.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No schedules found for this day.</td></tr>`;
+                return;
+            }
+            
             list.forEach(s => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
@@ -211,6 +221,11 @@ if (!isset($_SESSION['admin_user_id'])) {
             // Update the next/prev button states
             prevPageBtn.disabled = (currentPage === 1);
             nextPageBtn.disabled = (endIndex >= currentView.length);
+
+            // --- NEW: Update page indicator text ---
+            const maxPage = Math.ceil(currentView.length / rowsPerPage) || 1; // || 1 to prevent "0 of 0" if empty
+            pageIndicator.textContent = `${currentPage} of ${maxPage}`;
+            // --- END NEW ---
         }
 
         // 🟢 Filter by day

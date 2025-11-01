@@ -21,7 +21,7 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="schedule-style.css">
 
-
+ 
 
 </head>
 
@@ -149,6 +149,8 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   <!-- next + previous arrows -->
 <div class="table-arrows">
   <button id="prevPageBtn" class="arrow-btn">&lt;</button>
+  <!-- NEW: Page indicator -->
+  <span id="pageIndicator" class="page-indicator">1 of 1</span>
   <button id="nextPageBtn" class="arrow-btn">&gt;</button>
 </div>
 
@@ -201,6 +203,8 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
   const prevPageBtn = document.getElementById("prevPageBtn");
   const nextPageBtn = document.getElementById("nextPageBtn");
   const searchInput = document.getElementById("searchInput"); // Get search input element
+  // NEW: Get the page indicator element
+  const pageIndicator = document.getElementById("pageIndicator");
 
   let allSchedules = []; 
   let currentView = []; 
@@ -210,6 +214,13 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
  // Renders the table rows for the given data (a "slice")
   function renderTable(list) {
     tableBody.innerHTML = "";
+    
+    // NEW: Show a message if no results
+    if (list.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No schedules match your filters.</td></tr>`;
+        return;
+    }
+    
     list.forEach(schedule => {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -296,6 +307,11 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 
     prevPageBtn.disabled = (currentPage === 1);
     nextPageBtn.disabled = (endIndex >= currentView.length);
+    
+    // --- NEW: Update page indicator text ---
+    const maxPage = Math.ceil(currentView.length / rowsPerPage) || 1; // || 1 to prevent "0 of 0" if empty
+    pageIndicator.textContent = `${currentPage} of ${maxPage}`;
+    // --- END NEW ---
   }
 
   // --- NEW: Function to show the notification toast ---
@@ -338,9 +354,9 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
     fetch('php/fetch_schedules.php')
       .then(response => response.json())
       .then(data => {
-        allSchedules = data;    
-        currentView = data;     
-        updateDisplay();        
+        allSchedules = data;    
+        currentView = data;     
+        updateDisplay();        
       })
       .catch(error => {
         console.error('Error fetching schedules:', error);
@@ -372,9 +388,9 @@ $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
       return matchesSearch && matchesType && matchesDay && matchesTime;
     });
 
-    currentView = filtered;   
-    currentPage = 1;        
-    updateDisplay();        
+    currentView = filtered;   
+    currentPage = 1;        
+    updateDisplay();        
   });
 
   // UPDATED: Combined all filter change listeners into one

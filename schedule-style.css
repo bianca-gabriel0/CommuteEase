@@ -305,7 +305,6 @@ footer {
 }
 
 
-/* ===== RIGHT-ALIGNED SEARCH & FILTER SECTION ===== */
 .table-controls {
   display: flex;
   justify-content: flex-end;
@@ -340,7 +339,7 @@ footer {
   right: 12px;
   font-size: 16px;
   color: #888;
-  pointer-events: none; /* allows typing through the icon */
+  pointer-events: none;
 }
 
 
@@ -367,7 +366,6 @@ footer {
   background-color: #5ea398;
 }
 
-/* ===== SCHEDULE CARD ===== */
 .schedule-card {
   background-color: #ffffff;
   border-radius: 12px;
@@ -408,7 +406,6 @@ footer {
   background-color: #f1f1f1;
 }
 
-/* ===== ARROW BUTTONS BELOW THE CARD ===== */
 .table-arrows {
   display: flex;
   justify-content: center;
@@ -433,7 +430,6 @@ footer {
   transform: scale(1.05);
 }
 
-/* 🟩 Day Filter Styling */
 #dayFilter {
   padding: 9px 12px;
   border-radius: 6px;
@@ -442,11 +438,10 @@ footer {
   outline: none;
 }
 
-/* Notification Dropdown */
 .notification-dropdown {
   display: none;
   position: absolute;
-  top: 70px; /* Adjust based on navbar height */
+  top: 70px; 
   right: 40px;
   width: 260px;
   background-color: #fff;
@@ -464,7 +459,6 @@ footer {
   text-align: center;
 }
 
-/* Optional fade-in effect */
 .notification-dropdown.show {
   display: block;
   animation: fadeIn 0.2s ease-in-out;
@@ -479,11 +473,8 @@ footer {
   display: none;
 }
 
-/* --- Notification Bell & Dropdown Styles --- */
-
-/* Your icon styles (merged) */
 .notification-icon {
-  position: relative; /* This is the parent */
+  position: relative;
   cursor: pointer;
 }
 
@@ -494,11 +485,10 @@ footer {
 }
 
 .notification-icon i:hover {
-  color: #58a193; /* Your hover color */
+  color: #58a193;
   transform: scale(1.1);
 }
 
-/* Your red dot */
 .notification-icon::after {
   content: "";
   position: absolute;
@@ -511,19 +501,15 @@ footer {
   display: block;
 }
 
-/* 🟩 NEW: This hides the red dot when you click the bell */
-/* (My JavaScript already adds the 'read' class for this) */
 .notification-icon.read::after {
   display: none;
 }
 
-/* The dropdown box (hidden by default) */
 .notification-dropdown {
   display: none;
   position: absolute;
-  /* 🟩 Adjusted positioning to align with your icon */
-  top: 60px;  /* Drops it below the icon */
-  right: 40;   /* Aligns it to the right edge */
+  top: 60px;  
+  right: 40;  
   
   background-color: #ffffff;
   border-radius: 8px;
@@ -534,16 +520,14 @@ footer {
   border: 1px solid #eee;
 }
 
-/* This is the class our JavaScript toggles to show the box */
 .notification-dropdown.show {
   display: block;
 }
 
-/* Text inside the dropdown */
 .notification-dropdown p {
   margin: 0;
   padding: 1px;
-  color: #555; /* Looks good with your #333 icon color */
+  color: #555; 
   font-size: 14px;
 }
 
@@ -563,18 +547,15 @@ footer {
       font-size: 17px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    
-    /* Style for success (green) */
+
     #notification-toast.success {
-       background-color: #059669; /* A nice green */
+       background-color: #059669; 
     }
 
-    /* Style for info/warning (blue) */
     #notification-toast.info {
-       background-color: #0284c7; /* A nice blue */
+       background-color: #0284c7; 
     }
 
-    /* Animation to show and hide */
     #notification-toast.show {
       visibility: visible; 
       -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
@@ -599,4 +580,17 @@ footer {
     @keyframes fadeout {
       from {bottom: 30px; opacity: 1;}
       to {bottom: 0; opacity: 0;}
+    }
+
+    .page-indicator {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #555;
+        min-width: 70px; 
+        text-align: center;
+    }
+    .table-arrows {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }

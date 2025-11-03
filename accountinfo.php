@@ -62,7 +62,6 @@ if ($total_items > 0) {
 }
 
 
-// --- NOTIFICATION LOGIC ---
 $unread_count = 0;
 $notifications = [];
 
@@ -85,10 +84,7 @@ if ($notif_result->num_rows > 0) {
     }
 }
 $notif_stmt->close();
-// --- END OF NOTIFICATION LOGIC ---
 
-
-// --- User Info ---
 $firstName = htmlspecialchars($_SESSION['first_name'] ?? 'Guest');
 $lastName = htmlspecialchars($_SESSION['last_name'] ?? ''); 
 $userEmail = htmlspecialchars($_SESSION['email'] ?? 'email.not.found@example.com'); 

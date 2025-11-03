@@ -21,6 +21,31 @@ if (!$is_valid_token) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reset Your Password</title>
   <link rel="stylesheet" href="forgotpassword.css"/>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <style>
+    .password-wrapper {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 15px; 
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #888; 
+    }
+
+    .password-wrapper input[type="password"],
+    .password-wrapper input[type="text"] {
+        padding-right: 40px; 
+        width: 100%; 
+        box-sizing: border-box; 
+    }
+  </style>
+
 </head>
 <body>
   <div class="container">
@@ -37,13 +62,19 @@ if (!$is_valid_token) {
         
         <div class="form-group">
           <label for="new_password">New Password</label>
-          <input type="password" id="new_password" name="new_password" required>
+          <div class="password-wrapper">
+            <input type="password" id="new_password" name="new_password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
           <small class="error-message" id="passwordError" style="display: none;"></small>
         </div>
 
         <div class="form-group">
           <label for="confirm_password">Confirm New Password</label>
-          <input type="password" id="confirm_password" name="confirm_password" required>
+          <div class="password-wrapper">
+            <input type="password" id="confirm_password" name="confirm_password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
           <small class="error-message" id="confirmError" style="display: none;"></small>
         </div>
 
@@ -94,7 +125,34 @@ if (!$is_valid_token) {
 
   newPassword.addEventListener("input", validatePasswords);
   confirmPassword.addEventListener("input", validatePasswords);
+
+  // --- NEW: Password Toggle Logic ---
+
+  const passwordTogglers = document.querySelectorAll(".toggle-password");
+
+  passwordTogglers.forEach(toggler => {
+      toggler.addEventListener("click", function() {
+          // 'this' is the icon that was clicked
+          // '.previousElementSibling' gets the <input> right before it
+          const passwordInput = this.previousElementSibling; 
+
+          // Check the current type of the input
+          if (passwordInput.type === "password") {
+              // Change it to text
+              passwordInput.type = "text";
+              // Change the icon to the "slashed" eye
+              this.classList.remove("fa-eye");
+              this.classList.add("fa-eye-slash");
+          } else {
+              // Change it back to password
+              passwordInput.type = "password";
+              // Change the icon back to the regular eye
+              this.classList.remove("fa-eye-slash");
+              this.classList.add("fa-eye");
+          }
+      });
+  });
+
 </script>
 </body>
 </html>
-

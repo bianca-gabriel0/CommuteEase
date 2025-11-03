@@ -138,8 +138,8 @@ $conn->close();
     </p>
     <p>
       CommuteEase provides Dagupan commuters with a clear and accessible timetable system. By 
-      allowing users to see which buses or jeepneys are available at specific times—and which 
-      departures are coming within the next few minutes—the system helps make daily commuting 
+      allowing users to see which buses or jeepneys are available at specific times, and which 
+      departures are coming within the next few minutes, the system helps make daily commuting 
       more efficient and less stressful.
     </p>
   </div>

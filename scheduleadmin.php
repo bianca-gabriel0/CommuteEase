@@ -19,7 +19,6 @@ if (!isset($_SESSION['admin_user_id'])) {
     <link rel="stylesheet" href="scheduleadmin.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-
 </head>
 
 <body>
@@ -38,14 +37,57 @@ if (!isset($_SESSION['admin_user_id'])) {
             <h2>Schedules</h2>
 
             <div class="days-row">
-                <button onclick="filterByDay('All')">All</button>
-                <button onclick="filterByDay('Sunday')">Sunday</button>
-                <button onclick="filterByDay('Monday')">Monday</button>
-                <button onclick="filterByDay('Tuesday')">Tuesday</button>
-                <button onclick="filterByDay('Wednesday')">Wednesday</button>
-                <button onclick="filterByDay('Thursday')">Thursday</button>
-                <button onclick="filterByDay('Friday')">Friday</button>
-                <button onclick="filterByDay('Saturday')">Saturday</button>
+                
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search route/location...">
+                    <i class="fa fa-search"></i>
+                </div>
+                
+                <select id="dayFilter" class="filter-select">
+                    <option value="">All Days</option>
+                    <option value="Sunday">Sunday</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                </select>
+
+                <select id="timeFilter" class="filter-select">
+                    <option value="">Time</option>
+                    <option value="0">12 AM</option>
+                    <option value="1">1 AM</option>
+                    <option value="2">2 AM</option>
+                    <option value="3">3 AM</option>
+                    <option value="4">4 AM</option>
+                    <option value="5">5 AM</option>
+                    <option value="6">6 AM</option>
+                    <option value="7">7 AM</option>
+                    <option value="8">8 AM</option>
+                    <option value="9">9 AM</option>
+                    <option value="10">10 AM</option>
+                    <option value="11">11 AM</option>
+                    <option value="12">12 PM</option>
+                    <option value="13">1 PM</option>
+                    <option value="14">2 PM</option>
+                    <option value="15">3 PM</option>
+                    <option value="16">4 PM</option>
+                    <option value="17">5 PM</option>
+                    <option value="18">6 PM</option>
+                    <option value="19">7 PM</option>
+                    <option value="20">8 PM</option>
+                    <option value="21">9 PM</option>
+                    <option value="22">10 PM</option>
+                    <option value="23">11 PM</option>
+                </select>
+                
+                <select id="typeFilter" class="filter-select">
+                    <option value="">Types</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Mini-bus">Mini-bus</option>
+                </select>
+
                 <button class="add-schedule" onclick="openAddModal()">Add Schedule</button>
                 <a href="export.php" target="_blank" class="export-button"> Export</a>
             </div>
@@ -150,9 +192,7 @@ if (!isset($_SESSION['admin_user_id'])) {
             }
             try {
                 allSchedules = await res.json();
-                currentView = allSchedules; 
-                currentPage = 1; 
-                updateDisplay(); 
+                applyFilters(); 
             } catch (e) {
                 console.error("Could not parse JSON from fetch_schedules.php:", e);
             }
@@ -163,7 +203,7 @@ if (!isset($_SESSION['admin_user_id'])) {
             tableBody.innerHTML = "";
 
             if (list.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No schedules found for this day.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No schedules found matching your criteria.</td></tr>`;
                 return;
             }
             
@@ -201,12 +241,28 @@ if (!isset($_SESSION['admin_user_id'])) {
             pageIndicator.textContent = `${currentPage} of ${maxPage}`;
         }
 
-        function filterByDay(day) {
-            if (day === "All") {
-                currentView = allSchedules;
-            } else {
-                currentView = allSchedules.filter(s => s.day === day);
-            }
+        function applyFilters() {
+            const dayValue = document.getElementById("dayFilter").value; 
+            const searchValue = document.getElementById("searchInput").value.toLowerCase();
+            const typeValue = document.getElementById("typeFilter").value;
+            const timeValue = document.getElementById("timeFilter").value;
+
+            const filtered = allSchedules.filter(s => {
+                const matchesDay = (dayValue === "" || s.day === dayValue);
+                const matchesSearch = s.route_formatted.toLowerCase().includes(searchValue) || s.location.toLowerCase().includes(searchValue);
+                const matchesType = (typeValue === "" || s.type === typeValue);
+
+                let scheduleHour = -1; 
+                if (s.departure_time) {
+                    scheduleHour = parseInt(s.departure_time.split(':')[0], 10);
+                }
+                const timeFilterHour = timeValue === "" ? null : parseInt(timeValue, 10);
+                const matchesTime = (timeFilterHour === null || scheduleHour === timeFilterHour);
+
+                return matchesDay && matchesSearch && matchesType && matchesTime;
+            });
+
+            currentView = filtered;
             currentPage = 1; 
             updateDisplay(); 
         }
@@ -299,7 +355,7 @@ if (!isset($_SESSION['admin_user_id'])) {
         }
         
         async function deleteSchedule() {
-            const scheduleId = document.getElementById("schedule_id").value;
+            const scheduleId = document.getElementById("schedule_id").value; 
             
             if (!scheduleId) {
                 console.error("No schedule ID found for deletion.");
@@ -313,7 +369,7 @@ if (!isset($_SESSION['admin_user_id'])) {
             const res = await fetch("php/delete_schedule.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ schedule_id: scheduleId })
+                body: JSON.stringify({ schedule_id: scheduleId }) 
             });
 
             const result = await res.json();
@@ -328,6 +384,11 @@ if (!isset($_SESSION['admin_user_id'])) {
 
         window.onload = function() {
             loadSchedules().catch(error => console.error('Error fetching schedules:', error));
+
+            document.getElementById("dayFilter").addEventListener("change", applyFilters);
+            document.getElementById("searchInput").addEventListener("input", applyFilters);
+            document.getElementById("timeFilter").addEventListener("change", applyFilters);
+            document.getElementById("typeFilter").addEventListener("change", applyFilters);
         };
 
         prevPageBtn.addEventListener("click", () => {
@@ -346,9 +407,12 @@ if (!isset($_SESSION['admin_user_id'])) {
         });
 
         function logout() {
-            window.location.href = "admin_logout.php";
+            if (confirm("Are you sure you want to log out?")) {
+                window.location.href = "admin_logout.php";
+            }
         }
 
     </script>
 </body>
 </html>
+

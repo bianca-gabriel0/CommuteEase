@@ -217,6 +217,8 @@ p {
   display: flex;
   gap: 5px;
   margin-bottom: 10px;
+  flex-wrap: wrap; /* <-- Added this */
+  align-items: center; /* <-- Added this */
 }
 
 .days-row button {
@@ -227,6 +229,7 @@ p {
   font-weight: bold;
   cursor: pointer;
   border-radius: 4px;
+  margin-bottom: 5px; /* Added for wrap spacing */
 }
 
 .days-row button:hover {
@@ -338,7 +341,8 @@ p {
   background-color: #28a745; 
   color: white;
 
-  margin-left: auto;
+  margin-left: auto; /* This will push it to the right */
+  margin-bottom: 5px; /* Added for wrap spacing */
 }
 
 .export-button:hover {
@@ -368,21 +372,21 @@ p {
   transform: scale(1.05);
 }
 .modal-actions {
-   display: flex;
-   justify-content: space-between;
-   margin-top: 20px;
-   gap: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    gap: 10px;
 }
 #modalButton {
-   flex-grow: 1;
-   padding: 10px 20px;
-   background-color: #6BBBAE; 
-   color: white;
-   border: none;
-   border-radius: 6px;
-   cursor: pointer;
-   font-size: 16px;
-   transition: background-color 0.2s;
+    flex-grow: 1;
+    padding: 10px 20px;
+    background-color: #6BBBAE; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
 }
 
 #modalButton:hover {
@@ -467,3 +471,45 @@ p {
     min-width: 70px; 
     text-align: center;
 }
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px; 
+}
+
+.search-container input {
+  padding: 8px 30px 8px 12px; 
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  outline: none;
+  width: 250px; 
+  transition: 0.3s;
+  font-size: 14px;
+  font-family: 'Albert Sans', sans-serif;
+}
+
+.search-container input:focus {
+  border-color: #6BBBAE;
+}
+
+.search-container .fa-search {
+  position: absolute;
+  right: 10px;
+  font-size: 14px;
+  color: #888;
+  pointer-events: none;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: white;
+  outline: none;
+  font-size: 14px;
+  font-family: 'Albert Sans', sans-serif;
+  margin-bottom: 5px; 
+}
+
